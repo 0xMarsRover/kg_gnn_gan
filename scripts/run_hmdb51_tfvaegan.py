@@ -2,7 +2,7 @@ import os
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
---nclass_all 51 --dataset hmdb51 \
+--nclass_all 51 --dataset hmdb51 --zsl \
 --dataroot /content/drive/MyDrive/colab_data/action_datasets \
 --splits_path hmdb51_semantics --split 3 \
 --action_embedding i3d --class_embedding wv \

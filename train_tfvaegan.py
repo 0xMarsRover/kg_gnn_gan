@@ -163,10 +163,15 @@ def calc_gradient_penalty(netD, real_data, fake_data, input_att):
     return gradient_penalty
 
 
-best_zsl_acc = 0
-best_cm = []
+# best_cm = []
 if opt.gzsl_od:
-    best_gzsl_acc = 0
+    best_gzsl_od_acc = 0
+
+elif opt.gzsl:
+    best_gzsl_simple_acc = 0
+
+else:
+    best_zsl_acc = 0
 
 # Training loop
 for epoch in range(0, opt.nepoch):
@@ -307,9 +312,11 @@ for epoch in range(0, opt.nepoch):
     netF.eval()
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
+
     # Generalized zero-shot learning
     if opt.gzsl_od:
         # OD based GZSL
+        print("Performing Out-of-Distribution GZSL")
         seen_class = data.seenclasses.size(0)
         print('seen class size: ', seen_class)
         clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
@@ -327,8 +334,8 @@ for epoch in range(0, opt.nepoch):
                                              opt.cuda, clss, clsu, _batch_size=128,
                                              netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
-        if best_gzsl_acc < clsg.H:
-            best_acc_seen, best_acc_unseen, best_gzsl_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
+        if best_gzsl_od_acc < clsg.H:
+            best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
             best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
             best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
@@ -338,32 +345,65 @@ for epoch in range(0, opt.nepoch):
         print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
         print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
 
-    # Zero-shot learning
-    # Train ZSL classifier
-    zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
-                                    data, data.unseenclasses.size(0),
-                                    opt.cuda, opt.classifier_lr, 0.5, 25, opt.syn_num,
-                                    generalized=False, netDec=netDec,
-                                    dec_size=opt.attSize, dec_hidden_size=4096)
-    acc = zsl_cls.acc
-    acc_per_class = zsl_cls.acc_per_class
-    cm = zsl_cls.cm
-    if best_zsl_acc < acc:
-        best_zsl_acc = acc
-    print('ZSL unseen accuracy=%.4f' % acc)
-    print('ZSL unseen accuracy per class\n', acc_per_class)
-    print('ZSL confusion matrix\n', cm)
+    elif opt.gzsl:
+        # simple Generalized zero-shot learning
+        print("Performing simple GZSL")
+        train_X = torch.cat((data.train_feature, syn_feature), 0)
+        train_Y = torch.cat((data.train_label, syn_label), 0)
+        nclass = opt.nclass_all
+        clsg = classifier.CLASSIFIER(train_X, train_Y, data, nclass,
+                                     opt.cuda, _nepoch=30,
+                                     _batch_size=128, generalized=True)
+        if best_gzsl_simple_acc < clsg.H:
+            best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
+            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+            best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
+
+        print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
+        print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
+        print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
+        print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
+        print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
+
+    else:
+        # Zero-shot learning
+        print("Performing ZSL")
+        # Train ZSL classifier
+        zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
+                                        data, data.unseenclasses.size(0),
+                                        opt.cuda, opt.classifier_lr, 0.5, 25, opt.syn_num,
+                                        generalized=False, netDec=netDec,
+                                        dec_size=opt.attSize, dec_hidden_size=4096)
+        acc = zsl_cls.acc
+        acc_per_class = zsl_cls.acc_per_class
+        cm = zsl_cls.cm
+        if best_zsl_acc < acc:
+            best_zsl_acc = acc
+        print('ZSL unseen accuracy=%.4f' % acc)
+        print('ZSL unseen accuracy per class\n', acc_per_class)
+        print('ZSL confusion matrix\n', cm)
+
     # reset modules to training mode
     netG.train()
     netDec.train()
     netF.train()
 
-# Best results
-print('Dataset', opt.dataset)
-print('the best ZSL unseen accuracy is', best_zsl_acc)
+# Showing Best results
+print('Showing Best Results for Dataset: ', opt.dataset)
+
 if opt.gzsl_od:
-    print('the best GZSL seen accuracy is', best_acc_seen, best_acc_per_seen)
-    print('the best GZSL unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
-    print('the best GZSL H is', best_gzsl_acc)
-    print('the best GZSL seen CM', best_cm_seen)
-    print('the best GZSL unseen CM', best_cm_unseen)
+    print('Best GZSL-OD seen accuracy is', best_acc_seen, best_acc_per_seen)
+    print('Best GZSL-OD unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
+    print('Best GZSL-OD H is', best_gzsl_od_acc)
+    print('Best GZSL-OD seen CM', best_cm_seen)
+    print('Best GZSL-OD unseen CM', best_cm_unseen)
+
+elif opt.gzsl:
+    print('Best Simple GZSL seen accuracy is', best_acc_seen, best_acc_per_seen)
+    print('Best Simple GZSL unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
+    print('Best Simple GZSL H is', best_gzsl_simple_acc)
+    print('Best Simple GZSL seen CM', best_cm_seen)
+    print('Best Simple GZSL unseen CM', best_cm_unseen)
+
+else:
+    print('Best ZSL unseen accuracy is', best_zsl_acc)

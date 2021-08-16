@@ -79,7 +79,7 @@ class DATA_LOADER(object):
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" +
                                      opt.splits_path + "/split_" + str(opt.split) +
                                      "/att_splits.mat")
-
+            print("split: ", str(opt.split))
             trainval_loc = matcontent['trainval_loc'].squeeze() - 1
             train_loc = matcontent['train_loc'].squeeze() - 1
             val_unseen_loc = matcontent['val_loc'].squeeze() - 1

@@ -5,7 +5,7 @@ import os
 # 2. argparse: --zsl; --gzsl; --gzsl_od
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
---nclass_all 101 --dataset ucf101 \
+--nclass_all 101 --dataset ucf101 --zsl \
 --dataroot /content/drive/MyDrive/colab_data/action_datasets \
 --splits_path ucf101_semantics --split 2 \
 --action_embedding i3d --class_embedding wv \

@@ -14,6 +14,7 @@ parser.add_argument('--avg_wv', action='store_true', default=False, help='averag
 # parser.add_argument('--image_embedding_path', default='')
 # parser.add_argument('--manual_att', action='store_true', default=False, help='Use manual attributes')
 parser.add_argument('--syn_num', type=int, default=150, help='number features to generate per class')
+parser.add_argument('--zsl', action='store_true', default=False, help='enable zero-shot learning')
 parser.add_argument('--gzsl', action='store_true', default=False, help='enable generalized zero-shot learning')
 parser.add_argument('--gzsl_od', action='store_true', default=False, help='enable out-of-distribution based generalized zero-shot learning')
 parser.add_argument('--preprocessing', action='store_true', default=False, help='enbale MinMaxScaler on visual features')
