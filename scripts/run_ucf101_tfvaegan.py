@@ -5,9 +5,9 @@ import os
 # --avg_wv
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
---encoded_noise --object --workers 8 --nclass_all 101 \
+--encoded_noise --workers 8 --nclass_all 101 \
 --dataset ucf101 --dataroot /content/drive/MyDrive/colab_data/action_datasets \
---splits_path ucf101/ucf101_semantics/split_{split} \
+--splits_path ucf101/ucf101_semantics/split_1 \
 --syn_num 600 --preprocessing --cuda --gammaD 10 --gammaG 10 \
 --action_embedding i3d --class_embedding wv \
 --nepoch 30 --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \

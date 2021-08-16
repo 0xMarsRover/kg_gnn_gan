@@ -43,7 +43,7 @@ class DATA_LOADER(object):
 
             # load action dataset splits and semantics
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" +
-                                     opt.splits_path + "att_splits.mat")
+                                     opt.splits_path + "/att_splits.mat")
 
             trainval_loc = matcontent['trainval_loc'].squeeze() - 1
             train_loc = matcontent['train_loc'].squeeze() - 1
@@ -74,7 +74,7 @@ class DATA_LOADER(object):
 
             # load action dataset splits and semantics
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" +
-                                     opt.splits_path + "att_splits.mat")
+                                     opt.splits_path + "/att_splits.mat")
 
             trainval_loc = matcontent['trainval_loc'].squeeze() - 1
             train_loc = matcontent['train_loc'].squeeze() - 1
