@@ -4,7 +4,7 @@ import os
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
 --nclass_all 51 --dataset hmdb51 \
 --dataroot /content/drive/MyDrive/colab_data/action_datasets \
---splits_path hmdb51_semantics/split_1 \
+--splits_path hmdb51_semantics --split 1 \
 --action_embedding i3d --class_embedding wv \
 --nepoch 3 --batch_size 64 \
 --syn_num 600 --preprocessing --cuda --gammaD 10 --gammaG 10 \
