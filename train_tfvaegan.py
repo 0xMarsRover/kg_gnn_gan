@@ -1,15 +1,15 @@
 from __future__ import print_function
 import torch
-import torch.nn as nn
 import torch.autograd as autograd
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import numpy as np
 import random
+
 # load files
 import model
-import util_init
+import util
 import classifier
 import classifier_entropy
 from config import opt
@@ -26,7 +26,7 @@ cudnn.benchmark = True
 if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should probably run with --cuda")
 # load data
-data = util_init.DATA_LOADER(opt)
+data = util.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)
 print("Dataset: ", opt.dataset)
 
@@ -74,6 +74,7 @@ def loss_fn(recon_x, x, mean, log_var):
     KLD = -0.5 * torch.sum(1 + log_var - mean.pow(2) - log_var.exp())/ x.size(0)
     return BCE + KLD
 
+
 def WeightedL1(pred, gt, bce=False, gt_bce=None):
     # semantic embedding cycle-consistency loss
     if bce:
@@ -83,25 +84,28 @@ def WeightedL1(pred, gt, bce=False, gt_bce=None):
     wt /= wt.sum(1).sqrt().unsqueeze(1).expand(wt.size(0),wt.size(1))
     loss = wt * (pred-gt).abs()
     return loss.sum()/loss.size(0)
-           
+
+
 def feedback_module(gen_out, att, netG, netDec, netF):
     syn_fake = netG(gen_out, c=att)
-    recons = netDec(syn_fake)
+    # recons = netDec(syn_fake)
     recons_hidden_feat = netDec.getLayersOutDet()
     feedback_out = netF(recons_hidden_feat)
     syn_fake = netG(gen_out, a1=opt.a1, c=att, feedback_layers=feedback_out)
     return syn_fake
 
+
 def sample():
-    #data loader
-    #batch_feature, batch_att, batch_bce_att = data.next_seen_batch(opt.batch_size)
+    # data loader
+    # batch_feature, batch_att, batch_bce_att = data.next_seen_batch(opt.batch_size)
     batch_feature, batch_att = data.next_seen_batch(opt.batch_size)
     input_res.copy_(batch_feature)
     input_att.copy_(batch_att)
     #input_bce_att.copy_(batch_bce_att, batch_att)
 
+
 def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None):
-    #unseen feature synthesis
+    # unseen feature synthesis
     nclass = classes.size(0)
     syn_feature = torch.FloatTensor(nclass*num, opt.resSize)
     syn_label = torch.LongTensor(nclass*num) 
@@ -307,17 +311,17 @@ for epoch in range(0,opt.nepoch):
         # OD based GZSL
         seen_class = data.seenclasses.size(0)
         print('seen class size: ', seen_class)
-        clsu = classifier.CLASSIFIER(syn_feature, util_init.map_label(syn_label, data.unseenclasses),
+        clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                      data, data.unseenclasses.size(0), opt.cuda,
                                      _nepoch=30, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         #_batch_size=opt.syn_num
-        clss = classifier.CLASSIFIER(data.train_feature, util_init.map_label(data.train_label, data.seenclasses),
+        clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                      data, data.seenclasses.size(0), opt.cuda,
                                      _nepoch=30, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
-        clsg = classifier_entropy.CLASSIFIER(data.train_feature, util_init.map_label(data.train_label, data.seenclasses),
+        clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                              data, seen_class, syn_feature, syn_label,
                                              opt.cuda, clss, clsu, _batch_size=128,
                                              netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
@@ -335,7 +339,7 @@ for epoch in range(0,opt.nepoch):
 
     # Zero-shot learning
     # Train ZSL classifier
-    zsl_cls = classifier.CLASSIFIER(syn_feature, util_init.map_label(syn_label, data.unseenclasses),
+    zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                     data, data.unseenclasses.size(0),
                                     opt.cuda, opt.classifier_lr, 0.5, 25, opt.syn_num,
                                     generalized=False, netDec=netDec,
@@ -362,6 +366,4 @@ if opt.gzsl_od:
     print('the best GZSL H is', best_gzsl_acc)
     print('the best GZSL seen CM', best_cm_seen)
     print('the best GZSL unseen CM', best_cm_unseen)
-
-
 

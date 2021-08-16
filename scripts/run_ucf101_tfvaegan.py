@@ -4,7 +4,7 @@ import os
 # --object
 # --avg_wv
 
-os.system('''python /content/gzsl/zero-shot-actions/train_tfvaegan.py \
+os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
 --encoded_noise --object --workers 8 --nclass_all 101 \
 --dataset ucf101 --dataroot /content/drive/MyDrive/colab_data/action_datasets \
 --splits_path ucf101/ucf101_semantics/split_{split} \
