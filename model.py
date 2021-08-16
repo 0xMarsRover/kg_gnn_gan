@@ -16,8 +16,7 @@ def weights_init(m):
 class Encoder(nn.Module):
 
     def __init__(self, opt):
-
-        super(Encoder,self).__init__()
+        super(Encoder, self).__init__()
         layer_sizes = opt.encoder_layer_sizes
         latent_size = opt.latent_size
         layer_sizes[0] += latent_size
@@ -48,7 +47,7 @@ class Generator(nn.Module):
         self.fc1 = nn.Linear(input_size, layer_sizes[0])
         self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])
         self.lrelu = nn.LeakyReLU(0.2, True)
-        self.sigmoid=nn.Sigmoid()
+        self.sigmoid = nn.Sigmoid()
         self.apply(weights_init)
 
     def _forward(self, z, c=None):
@@ -60,11 +59,11 @@ class Generator(nn.Module):
 
     def forward(self, z, a1=None, c=None, feedback_layers=None):
         if feedback_layers is None:
-            return self._forward(z,c)
+            return self._forward(z, c)
         else:
             z = torch.cat((z, c), dim=-1)
             x1 = self.lrelu(self.fc1(z))
-            feedback_out = x1 + a1*feedback_layers
+            feedback_out = x1 + a1 * feedback_layers
             x = self.sigmoid(self.fc3(feedback_out))
             return x
 
@@ -124,6 +123,7 @@ class AttDec(nn.Module):
             h = h/h.pow(2).sum(1).sqrt().unsqueeze(1).expand(h.size(0),h.size(1))
         self.out = h
         return h
+
 
     def getLayersOutDet(self):
         # used at synthesis time and feature transformation
