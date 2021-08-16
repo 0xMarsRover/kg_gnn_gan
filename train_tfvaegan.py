@@ -175,7 +175,7 @@ else:
 
 # Training loop
 for epoch in range(0, opt.nepoch):
-    print("Start Training: ")
+    print("Start Training at epoch: ", epoch)
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
         for i in range(0, data.ntrain, opt.batch_size):
@@ -360,7 +360,7 @@ for epoch in range(0, opt.nepoch):
             # best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
             # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
-        print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
+        print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
         #print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
         #print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
         #print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
@@ -380,7 +380,7 @@ for epoch in range(0, opt.nepoch):
         cm = zsl_cls.cm
         if best_zsl_acc < acc:
             best_zsl_acc = acc
-        print('ZSL unseen accuracy=%.4f' % acc)
+        print('ZSL unseen accuracy=%.4f \n' % acc)
         print('ZSL unseen accuracy per class\n', acc_per_class)
         print('ZSL confusion matrix\n', cm)
 
