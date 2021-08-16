@@ -357,14 +357,14 @@ for epoch in range(0, opt.nepoch):
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         if best_gzsl_simple_acc < clsg.H:
             best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-            best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
+            # best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+            # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
         print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-        print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-        print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
-        print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
-        print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
+        #print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
+        #print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
+        #print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
+        #print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
 
     else:
         # Zero-shot learning
@@ -400,11 +400,11 @@ if opt.gzsl_od:
     print('Best GZSL-OD unseen CM', best_cm_unseen)
 
 elif opt.gzsl:
-    print('Best Simple GZSL seen accuracy is', best_acc_seen, best_acc_per_seen)
-    print('Best Simple GZSL unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
+    print('Best Simple GZSL seen accuracy is', best_acc_seen) #, best_acc_per_seen)
+    print('Best Simple GZSL unseen accuracy is', best_acc_unseen) #, best_acc_per_unseen)
     print('Best Simple GZSL H is', best_gzsl_simple_acc)
-    print('Best Simple GZSL seen CM', best_cm_seen)
-    print('Best Simple GZSL unseen CM', best_cm_unseen)
+    #print('Best Simple GZSL seen CM', best_cm_seen)
+    #print('Best Simple GZSL unseen CM', best_cm_unseen)
 
 else:
     print('Best ZSL unseen accuracy is', best_zsl_acc)
