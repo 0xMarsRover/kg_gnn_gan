@@ -32,7 +32,8 @@ class DATA_LOADER(object):
 
         if opt.dataset == "ucf101":
             # --dataroot '/content/drive/MyDrive/colab_data/action_datasets/'
-            # --splits_path ucf101/ucf101_semantics/split_{split}
+            # --splits_path ucf101_semantics
+            # --split = 1 (or 2 ... 30)
             # --dataset ucf101
 
             # load visual features for ucf101
