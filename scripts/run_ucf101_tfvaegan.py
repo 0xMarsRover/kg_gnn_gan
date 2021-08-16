@@ -4,7 +4,7 @@ import os
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
 --nclass_all 101 --dataset ucf101 \
---dataroot /content/drive/MyDrive/colab_data/action_datasets\
+--dataroot /content/drive/MyDrive/colab_data/action_datasets \
 --splits_path ucf101_semantics/split_1 \
 --action_embedding i3d --class_embedding wv \
 --nepoch 3 --batch_size 64 \
