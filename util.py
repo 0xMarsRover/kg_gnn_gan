@@ -18,7 +18,7 @@ def weights_init(m):
 def map_label(label, classes):
     mapped_label = torch.LongTensor(label.size())
     for i in range(classes.size(0)):
-        mapped_label[label==classes[i]] = i
+        mapped_label[label == classes[i]] = i
     return mapped_label
 
 
@@ -108,53 +108,52 @@ class DATA_LOADER(object):
                 if opt.standardization:
                     print('Standardization...')
                     scaler = preprocessing.StandardScaler()
-                    #scaler_att = preprocessing.StandardScaler()
+                    # scaler_att = preprocessing.StandardScaler()
                 else:
                     scaler = preprocessing.MinMaxScaler()
-                    #scaler_att = preprocessing.MinMaxScaler()
-                
+                    # scaler_att = preprocessing.MinMaxScaler()
+
                 _train_feature = scaler.fit_transform(feature[trainval_loc])
                 _test_seen_feature = scaler.transform(feature[test_seen_loc])
                 _test_unseen_feature = scaler.transform(feature[test_unseen_loc])
                 self.train_feature = torch.from_numpy(_train_feature).float()
                 mx = self.train_feature.max()
-                self.train_feature.mul_(1/mx)
-                self.train_label = torch.from_numpy(label[trainval_loc]).long() 
+                self.train_feature.mul_(1 / mx)
+                self.train_label = torch.from_numpy(label[trainval_loc]).long()
                 self.test_unseen_feature = torch.from_numpy(_test_unseen_feature).float()
-                self.test_unseen_feature.mul_(1/mx)
-                self.test_unseen_label = torch.from_numpy(label[test_unseen_loc]).long() 
-                self.test_seen_feature = torch.from_numpy(_test_seen_feature).float() 
-                self.test_seen_feature.mul_(1/mx)
+                self.test_unseen_feature.mul_(1 / mx)
+                self.test_unseen_label = torch.from_numpy(label[test_unseen_loc]).long()
+                self.test_seen_feature = torch.from_numpy(_test_seen_feature).float()
+                self.test_seen_feature.mul_(1 / mx)
                 self.test_seen_label = torch.from_numpy(label[test_seen_loc]).long()
                 # Scaled and transformed (0,1) attributes (bce: binary class embedding)
-                #self.bce_att = opt.bce_att
+                # self.bce_att = opt.bce_att
                 # select either binary class embedding or norm class embedding for attributes
-                #if opt.bce_att:
-                 #   temp_att = torch.from_numpy(scaler_att.fit_transform(self.original_att)).float()
-                #else:
-                 #   temp_att = torch.from_numpy(scaler_att.fit_transform(self.attribute)).float()
-                #mx_att = temp_att.max()
-                #temp_att.mul_(1/mx)
-                #self.bce_attribute = temp_att
-                #self.bce_attribute_norm = self.bce_attribute/self.bce_attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0), self.attribute.size(1))
+                # if opt.bce_att:
+                #   temp_att = torch.from_numpy(scaler_att.fit_transform(self.original_att)).float()
+                # else:
+                #   temp_att = torch.from_numpy(scaler_att.fit_transform(self.attribute)).float()
+                # mx_att = temp_att.max()
+                # temp_att.mul_(1/mx)
+                # self.bce_attribute = temp_att
+                # self.bce_attribute_norm = self.bce_attribute/self.bce_attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0), self.attribute.size(1))
 
             else:
                 self.train_feature = torch.from_numpy(feature[trainval_loc]).float()
-                self.train_label = torch.from_numpy(label[trainval_loc]).long() 
+                self.train_label = torch.from_numpy(label[trainval_loc]).long()
                 self.test_unseen_feature = torch.from_numpy(feature[test_unseen_loc]).float()
-                self.test_unseen_label = torch.from_numpy(label[test_unseen_loc]).long() 
-                self.test_seen_feature = torch.from_numpy(feature[test_seen_loc]).float() 
+                self.test_unseen_label = torch.from_numpy(label[test_unseen_loc]).long()
+                self.test_seen_feature = torch.from_numpy(feature[test_seen_loc]).float()
                 self.test_seen_label = torch.from_numpy(label[test_seen_loc]).long()
         else:
-            print ("Enable cross validation mode")
+            print("Enable cross validation mode")
             self.train_feature = torch.from_numpy(feature[train_loc]).float()
             self.train_label = torch.from_numpy(label[train_loc]).long()
             self.test_unseen_feature = torch.from_numpy(feature[val_unseen_loc]).float()
-            self.test_unseen_label = torch.from_numpy(label[val_unseen_loc]).long() 
-    
+            self.test_unseen_label = torch.from_numpy(label[val_unseen_loc]).long()
+
         self.seenclasses = torch.from_numpy(np.unique(self.train_label.numpy()))
         self.unseenclasses = torch.from_numpy(np.unique(self.test_unseen_label.numpy()))
-
 
         self.ntrain = self.train_feature.size()[0]
         self.ntest_seen = self.test_seen_feature.size()[0]
@@ -162,13 +161,13 @@ class DATA_LOADER(object):
         self.ntrain_class = self.seenclasses.size(0)
         self.ntest_class = self.unseenclasses.size(0)
         self.train_class = self.seenclasses.clone()
-        self.allclasses = torch.arange(0, self.ntrain_class+self.ntest_class).long()
-        self.train_mapped_label = map_label(self.train_label, self.seenclasses) 
+        self.allclasses = torch.arange(0, self.ntrain_class + self.ntest_class).long()
+        self.train_mapped_label = map_label(self.train_label, self.seenclasses)
 
     def next_seen_batch(self, seen_batch):
         idx = torch.randperm(self.ntrain)[0:seen_batch]
         batch_feature = self.train_feature[idx]
         batch_label = self.train_label[idx]
         batch_att = self.attribute[batch_label]
-        #batch_bce_att = self.bce_attribute[batch_label]
-        return batch_feature, batch_att #batch_bce_att
+        # batch_bce_att = self.bce_attribute[batch_label]
+        return batch_feature, batch_att  # batch_bce_att

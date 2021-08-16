@@ -10,8 +10,8 @@ parser.add_argument('--splits_path', default='ucf101/ucf101_semantics/split_{spl
 parser.add_argument('--object', action='store_true', default=False, help='add object info.')
 parser.add_argument('--avg_wv', action='store_true', default=False, help='average between action and object.')
 
-parser.add_argument('--image_embedding_path', default='')
-parser.add_argument('--manual_att', action='store_true', default=False, help='Use manual attributes')
+# parser.add_argument('--image_embedding_path', default='')
+# parser.add_argument('--manual_att', action='store_true', default=False, help='Use manual attributes')
 parser.add_argument('--syn_num', type=int, default=100, help='number features to generate per class')
 parser.add_argument('--gzsl_od', action='store_true', default=False, help='enable out-of-distribution based generalized zero-shot learning')
 parser.add_argument('--preprocessing', action='store_true', default=False, help='enbale MinMaxScaler on visual features')
@@ -57,4 +57,3 @@ opt.lambda2 = opt.lambda1
 opt.encoder_layer_sizes[0] = opt.resSize
 opt.decoder_layer_sizes[-1] = opt.resSize
 opt.latent_size = opt.attSize
-

@@ -10,8 +10,7 @@ class CLASSIFIER:
     def __init__(self, _train_X, _train_Y, data_loader, _nclass, _cuda, _lr=0.001, _beta1=0.5, _nepoch=20,
                 _batch_size=100, generalized=False, netDec=None, dec_size=4096, dec_hidden_size=4096):
         self.train_X = _train_X.clone()
-        self.train_Y = _train_Y.clone() 
-        # No need for init exp.
+        self.train_Y = _train_Y.clone()
         self.test_seen_feature = data_loader.test_seen_feature.clone()
         self.test_seen_label = data_loader.test_seen_label
 
@@ -42,7 +41,7 @@ class CLASSIFIER:
         self.lr = _lr
         self.beta1 = _beta1
         self.optimizer = optim.Adam(self.model.parameters(), lr=_lr, betas=(_beta1, 0.999))
-        #self.test_on_seen = test_on_seen
+        # self.test_on_seen = test_on_seen
         if self.cuda:
             self.model.cuda()
             self.criterion.cuda()
@@ -52,8 +51,10 @@ class CLASSIFIER:
         self.epochs_completed = 0
         self.ntrain = self.train_X.size()[0]
         if generalized:
+            # gzsl
             self.acc_seen, self.acc_unseen, self.H, self.epoch, self.best_model = self.fit()
         else:
+            # zsl
             self.acc, self.acc_per_class, self.best_model, self.cm = self.fit_zsl()
 
     def fit_zsl(self):
@@ -63,7 +64,7 @@ class CLASSIFIER:
         best_cm = []
         last_loss_epoch = 1e8
         best_model = copy.deepcopy(self.model)
-        #best_model = copy.deepcopy(self.model.state_dict())
+        # best_model = copy.deepcopy(self.model.state_dict())
         for epoch in range(self.nepoch):
             for i in range(0, self.ntrain, self.batch_size):      
                 self.model.zero_grad()
@@ -81,14 +82,13 @@ class CLASSIFIER:
             self.model.eval()
                 #print('Training classifier loss= ', loss.data[0])
             acc, acc_per_class, cm = self.val(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
-            #print('acc %.4f' % (acc))
+            # print('acc %.4f' % (acc))
             if acc > best_acc:
                 best_acc = acc
                 best_acc_per_class = acc_per_class
                 best_model = copy.deepcopy(self.model)
                 best_cm = cm
                 #best_model = copy.deepcopy(self.model.state_dict())
-                #print(best_model)
         return best_acc, best_acc_per_class, best_model, best_cm
         
     def fit(self):

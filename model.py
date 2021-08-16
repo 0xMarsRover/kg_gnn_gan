@@ -114,16 +114,15 @@ class AttDec(nn.Module):
         h = feat
         if self.embedSz > 0:
             assert att is not None, 'Conditional Decoder requires attribute input'
-            h = torch.cat((feat,att),1)
+            h = torch.cat((feat, att), 1)
         self.hidden = self.lrelu(self.fc1(h))
         h = self.fc3(self.hidden)
         if self.sigmoid is not None: 
             h = self.sigmoid(h)
         else:
-            h = h/h.pow(2).sum(1).sqrt().unsqueeze(1).expand(h.size(0),h.size(1))
+            h = h/h.pow(2).sum(1).sqrt().unsqueeze(1).expand(h.size(0), h.size(1))
         self.out = h
         return h
-
 
     def getLayersOutDet(self):
         # used at synthesis time and feature transformation
