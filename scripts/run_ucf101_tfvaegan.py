@@ -1,10 +1,12 @@
 import os
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
+# Will do:
+# 1. Implement gzsl classifier without using OD (--gzsl)
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
 --nclass_all 101 --dataset ucf101 \
 --dataroot /content/drive/MyDrive/colab_data/action_datasets \
---splits_path ucf101_semantics --split 1 \
+--splits_path ucf101_semantics --split 2 \
 --action_embedding i3d --class_embedding wv \
 --nepoch 3 --batch_size 64 \
 --syn_num 600 --preprocessing --cuda --gammaD 10 --gammaG 10 \

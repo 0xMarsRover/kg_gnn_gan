@@ -65,7 +65,8 @@ class DATA_LOADER(object):
                 print("Wrong semantics. In UCF101 splits file, att means word2vec and origin_att means attributes.")
 
         elif opt.dataset == "hmdb51":
-            # --splits_path hmdb51/hmdb51_semantics/split_{split}
+            # --splits_path hmdb51_semantics
+            # --split 1 (or 2 .... 30)
             # --dataset hmdb51
 
             # load visual features for hmdb51
@@ -76,7 +77,8 @@ class DATA_LOADER(object):
 
             # load action dataset splits and semantics
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" +
-                                     opt.splits_path + "/att_splits.mat")
+                                     opt.splits_path + "/split_" + str(opt.split) +
+                                     "/att_splits.mat")
 
             trainval_loc = matcontent['trainval_loc'].squeeze() - 1
             train_loc = matcontent['train_loc'].squeeze() - 1
