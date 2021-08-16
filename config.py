@@ -5,7 +5,8 @@ parser.add_argument('--dataset', default='ucf101', help='ucf101 or hmdb51')
 parser.add_argument('--dataroot', default='data', help='path to data root')
 parser.add_argument('--action_embedding', default='i3d') # action visual embedding
 parser.add_argument('--class_embedding', default='wv') # att or wv
-parser.add_argument('--splits_path', default='ucf101/ucf101_semantics/split_{split}', help='or replace ucf101 with hmdb51')
+parser.add_argument('--splits_path', default='ucf101/ucf101_semantics', help='or replace ucf101 with hmdb51')
+parser.add_argument('--split', type=int, default=1)
 
 parser.add_argument('--object', action='store_true', default=False, help='add object info.')
 parser.add_argument('--avg_wv', action='store_true', default=False, help='average between action and object.')
@@ -13,6 +14,7 @@ parser.add_argument('--avg_wv', action='store_true', default=False, help='averag
 # parser.add_argument('--image_embedding_path', default='')
 # parser.add_argument('--manual_att', action='store_true', default=False, help='Use manual attributes')
 parser.add_argument('--syn_num', type=int, default=100, help='number features to generate per class')
+parser.add_argument('--gzsl', action='store_true', default=False, help='enable generalized zero-shot learning')
 parser.add_argument('--gzsl_od', action='store_true', default=False, help='enable out-of-distribution based generalized zero-shot learning')
 parser.add_argument('--preprocessing', action='store_true', default=False, help='enbale MinMaxScaler on visual features')
 parser.add_argument('--standardization', action='store_true', default=False)
