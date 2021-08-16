@@ -1,5 +1,4 @@
 import os
-
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
