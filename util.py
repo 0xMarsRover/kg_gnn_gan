@@ -1,8 +1,8 @@
-#author: akshitac8
 import numpy as np
 import scipy.io as sio
 import torch
 from sklearn import preprocessing
+
 
 def weights_init(m):
     classname = m.__class__.__name__
@@ -14,12 +14,13 @@ def weights_init(m):
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
 
+
 def map_label(label, classes):
     mapped_label = torch.LongTensor(label.size())
     for i in range(classes.size(0)):
-        mapped_label[label==classes[i]] = i    
-
+        mapped_label[label==classes[i]] = i
     return mapped_label
+
 
 class DATA_LOADER(object):
     def __init__(self, opt):
@@ -30,6 +31,10 @@ class DATA_LOADER(object):
     def read_matdataset(self, opt):
 
         if opt.dataset == "ucf101":
+            # --dataroot '/content/drive/MyDrive/colab_data/action_datasets/'
+            # --splits_path ucf101/ucf101_semantics/split_{split}
+            # --dataset ucf101
+
             # load visual features for ucf101
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" + opt.dataset
                                      + "_" + opt.action_embedding + ".mat")
@@ -37,8 +42,9 @@ class DATA_LOADER(object):
             label = matcontent['labels'].astype(int).squeeze() - 1
 
             # load action dataset splits and semantics
-            matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" + opt.dataset + "_semantics/" +
-                                     "split_1/" + "att_splits.mat")
+            matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" +
+                                     opt.splits_path + "att_splits.mat")
+
             trainval_loc = matcontent['trainval_loc'].squeeze() - 1
             train_loc = matcontent['train_loc'].squeeze() - 1
             val_unseen_loc = matcontent['val_loc'].squeeze() - 1
@@ -57,15 +63,19 @@ class DATA_LOADER(object):
                 print("Wrong semantics. In UCF101 splits file, att means word2vec and origin_att means attributes.")
 
         elif opt.dataset == "hmdb51":
-            # load visual features for HMDB51
-            matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/"
-                                     + opt.dataset + "_" + opt.action_embedding + ".mat")
+            # --splits_path hmdb51/hmdb51_semantics/split_{split}
+            # --dataset hmdb51
+
+            # load visual features for hmdb51
+            matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" + opt.dataset
+                                     + "_" + opt.action_embedding + ".mat")
             feature = matcontent['features'].T
             label = matcontent['labels'].astype(int).squeeze() - 1
 
             # load action dataset splits and semantics
-            matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" + opt.dataset + "_semantics/" +
-                                     "split_1/" + "att_splits.mat")
+            matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" +
+                                     opt.splits_path + "att_splits.mat")
+
             trainval_loc = matcontent['trainval_loc'].squeeze() - 1
             train_loc = matcontent['train_loc'].squeeze() - 1
             val_unseen_loc = matcontent['val_loc'].squeeze() - 1

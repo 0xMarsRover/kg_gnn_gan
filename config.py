@@ -1,10 +1,11 @@
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataset', default='FLO', help='FLO')
-parser.add_argument('--dataroot', default='data', help='path to dataset')
+parser.add_argument('--dataset', default='ucf101', help='ucf101 or hmdb51')
+parser.add_argument('--dataroot', default='data', help='path to data root')
 parser.add_argument('--action_embedding', default='i3d') # action visual embedding
-parser.add_argument('--class_embedding', default='att') # att or wv
+parser.add_argument('--class_embedding', default='wv') # att or wv
+parser.add_argument('--splits_path', default='ucf101/ucf101_semantics/split_{split}', help='or replace ucf101 with hmdb51')
 
 parser.add_argument('--object', action='store_true', default=False, help='add object info.')
 parser.add_argument('--avg_wv', action='store_true', default=False, help='average between action and object.')

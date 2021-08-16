@@ -1,4 +1,3 @@
-#author: akshitac8
 from __future__ import print_function
 import torch
 import torch.nn as nn

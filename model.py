@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.autograd import Variable
+
 
 def weights_init(m):
     classname = m.__class__.__name__
@@ -127,6 +126,6 @@ class AttDec(nn.Module):
         return h
 
     def getLayersOutDet(self):
-        #used at synthesis time and feature transformation
+        # used at synthesis time and feature transformation
         return self.hidden.detach()
 

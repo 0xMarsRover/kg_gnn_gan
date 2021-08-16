@@ -2,9 +2,8 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 import torch.optim as optim
-import torch.nn.functional as F
 import numpy as np
-import util_init
+import util
 from sklearn.metrics import confusion_matrix
 
 
@@ -42,7 +41,7 @@ class CLASSIFIER:
 
         self.seen_cls_model = seen_classifier.best_model
         self.unseen_cls_model = unseen_classifier.best_model
-        self.model.apply(util_init.weights_init)
+        self.model.apply(util.weights_init)
         self.criterion = HLoss()
         self.nll_criterion = nn.NLLLoss()
         self.logsoft = nn.LogSoftmax(dim=1)
@@ -94,9 +93,9 @@ class CLASSIFIER:
                 labelv = Variable(self.label)
                 model_input = inputv
                 pred = self.model(model_input)
-                ## For seen classes, minimize entropy
+                # For seen classes, minimize entropy
                 loss1 = self.criterion(pred[:hbsz], neg=True) + self.nll_criterion(self.logsoft(pred[:hbsz]),labelv[:hbsz])
-                ## For unseen classes, maximize entropy
+                # For unseen classes, maximize entropy
                 loss2 = self.criterion(pred[hbsz:], neg=False)
                 entropy_loss = loss1 + loss2
                 entropy_loss.backward()
@@ -199,17 +198,17 @@ class CLASSIFIER:
         seen_mask = entropy_tensor < thresh
         if not seen_classes:
             seen_mask = ~seen_mask
-        acc, acc_per_class = self.compute_per_class_acc_gzsl(test_label, predicted_label, target_classes, \
+        acc, acc_per_class = self.compute_per_class_acc_gzsl(test_label, predicted_label, target_classes,
                                                              target_classes.size(0), seen_mask)
 
-        cm = self.compute_confusion_matrix(util_init.map_label(test_label, target_classes),
+        cm = self.compute_confusion_matrix(util.map_label(test_label, target_classes),
                                            predicted_label, target_classes.size(0))
 
         return acc, acc_per_class, cm
 
     def compute_per_class_acc_gzsl(self, test_label, predicted_label, target_classes, nclass, mask):
         acc_per_class = torch.FloatTensor(nclass).fill_(0)
-        test_label = util_init.map_label(test_label, target_classes)  # required to map for both classifiers
+        test_label = util.map_label(test_label, target_classes)  # required to map for both classifiers
         for i in range(target_classes.size(0)):
             idx = (test_label == i)
             # NEED TO FIX: cpu and cuda setting
@@ -273,4 +272,3 @@ class HLoss(nn.Module):
             return -1.0 * b.sum()/x.size(0)
         else:
             return b.sum()/x.size(0)
-
