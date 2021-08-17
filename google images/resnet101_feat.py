@@ -1,5 +1,6 @@
+# Extracting ResNet101 features for images
+
 import torch
-import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.autograd import Variable
@@ -19,6 +20,7 @@ scaler = transforms.Scale((224, 224))
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 to_tensor = transforms.ToTensor()
 
+
 def get_vector(image_name):
     # 1. Load the image with Pillow library
     img = Image.open(image_name)
@@ -30,6 +32,7 @@ def get_vector(image_name):
     # 4. Define a function that will copy the output of a layer
     def copy_data(m, i, o):
         my_embedding.copy_(o.data)
+
     # 5. Attach that function to our selected layer
     h = layer.register_forward_hook(copy_data)
     # 6. Run the model on our transformed image
@@ -41,8 +44,10 @@ def get_vector(image_name):
 
 
 if __name__ == "__main__":
+
+
     image_path = './downloads/diving/1.adobestock_62701813-scaled.jpeg'
     image_feature = get_vector(image_path)
-    print (image_feature)
-    print (image_feature.shape)
-    
+    print(image_feature)
+    print(image_feature.shape)
+

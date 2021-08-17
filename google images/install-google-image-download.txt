@@ -1,7 +1,7 @@
-Install google-images-download
+How to install google-images-download
 
 1. pip3 install google-image-download
 
-2. to fix further issures:
+2. fix further issures:
 git clone https://github.com/Joeclinton1/google-images-download.git
 cd google-images-download && python setup.py install
