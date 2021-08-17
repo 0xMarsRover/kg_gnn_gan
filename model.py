@@ -14,14 +14,13 @@ def weights_init(m):
 
 # Encoder
 class Encoder(nn.Module):
-
     def __init__(self, opt):
         super(Encoder, self).__init__()
         layer_sizes = opt.encoder_layer_sizes
         latent_size = opt.latent_size
         layer_sizes[0] += latent_size
-        self.fc1=nn.Linear(layer_sizes[0], layer_sizes[-1])
-        self.fc3=nn.Linear(layer_sizes[-1], latent_size*2)
+        self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
+        self.fc3 = nn.Linear(layer_sizes[-1], latent_size*2)
         self.lrelu = nn.LeakyReLU(0.2, True)
         self.linear_means = nn.Linear(latent_size*2, latent_size)
         self.linear_log_var = nn.Linear(latent_size*2, latent_size)
@@ -38,11 +37,10 @@ class Encoder(nn.Module):
 
 # Decoder/Generator
 class Generator(nn.Module):
-
     def __init__(self, opt):
         super(Generator, self).__init__()
         layer_sizes = opt.decoder_layer_sizes
-        latent_size=opt.latent_size
+        latent_size = opt.latent_size
         input_size = latent_size * 2
         self.fc1 = nn.Linear(input_size, layer_sizes[0])
         self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])

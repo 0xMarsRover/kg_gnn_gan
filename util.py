@@ -31,6 +31,7 @@ class DATA_LOADER(object):
     def read_matdataset(self, opt):
 
         if opt.dataset == "ucf101":
+            # Argparse:
             # --dataroot '/content/drive/MyDrive/colab_data/action_datasets/'
             # --splits_path ucf101_semantics
             # --split = 1 (or 2 ... 30)
@@ -61,10 +62,13 @@ class DATA_LOADER(object):
                 self.attribute = torch.from_numpy(matcontent['att'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
+            # More semantic embedding .....
+
             else:
                 print("Wrong semantics. In UCF101 splits file, att means word2vec and origin_att means attributes.")
 
         elif opt.dataset == "hmdb51":
+            # Argparse:
             # --splits_path hmdb51_semantics
             # --split 1 (or 2 .... 30)
             # --dataset hmdb51
@@ -103,10 +107,8 @@ class DATA_LOADER(object):
                 if opt.standardization:
                     print('Standardization...')
                     scaler = preprocessing.StandardScaler()
-                    # scaler_att = preprocessing.StandardScaler()
                 else:
                     scaler = preprocessing.MinMaxScaler()
-                    # scaler_att = preprocessing.MinMaxScaler()
 
                 _train_feature = scaler.fit_transform(feature[trainval_loc])
                 _test_seen_feature = scaler.transform(feature[test_seen_loc])
@@ -121,18 +123,6 @@ class DATA_LOADER(object):
                 self.test_seen_feature = torch.from_numpy(_test_seen_feature).float()
                 self.test_seen_feature.mul_(1 / mx)
                 self.test_seen_label = torch.from_numpy(label[test_seen_loc]).long()
-
-                # Scaled and transformed (0,1) attributes (bce: binary class embedding)
-                # self.bce_att = opt.bce_att
-                # select either binary class embedding or norm class embedding for attributes
-                # if opt.bce_att:
-                #   temp_att = torch.from_numpy(scaler_att.fit_transform(self.original_att)).float()
-                # else:
-                #   temp_att = torch.from_numpy(scaler_att.fit_transform(self.attribute)).float()
-                # mx_att = temp_att.max()
-                # temp_att.mul_(1/mx)
-                # self.bce_attribute = temp_att
-                # self.bce_attribute_norm = self.bce_attribute/self.bce_attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0), self.attribute.size(1))
 
             else:
                 self.train_feature = torch.from_numpy(feature[trainval_loc]).float()
@@ -165,5 +155,5 @@ class DATA_LOADER(object):
         batch_feature = self.train_feature[idx]
         batch_label = self.train_label[idx]
         batch_att = self.attribute[batch_label]
-        # batch_bce_att = self.bce_attribute[batch_label]
-        return batch_feature, batch_att  # batch_bce_att
+        return batch_feature, batch_att
+

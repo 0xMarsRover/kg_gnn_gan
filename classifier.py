@@ -65,7 +65,6 @@ class CLASSIFIER:
         best_cm = []
         last_loss_epoch = 1e8
         best_model = copy.deepcopy(self.model)
-        # best_model = copy.deepcopy(self.model.state_dict())
         for epoch in range(self.nepoch):
             for i in range(0, self.ntrain, self.batch_size):
                 self.model.zero_grad()
@@ -98,7 +97,7 @@ class CLASSIFIER:
         best_unseen = 0
         best_cm = []
         out = []
-        # best_model = copy.deepcopy(self.model.state_dict())
+
         best_model = copy.deepcopy(self.model)
         # early_stopping = EarlyStopping(patience=20, verbose=True)
         for epoch in range(self.nepoch):
@@ -191,8 +190,7 @@ class CLASSIFIER:
         acc_per_class /= target_classes.size(0)
         return acc_per_class
 
-        # test_label is integer
-
+    # Parameter: test_label is integer
     def val(self, test_X, test_label, target_classes):
         start = 0
         ntest = test_X.size()[0]
