@@ -1,3 +1,5 @@
+# Extracting w2v
+
 from gensim.models import KeyedVectors
 import numpy as np
 

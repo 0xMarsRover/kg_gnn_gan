@@ -24,7 +24,7 @@ if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
 cudnn.benchmark = True
 if torch.cuda.is_available() and not opt.cuda:
-    print("WARNING: You have a CUDA device, so you should probably run with --cuda")
+    print("WARNING: You have a CUDA device, so you should run with --cuda")
 # load data
 data = util.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)

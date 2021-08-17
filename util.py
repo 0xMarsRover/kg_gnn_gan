@@ -96,15 +96,6 @@ class DATA_LOADER(object):
         else:
             print("Wrong dataset!")
 
-        '''
-        # use above codes
-        if opt.manual_att:
-            print("Using manual_att")
-            m_att = torch.from_numpy(np.load(opt.dataroot + "/ucf101_i3d/ucf101_manual_att.npy")).float()
-            m_att /= m_att.pow(2).sum(1).sqrt().unsqueeze(1).expand(101,m_att.size(1))
-            self.attribute = m_att
-        '''
-
         if not opt.validation:
             print("Disable cross validation mode")
             if opt.preprocessing:
@@ -130,6 +121,7 @@ class DATA_LOADER(object):
                 self.test_seen_feature = torch.from_numpy(_test_seen_feature).float()
                 self.test_seen_feature.mul_(1 / mx)
                 self.test_seen_label = torch.from_numpy(label[test_seen_loc]).long()
+
                 # Scaled and transformed (0,1) attributes (bce: binary class embedding)
                 # self.bce_att = opt.bce_att
                 # select either binary class embedding or norm class embedding for attributes
