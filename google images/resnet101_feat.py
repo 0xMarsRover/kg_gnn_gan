@@ -44,8 +44,9 @@ def get_vector(image_name):
 
 
 if __name__ == "__main__":
-
-
+    # Will do:
+    # 1. extracting image features in one run
+    # 2. averaging image features for each class
     image_path = './downloads/diving/1.adobestock_62701813-scaled.jpeg'
     image_feature = get_vector(image_path)
     print(image_feature)
