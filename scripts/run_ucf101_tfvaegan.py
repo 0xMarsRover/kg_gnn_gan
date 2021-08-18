@@ -1,8 +1,8 @@
 import os
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
 # Will do:
-# 1. Implement gzsl classifier without using OD (--gzsl)
-# 2. argparse: --zsl; --gzsl; --gzsl_od
+# 1. Implement gzsl classifier without using OD (--gzsl)    --done
+# 2. argparse: --zsl; --gzsl; --gzsl_od                     -- done
 
 os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
 --nclass_all 101 --dataset ucf101 --zsl \

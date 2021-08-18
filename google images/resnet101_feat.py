@@ -5,8 +5,9 @@ import torchvision.models as models
 import torchvision.transforms as transforms
 from torch.autograd import Variable
 from PIL import Image
+import os
 
-# Load the pretrained model
+# Load the pretrained model - ResNet101
 model = models.resnet101(pretrained=True)
 
 # Use the model object to select the desired layer
@@ -29,6 +30,7 @@ def get_vector(image_name):
     # 3. Create a vector of zeros that will hold our feature vector
     #    The 'avgpool' layer has an output size of 512 (resnet18)  2048 for resnet101
     my_embedding = torch.zeros(1, 2048, 1, 1)
+
     # 4. Define a function that will copy the output of a layer
     def copy_data(m, i, o):
         my_embedding.copy_(o.data)
@@ -47,8 +49,20 @@ if __name__ == "__main__":
     # Will do:
     # 1. extracting image features in one run
     # 2. averaging image features for each class
-    image_path = './downloads/diving/1.adobestock_62701813-scaled.jpeg'
-    image_feature = get_vector(image_path)
-    print(image_feature)
-    print(image_feature.shape)
+    image_data_root = './ucf101_images'
+    # get all folder names as action classes
+    all_classes = os.listdir(image_data_root)
 
+    for action in all_classes:
+        action_path = os.path.join(image_data_root, action)
+        all_images_each_class = os.listdir(action_path)
+        for image in all_images_each_class:
+            image_path = os.path.join(action_path, image)
+            print(image_path)
+            image_feature = get_vector(image_path)
+            print(image_feature.shape)
+
+    # image_path = './downloads/diving/1.adobestock_62701813-scaled.jpeg'
+    # image_feature = get_vector(image_path)
+    # print(image_feature)
+    # print(image_feature.shape)

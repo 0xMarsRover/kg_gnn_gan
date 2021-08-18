@@ -1,7 +1,7 @@
 # Scraping images from Google Image Source
 # See instruction file "install-google-image-download.txt"
 
-# Maybe do:
+# Probably do:
 # scrape over 100 images for each class since the issue from this tool
 
 from google_images_download import google_images_download
@@ -11,6 +11,7 @@ response = google_images_download.googleimagesdownload()
 
 # Get all action names
 actions = ""
+# read action classes from a file
 with open("ucf101_class_index.txt") as fp:
     Lines = fp.readlines()
     for line in Lines:
@@ -18,6 +19,7 @@ with open("ucf101_class_index.txt") as fp:
 # print(actions)
 
 # creating list of arguments
+# 100 images per class
 arguments = {"keywords": actions,
              "limit": 100,
              "print_urls": True}
