@@ -2,9 +2,10 @@
 data/
 downloads/
 ucf101_images/
-hmdb51_image/
+hmdb51_images/
 *.mat
 *.zip
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
