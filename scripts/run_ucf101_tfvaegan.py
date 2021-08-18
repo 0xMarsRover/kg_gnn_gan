@@ -22,10 +22,10 @@ for NUM in range(1, 1):
     --dataroot /content/drive/MyDrive/colab_data/action_datasets \
     --splits_path ucf101_semantics --split {split} \
     --action_embedding i3d --class_embedding img_avg \
-    --nepoch 3 --batch_size 64 \
+    --nepoch 20 --batch_size 64 \
     --syn_num 150 --preprocessing --cuda --gammaD 10 --gammaG 10 \
     --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
-    --nz 300 --attSize 300 --resSize 8192 --lr 0.0001 \
+    --nz 2048 --attSize 2048 --resSize 8192 --lr 0.0001 \
     --encoded_noise --workers 8 \
     --recons_weight 0.1 --feedback_loop 2 --a2 1 --a1 1 \
     --feed_lr 0.00001 --dec_lr 0.0001'''.format(split=NUM))

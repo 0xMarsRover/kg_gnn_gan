@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # Will do:
     # 1. extracting image features in one run
     # 2. averaging image features for each class
-    image_data_root = './ucf101_images'
+    image_data_root = './hmdb51_images'
     if os.path.exists(os.path.join(image_data_root, '.DS_Store')):
         os.remove(os.path.join(image_data_root, '.DS_Store'))
     else:
@@ -102,7 +102,7 @@ if __name__ == "__main__":
             print("avg_action_embedding", avg_action_embedding.shape)
 
             # Save data
-            sio.savemat('image_based_rep.mat', {'image_based_rep': avg_action_embedding})
+            sio.savemat('avg_image_based_rep.mat', {'avg_image_based_rep': avg_action_embedding})
 
     '''
     image_path = './/ucf101_images/Surfing/95.8.jpg'
