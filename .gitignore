@@ -1,6 +1,8 @@
 # Ignore data
 data/
 downloads/
+ucf101_images/
+hmdb51_image/
 *.mat
 *.zip
 
