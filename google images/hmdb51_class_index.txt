@@ -1,0 +1,51 @@
+brush hair
+cart wheel
+catch
+chew
+clap
+climb
+climb stairs
+dive
+draw sword
+dribble
+drink
+eat
+fall floor
+fencing
+flic flac
+golf
+hand stand
+hit
+hug
+jump
+kick
+kick ball
+kiss
+laugh
+pick
+pour
+pullup
+punch
+push
+pushup
+ride bike
+ride horse
+run
+shake hands
+shoot ball
+shoot bow
+shoot gun
+sit
+situp
+smile
+smoke
+somersault
+stand
+swing baseball
+sword exercise
+sword
+talk
+throw
+turn
+walk
+wave
