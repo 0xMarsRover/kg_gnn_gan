@@ -13,11 +13,12 @@ import os
 # when --class_embedding wv
 #       --nz 300 --attSize 300
 
-# when --class_embedding img
+# when --class_embedding img_avg
 #       --nz 2048 --attSize 2048
 
 
-# Number of splits
+# Number of splits range(30)
+# when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
 for n in range(1):
     n = n + 1
     os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \

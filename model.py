@@ -16,6 +16,7 @@ def weights_init(m):
 class Encoder(nn.Module):
     def __init__(self, opt):
         super(Encoder, self).__init__()
+        # encoder_layer_sizes (default: [8192, 4096])
         layer_sizes = opt.encoder_layer_sizes
         latent_size = opt.latent_size
         layer_sizes[0] += latent_size
