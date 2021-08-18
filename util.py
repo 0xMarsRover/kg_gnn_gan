@@ -63,7 +63,7 @@ class DATA_LOADER(object):
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
             elif opt.class_embedding == "img_avg":
-                self.attribute = torch.from_numpy(matcontent['image_based_rep'].T).float()
+                self.attribute = torch.from_numpy(matcontent['avg_image_based_rep'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
             # More semantic embedding .....
