@@ -381,8 +381,8 @@ for epoch in range(0, opt.nepoch):
         if best_zsl_acc < acc:
             best_zsl_acc = acc
         print('ZSL unseen accuracy=%.4f \n' % acc)
-        print('ZSL unseen accuracy per class\n', acc_per_class)
-        print('ZSL confusion matrix\n', cm)
+        #print('ZSL unseen accuracy per class\n', acc_per_class)
+        #print('ZSL confusion matrix\n', cm)
 
     # reset modules to training mode
     netG.train()

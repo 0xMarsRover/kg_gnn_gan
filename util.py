@@ -54,16 +54,29 @@ class DATA_LOADER(object):
             test_seen_loc = matcontent['test_seen_loc'].squeeze() - 1
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
-            if opt.class_embedding == "att":
-                self.attribute = torch.from_numpy(matcontent['original_att'].T).float()
+            # selecting semantics
+            if opt.class_embedding == "attribute":
+                self.attribute = torch.from_numpy(matcontent['attribute'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
-            elif opt.class_embedding == "wv":
-                self.attribute = torch.from_numpy(matcontent['att'].T).float()
+            elif opt.class_embedding == "action_class_w2v":
+                self.attribute = torch.from_numpy(matcontent['action_class_w2v'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
-            elif opt.class_embedding == "img_avg":
-                self.attribute = torch.from_numpy(matcontent['avg_image_based_rep'].T).float()
+            elif opt.class_embedding == "avg_img_resnet101":
+                self.attribute = torch.from_numpy(matcontent['avg_img_resnet101'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
+            elif opt.class_embedding == "avg_img_googlenet":
+                self.attribute = torch.from_numpy(matcontent['avg_img_googlenet'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
+            elif opt.class_embedding == "avg_desc_w2v":
+                self.attribute = torch.from_numpy(matcontent['avg_desc_w2v'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
+            elif opt.class_embedding == "fwv_k1_desc":
+                self.attribute = torch.from_numpy(matcontent['fwv_k1_desc'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
             # More semantic embedding .....
@@ -93,12 +106,25 @@ class DATA_LOADER(object):
             test_seen_loc = matcontent['test_seen_loc'].squeeze() - 1
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
-            if opt.class_embedding == "wv":
-                self.attribute = torch.from_numpy(matcontent['att'].T).float()
+            # selecting semantics
+            if opt.class_embedding == "action_class_w2v":
+                self.attribute = torch.from_numpy(matcontent['action_class_w2v'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
-            elif opt.class_embedding == "img_avg":
-                self.attribute = torch.from_numpy(matcontent['avg_image_based_rep'].T).float()
+            elif opt.class_embedding == "avg_img_resnet101":
+                self.attribute = torch.from_numpy(matcontent['avg_img_resnet101'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
+            elif opt.class_embedding == "avg_img_googlenet":
+                self.attribute = torch.from_numpy(matcontent['avg_img_googlenet'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
+            elif opt.class_embedding == "avg_desc_w2v":
+                self.attribute = torch.from_numpy(matcontent['avg_desc_w2v'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
+            elif opt.class_embedding == "fwv_k1_desc":
+                self.attribute = torch.from_numpy(matcontent['fwv_k1_desc'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
             else:
