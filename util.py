@@ -38,6 +38,7 @@ class DATA_LOADER(object):
             # --dataset ucf101
 
             # load visual features for ucf101
+            print("Action Embedding: ", opt.action_embedding)
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" + opt.dataset
                                      + "_" + opt.action_embedding + ".mat")
             feature = matcontent['features'].T
@@ -54,6 +55,7 @@ class DATA_LOADER(object):
             test_seen_loc = matcontent['test_seen_loc'].squeeze() - 1
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
+            print("Semantic Embedding: ", opt.class_embedding)
             # selecting semantics
             if opt.class_embedding == "attribute":
                 self.attribute = torch.from_numpy(matcontent['attribute'].T).float()
@@ -90,6 +92,7 @@ class DATA_LOADER(object):
             # --dataset hmdb51
 
             # load visual features for hmdb51
+            print("Action Embedding: ", opt.action_embedding)
             matcontent = sio.loadmat(opt.dataroot + "/" + opt.dataset + "/" + opt.dataset
                                      + "_" + opt.action_embedding + ".mat")
             feature = matcontent['features'].T
@@ -106,6 +109,7 @@ class DATA_LOADER(object):
             test_seen_loc = matcontent['test_seen_loc'].squeeze() - 1
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
+            print("Semantic Embedding: ", opt.class_embedding)
             # selecting semantics
             if opt.class_embedding == "action_class_w2v":
                 self.attribute = torch.from_numpy(matcontent['action_class_w2v'].T).float()

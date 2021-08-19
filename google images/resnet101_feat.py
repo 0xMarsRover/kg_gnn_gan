@@ -14,6 +14,7 @@ model = models.resnet101(pretrained=True)
 
 # Use the model object to select the desired layer
 layer = model._modules.get('avgpool')
+print(layer)
 
 # Set model to evaluation mode
 model.eval()
