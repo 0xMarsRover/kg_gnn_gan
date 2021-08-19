@@ -18,8 +18,7 @@ with open("ucf101_class_index.txt") as fp:
     for line in Lines:
         actions = actions + line.strip() + ","
 
-output_dir_ucf = "/Volumes/Kellan/datasets/data_KG_GNN_GCN/ucf101_images_1000"
-#output_dir_hmdb = "/Volumes/Kellan/datasets/data_KG_GNN_GCN/hmdb51_images_1000"
+output_dir_ucf = "/Volumes/Kellan/datasets/data_KG_GNN_GCN/ucf101_images_400"
 chromedriver_dir = "/Users/Kellan/Desktop/chromedriver"
 
 # creating list of arguments
