@@ -5,3 +5,8 @@ How to install google-images-download
 2. fix further issures:
 git clone https://github.com/Joeclinton1/google-images-download.git
 cd google-images-download && python setup.py install
+
+3. For download more than 100 images:
+Ref: https://github.com/Joeclinton1/google-images-download/pull/8
+git clone https://github.com/matthewlehew/google-images-download.git
+cd google-images-download && python setup.py install

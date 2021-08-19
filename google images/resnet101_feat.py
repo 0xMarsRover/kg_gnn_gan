@@ -58,10 +58,12 @@ def get_vector(image_name):
 
 
 if __name__ == "__main__":
-    # Will do:
-    # 1. extracting image features in one run
-    # 2. averaging image features for each class
-    image_data_root = './hmdb51_images'
+
+    data_root = '/Volumes/Kellan/datasets/data_KG_GNN_GCN'
+    #image_data_root = os.path.join(data_root, 'ucf101_images_400')
+    #image_data_root = os.path.join(data_root, 'hmdb51_images_400')
+    image_data_root = os.path.join(data_root, 'test_ucf101_images_400')
+
     if os.path.exists(os.path.join(image_data_root, '.DS_Store')):
         os.remove(os.path.join(image_data_root, '.DS_Store'))
     else:
@@ -89,8 +91,19 @@ if __name__ == "__main__":
             # reshpe to (2048, number of images) number of images with 2048 dimension for each action class
             all_images_embedding_reshape = all_images_embedding.reshape(all_images_embedding.shape[1],
                                                                         all_images_embedding.shape[0])
+
+            # TODO: Save each image representation for each action class
+            # TODO: Save all images Reps. in mat file cell(1 * number of class), cell as: 400*2048, 398*2048, .....
+
+
             # (2048, number of images)
             print("all_images_embedding_reshape", all_images_embedding_reshape.shape)
+
+            # TODO: Rewrite codes below
+            # TODO: Averaging image Rep. from mat file for each cell/action class
+            # TODO: Save averagered image Rep. to one file Size(2048, number of classes)
+            # TODO: Option - consider different approaches to combine image Rep.
+
             # Averaing image features for each class
             avg_image_embedding = np.mean(all_images_embedding_reshape, axis=1).reshape(2048, 1)
             print("avg_image_embedding.shape", avg_image_embedding.shape) # (2048, 1)
@@ -102,10 +115,10 @@ if __name__ == "__main__":
             print("avg_action_embedding", avg_action_embedding.shape)
 
             # Save data
-            sio.savemat('avg_image_based_rep.mat', {'avg_image_based_rep': avg_action_embedding})
+            sio.savemat(os.path.join(data_root, 'avg_image_based_rep.mat'), {'avg_image_based_rep': avg_action_embedding})
 
     '''
-    image_path = './/ucf101_images/Surfing/95.8.jpg'
+    image_path = './ucf101_images/Surfing/95.8.jpg'
     image_feature = get_vector(image_path)
     print(image_feature)
     print(image_feature.shape)

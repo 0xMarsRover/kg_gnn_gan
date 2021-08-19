@@ -13,17 +13,22 @@ response = google_images_download.googleimagesdownload()
 actions = ""
 # read action classes from a file
 # ucf101_class_index or hmdb51_class_index
-with open("hmdb51_class_index.txt") as fp:
+with open("ucf101_class_index.txt") as fp:
     Lines = fp.readlines()
     for line in Lines:
         actions = actions + line.strip() + ","
-# print(actions)
+
+output_dir_ucf = "/Volumes/Kellan/datasets/data_KG_GNN_GCN/ucf101_images_1000"
+#output_dir_hmdb = "/Volumes/Kellan/datasets/data_KG_GNN_GCN/hmdb51_images_1000"
+chromedriver_dir = "/Users/Kellan/Desktop/chromedriver"
 
 # creating list of arguments
 # 100 images per class
 arguments = {"keywords": actions,
-             "limit": 100,
-             "print_urls": True}
+             "limit": 1000,
+             "language": "English",
+             "chromedriver": chromedriver_dir,
+             "output_directory": output_dir_ucf}
 
 # passing the arguments to the function
 paths = response.download(arguments)
