@@ -21,15 +21,15 @@ import os
 # when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
 for n in range(1):
     n = n + 1
-    os.system('''python /content/kg_gnn_gan/train_tfvaegan.py \
+    os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
     --nclass_all 101 --dataset ucf101 --zsl \
     --dataroot /content/drive/MyDrive/colab_data/action_datasets \
     --splits_path ucf101_semantics --split {split} \
-    --action_embedding i3d --class_embedding att \
+    --action_embedding i3d --class_embedding img-avg \
     --nepoch 50 --batch_size 64 \
     --syn_num 600 --preprocessing --cuda --gammaD 10 --gammaG 10 \
     --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
-    --nz 115 --attSize 115 --resSize 8192 --lr 0.0001 \
+    --nz 2048 --attSize 2048 --resSize 8192 --lr 0.0001 \
     --encoded_noise --workers 8 \
     --recons_weight 0.1 --feedback_loop 2 --a2 1 --a1 1 \
     --feed_lr 0.00001 --dec_lr 0.0001'''.format(split=n))
