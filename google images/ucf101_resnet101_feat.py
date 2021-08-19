@@ -68,9 +68,10 @@ def get_vector(image_name):
 if __name__ == "__main__":
 
     data_root = '/Volumes/Kellan/datasets/data_KG_GNN_GCN'
-    #image_data_root = os.path.join(data_root, 'ucf101_images_400')
+    image_data_root = os.path.join(data_root, 'ucf101_images_400')
     #image_data_root = os.path.join(data_root, 'hmdb51_images_400')
-    image_data_root = os.path.join(data_root, 'test_ucf101_images_400')
+    #image_data_root = os.path.join(data_root, 'test_ucf101_images_400')
+    dataset = 'ucf101'
 
     if os.path.exists(os.path.join(image_data_root, '.DS_Store')):
         os.remove(os.path.join(image_data_root, '.DS_Store'))
@@ -90,7 +91,7 @@ if __name__ == "__main__":
 
             for image in all_images_each_class:
                 image_path = os.path.join(action_path, image)
-                print(image_path)
+                #print(image_path)
                 image_feature = get_vector(image_path)
                 # put all image features into one numpy array
                 all_images_embedding = np.vstack((all_images_embedding, image_feature))
@@ -102,7 +103,8 @@ if __name__ == "__main__":
 
             # TODO: Save each image representation for each action class
             # TODO: Save all images Reps. in mat file cell(1 * number of class), cell as: 400*2048, 398*2048, .....
-
+            sio.savemat(os.path.join(data_root, dataset + '_img_resnet101_features', dataset + '_' + action + '_all_img_resnet101.mat'),
+                        {'all_img_resnet101': all_images_embedding_reshape})
 
             # (2048, number of images)
             print("all_images_embedding_reshape", all_images_embedding_reshape.shape)
@@ -123,7 +125,8 @@ if __name__ == "__main__":
             print("avg_action_embedding", avg_action_embedding.shape)
 
             # Save data
-            sio.savemat(os.path.join(data_root, 'avg_image_based_rep.mat'), {'avg_image_based_rep': avg_action_embedding})
+            sio.savemat(os.path.join(data_root, dataset + '_avg_img_resnet101.mat'),
+                        {'avg_img_resnet101': avg_action_embedding})
 
     '''
     image_path = './ucf101_images/Surfing/95.8.jpg'
