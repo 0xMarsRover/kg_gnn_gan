@@ -70,7 +70,6 @@ if __name__ == "__main__":
     data_root = '/Volumes/Kellan/datasets/data_KG_GNN_GCN'
     image_data_root = os.path.join(data_root, 'ucf101_images_400')
     #image_data_root = os.path.join(data_root, 'hmdb51_images_400')
-    #image_data_root = os.path.join(data_root, 'test_ucf101_images_400')
     dataset = 'ucf101'
 
     if os.path.exists(os.path.join(image_data_root, '.DS_Store')):
@@ -109,7 +108,6 @@ if __name__ == "__main__":
             # (2048, number of images)
             print("all_images_embedding_reshape", all_images_embedding_reshape.shape)
 
-            # TODO: Rewrite codes below
             # TODO: Averaging image Rep. from mat file for each cell/action class
             # TODO: Save averagered image Rep. to one file Size(2048, number of classes)
             # TODO: Option - consider different approaches to combine image Rep.
