@@ -26,6 +26,7 @@ chromedriver_dir = "/Users/Kellan/Desktop/chromedriver"
 arguments = {"keywords": actions,
              "limit": 400,
              "language": "English",
+             "format": "jpg",
              "chromedriver": chromedriver_dir,
              "output_directory": output_dir_hmdb}
 

@@ -1,4 +1,4 @@
-# Extracting ResNet101 features for images
+# Extracting visual features for images
 
 import torch
 import torchvision.models as models
@@ -10,10 +10,10 @@ import scipy.io as sio
 
 # ucf101 or hmdb51
 dataset = 'hmdb51'
-# or resnet18, resnet50
+# googlenet resnet18, resnet50, resnet101
 MODEL = 'googlenet'
 
-# TODO： Check which layer should be used for extraction
+# TODO： Check which layer should be used for feature extraction
 
 if MODEL == 'googlenet':
     SIZE = 1024
@@ -33,7 +33,7 @@ elif MODEL == 'resnet18':
     # Set model to evaluation mode
     model.eval()
 
-elif MODEL == 'resnet51':
+elif MODEL == 'resnet50':
     SIZE = 2048
     model = models.resnet50(pretrained=True)
     # Use the model object to select the desired layer
@@ -90,7 +90,6 @@ def get_vector(image_name):
 
     except Exception:
         print('Invalid Image !')
-
     # Return the feature vector
     return my_embedding.numpy()
 
@@ -101,11 +100,11 @@ if __name__ == "__main__":
 
     if dataset == 'ucf101':
         image_data_root = os.path.join(data_root, 'ucf101_images_400')
-        # image_data_root = os.path.join(data_root, 'test_ucf101_images_400')
+        # image_data_root = os.path.join(data_root, 'test_images_400')
 
     elif dataset == 'hmdb51':
         image_data_root = os.path.join(data_root, 'hmdb51_images_400')
-
+        #image_data_root = os.path.join(data_root, 'test_images_400')
     else:
         print("Please select a dataset")
 
@@ -141,29 +140,24 @@ if __name__ == "__main__":
             print("all_images_embedding_reshape", all_images_embedding_reshape.shape)
 
             # TODO: Save each image representation for each action class
-            # TODO: Save all images Reps. in mat file cell(1 * number of class), cell as: 400*2048, 398*2048, .....
             sio.savemat(os.path.join(data_root, dataset + '_img_' + MODEL + '_features',
                                      dataset + '_' + action + '_all_img_' + MODEL + '.mat'),
                         {'all_img_' + MODEL: all_images_embedding_reshape})
 
-            # TODO: Averaging image Rep. from mat file for each cell/action class
-            # TODO: Save averagered image Rep. to one file Size(Feature SIZE, number of classes)
-            # TODO: Option - consider different approaches to combine image Rep.
-
             # Averaing image features for each class
+            # TODO: probably need to change codes for "averaging"
             avg_image_embedding = np.mean(all_images_embedding_reshape, axis=1).reshape(SIZE, 1)
             print("avg_image_embedding.shape", avg_image_embedding.shape) # (SIZE, 1)
-            #print(avg_image_embedding)
+            print(avg_image_embedding)
 
             # put all action embedding together
             # (Feature SIZE, number of classes)
             avg_action_embedding = np.hstack((avg_action_embedding, avg_image_embedding))
             print("avg_action_embedding", avg_action_embedding.shape)
 
-            # Save data
+            # Save averaged img Rep.
             sio.savemat(os.path.join(data_root, dataset + '_avg_img_' + MODEL + '.mat'),
                         {'avg_img_' + MODEL: avg_action_embedding})
-
 
     '''
     image_path = './ucf101_images/Surfing/95.8.jpg'
