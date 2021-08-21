@@ -56,9 +56,8 @@ class DATA_LOADER(object):
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
             # selecting semantics
-            input_class_embedding = opt.class_embedding
-            print("Semantic Embedding: ", opt.input_class_embedding)
-            self.attribute = torch.from_numpy(matcontent[input_class_embedding].T).float()
+            print("Semantic Embedding: ", opt.class_embedding)
+            self.attribute = torch.from_numpy(matcontent[opt.class_embedding].T).float()
             # L2 Norm.
             self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                       self.attribute.size(1))
