@@ -55,8 +55,14 @@ class DATA_LOADER(object):
             test_seen_loc = matcontent['test_seen_loc'].squeeze() - 1
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
-            print("Semantic Embedding: ", opt.class_embedding)
             # selecting semantics
+            input_class_embedding = opt.class_embedding
+            print("Semantic Embedding: ", opt.input_class_embedding)
+            self.attribute = torch.from_numpy(matcontent[input_class_embedding].T).float()
+            # L2 Norm.
+            self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                      self.attribute.size(1))
+            '''
             if opt.class_embedding == "attribute":
                 self.attribute = torch.from_numpy(matcontent['attribute'].T).float()
                 # L2 Norm.
@@ -102,6 +108,7 @@ class DATA_LOADER(object):
             # More semantic embedding .....
             else:
                 print("Wrong semantics. In UCF101 splits file, att means word2vec and origin_att means attributes.")
+            '''
 
         elif opt.dataset == "hmdb51":
             # Argparse:
