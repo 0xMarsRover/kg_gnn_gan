@@ -128,6 +128,10 @@ class DATA_LOADER(object):
                 self.attribute = torch.from_numpy(matcontent['avg_img_googlenet'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                           self.attribute.size(1))
+            elif opt.class_embedding == "avg_img_googlenet_me":
+                self.attribute = torch.from_numpy(matcontent['avg_img_googlenet_me'].T).float()
+                self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
+                                                                                          self.attribute.size(1))
             elif opt.class_embedding == "avg_desc_w2v":
                 self.attribute = torch.from_numpy(matcontent['avg_desc_w2v'].T).float()
                 self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
