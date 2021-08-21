@@ -7,13 +7,22 @@ from PIL import Image
 import os
 import numpy as np
 import scipy.io as sio
+import argparse
+
+# using argparaser for running bash
+parser = argparse.ArgumentParser()
+
+# add arg.
+parser.add_argument('--dataset', default='ucf101', help='ucf101 or hmdb51')
+parser.add_argument('--model', default='googlenet', help='googlenet or resnet18 or resnet50 or resnet101')
+opt = parser.parse_args()
 
 # ucf101 or hmdb51
-dataset = 'hmdb51'
+dataset = opt.dataset
+print(dataset)
 # googlenet resnet18, resnet50, resnet101
-MODEL = 'googlenet'
-
-# TODO： Check which layer should be used for feature extraction
+MODEL = opt.model
+print(MODEL)
 
 if MODEL == 'googlenet':
     SIZE = 1024
@@ -66,7 +75,6 @@ preprocess = transforms.Compose([
 
 def get_vector(image_name):
 
-    # TODO: check size of image features (resnet101 - 2048, googlenet - 1024)
     # Create a vector of zeros that will hold our feature vector
     my_embedding = torch.zeros(1, SIZE, 1, 1)
 
@@ -89,7 +97,8 @@ def get_vector(image_name):
         h.remove()
 
     except Exception:
-        print('Invalid Image !')
+        pass
+
     # Return the feature vector
     return my_embedding.numpy()
 
@@ -100,7 +109,7 @@ if __name__ == "__main__":
 
     if dataset == 'ucf101':
         image_data_root = os.path.join(data_root, 'ucf101_images_400')
-        # image_data_root = os.path.join(data_root, 'test_images_400')
+        #image_data_root = os.path.join(data_root, 'test_images_400')
 
     elif dataset == 'hmdb51':
         image_data_root = os.path.join(data_root, 'hmdb51_images_400')
@@ -122,46 +131,31 @@ if __name__ == "__main__":
                 os.remove(os.path.join(action_path, '.DS_Store'))
             else:
                 all_images_each_class = os.listdir(action_path)
-                all_images_embedding = np.empty((0, SIZE, 1, 1))
+                all_images_embedding = np.empty((SIZE, 0))
 
             for image in all_images_each_class:
                 image_path = os.path.join(action_path, image)
-                image_feature = get_vector(image_path)
-                # TODO: Check image feature vallues
-                #print(image_feature)
-                # put all image features into one numpy array
-                all_images_embedding = np.vstack((all_images_embedding, image_feature))
-                print("all_images_embedding", all_images_embedding.shape)
+                # reshape image features - (size, 1)
+                image_feature = get_vector(image_path).reshape(SIZE, 1)
+                # TODO: deal with invalid images (skip it)
+                if np.all((image_feature == 0)):
+                    print('Invalid Image !')
+                else:
+                    # stack all image features into one numpy array
+                    all_images_embedding = np.hstack((all_images_embedding, image_feature))
+                    print("all_images_embedding", all_images_embedding.shape)
 
-            # reshpe to (Feature SIZE, number of images)
-            all_images_embedding_reshape = all_images_embedding.reshape(all_images_embedding.shape[1],
-                                                                        all_images_embedding.shape[0])
-            # (Feature SIZE, number of images)
-            print("all_images_embedding_reshape", all_images_embedding_reshape.shape)
-
-            # TODO: Save each image representation for each action class
+            # Save each image representation for each action class
             sio.savemat(os.path.join(data_root, dataset + '_img_' + MODEL + '_features',
                                      dataset + '_' + action + '_all_img_' + MODEL + '.mat'),
-                        {'all_img_' + MODEL: all_images_embedding_reshape})
+                        {'all_img_' + MODEL: all_images_embedding})
 
             # Averaing image features for each class
-            # TODO: probably need to change codes for "averaging"
-            avg_image_embedding = np.mean(all_images_embedding_reshape, axis=1).reshape(SIZE, 1)
-            print("avg_image_embedding.shape", avg_image_embedding.shape) # (SIZE, 1)
-            print(avg_image_embedding)
-
-            # put all action embedding together
-            # (Feature SIZE, number of classes)
+            avg_image_embedding = np.mean(all_images_embedding, axis=1).reshape(SIZE, 1)
+            # put all action embedding together - (Feature SIZE, number of classes)
             avg_action_embedding = np.hstack((avg_action_embedding, avg_image_embedding))
             print("avg_action_embedding", avg_action_embedding.shape)
-
             # Save averaged img Rep.
             sio.savemat(os.path.join(data_root, dataset + '_avg_img_' + MODEL + '.mat'),
                         {'avg_img_' + MODEL: avg_action_embedding})
 
-    '''
-    image_path = './ucf101_images/Surfing/95.8.jpg'
-    image_feature = get_vector(image_path)
-    print(image_feature)
-    print(image_feature.shape)
-    '''
