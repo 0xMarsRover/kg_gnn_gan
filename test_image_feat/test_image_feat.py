@@ -1,6 +1,7 @@
 # Extracting visual features for images
 
 import torch
+import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
@@ -24,43 +25,87 @@ print(dataset)
 MODEL = opt.model
 print(MODEL)
 
+
+# GoogLeNet
+class GoogleNet(nn.Module):
+    def __init__(self):
+        super(GoogleNet, self).__init__()
+        googlenet = models.googlenet(pretrained=True)
+        self.features = nn.Sequential(*list(googlenet.children())[:-2])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        return x
+
+
+# ResNet101
+class ResNet18(nn.Module):
+    def __init__(self):
+        super(ResNet18, self).__init__()
+        resnet = models.resnet18(pretrained=True)
+        #self.relu = nn.ReLU(inplace=True)
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        print(x.shape)
+        return x
+
+
+# ResNet101
+class ResNet50(nn.Module):
+    def __init__(self):
+        super(ResNet50, self).__init__()
+        resnet = models.resnet50(pretrained=True)
+        #self.relu = nn.ReLU(inplace=True)
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        print(x.shape)
+        return x
+
+
+# ResNet101
+class ResNet101(nn.Module):
+    def __init__(self):
+        super(ResNet101, self).__init__()
+        resnet = models.resnet101(pretrained=True)
+        #self.relu = nn.ReLU(inplace=True)
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        print(x.shape)
+        return x
+
 #TODO: check which layer should be used for feature extration
 # 1. average pooling ?
 # 2. alternative semantic embedding paper: activation of top FC layer
+
+
 if MODEL == 'googlenet':
     SIZE = 1024
-    model = models.googlenet(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = GoogleNet()
     model.eval()
 
 elif MODEL == 'resnet18':
-    SIZE = 512
-    model = models.resnet18(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    SIZE = 2048
+    model = ResNet18()
     model.eval()
 
 elif MODEL == 'resnet50':
     SIZE = 2048
-    model = models.resnet50(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = ResNet50()
     model.eval()
 
 elif MODEL == 'resnet101':
     SIZE = 2048
-    model = models.resnet101(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = ResNet101()
     model.eval()
 
 else:
@@ -74,36 +119,6 @@ preprocess = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
-
-
-def get_vector(image_name):
-
-    # Create a vector of zeros that will hold our feature vector
-    my_embedding = torch.zeros(1, SIZE, 1, 1)
-
-    try:
-        # Load the image
-        img = Image.open(image_name)
-        img = img.convert('RGB')
-        # preprocess image
-        t_img = preprocess(img).unsqueeze(0)
-
-        # Define a function that will copy the output of a layer
-        def copy_data(m, i, o):
-            my_embedding.copy_(o.data)
-
-        # Attach that function to our selected layer
-        h = layer.register_forward_hook(copy_data)
-        # Run the model on our transformed image
-        model(t_img)
-        # Detach our copy function from the layer
-        h.remove()
-
-    except Exception:
-        pass
-
-    # Return the feature vector (1, SIZE, 1, 1)
-    return my_embedding.numpy()
 
 
 if __name__ == "__main__":
@@ -138,8 +153,17 @@ if __name__ == "__main__":
 
             for image in all_images_each_class:
                 image_path = os.path.join(action_path, image)
-                # reshape image features - (size, 1)
-                image_feature = get_vector(image_path).reshape(SIZE, 1)
+                try:
+                    img = Image.open(image_path)
+                    img = img.convert('RGB')
+                    # preprocess image
+                    t_img = preprocess(img).unsqueeze(0)
+                    # Feature extraction
+                    with torch.no_grad():
+                        image_feature = model(t_img).numpy().T
+                except Exception:
+                    pass
+
                 # deal with invalid images (skip it)
                 if np.all((image_feature == 0)):
                     print('Invalid Image !')
