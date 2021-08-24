@@ -1,8 +1,12 @@
 # Scraping images from Google Image Source
 # See instruction file "install-google-image-download.txt"
 
-# Probably do:
-# scrape over 100 images for each class since the issue from this tool
+#TODO: after downloading images:
+# 1. remove non-jpg or non-png images by:
+#       find . -name *.webp -type f -delete
+#       find . -name *.gif -type f -delete
+# 2. removing images if their sizes are lower than 20KB by:
+#       find . -size -20k -type f -delete
 
 from google_images_download import google_images_download
 
@@ -13,7 +17,7 @@ response = google_images_download.googleimagesdownload()
 actions = ""
 # read action classes from a file
 # ucf101_class_index or hmdb51_class_index
-with open("ucf101_class_index.txt") as fp:
+with open("ucf101_class_index_renamed.txt") as fp:
     Lines = fp.readlines()
     for line in Lines:
         actions = actions + line.strip() + ","
@@ -25,7 +29,6 @@ chromedriver_dir = "/Users/Kellan/Desktop/chromedriver"
 # 100 images per class
 arguments = {"keywords": actions,
              "limit": 400,
-             "language": "English",
              "format": "jpg",
              "chromedriver": chromedriver_dir,
              "output_directory": output_dir_ucf}

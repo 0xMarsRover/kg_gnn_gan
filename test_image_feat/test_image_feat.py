@@ -35,7 +35,8 @@ class GoogleNet(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        x = x.view(x.size(0), -1)
+        x = torch.flatten(x, 1)
+        #x = x.view(x.size(0), -1)
         return x
 
 
@@ -94,7 +95,7 @@ if MODEL == 'googlenet':
     model.eval()
 
 elif MODEL == 'resnet18':
-    SIZE = 2048
+    SIZE = 512
     model = ResNet18()
     model.eval()
 
