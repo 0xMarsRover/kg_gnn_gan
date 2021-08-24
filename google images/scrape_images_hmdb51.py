@@ -28,7 +28,7 @@ chromedriver_dir = "/Users/Kellan/Desktop/chromedriver"
 # creating list of arguments
 # 100 images per class
 arguments = {"keywords": actions,
-             "limit": 400,
+             "limit": 200,
              "format": "jpg",
              "chromedriver": chromedriver_dir,
              "output_directory": output_dir_hmdb}

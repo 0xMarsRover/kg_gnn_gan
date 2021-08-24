@@ -1,25 +1,25 @@
-brush hair
+brush_hair
 cartwheel
 catch
 chew
 clap
 climb
-climb stairs
+climb_stairs
 dive
-draw sword
+draw_sword
 dribble
 drink
 eat
-fall floor
+fall_floor
 fencing
-flic flac
+flic_flac
 golf
-hand stand
+hand_stand
 hit
 hug
 jump
 kick
-kick ball
+kick_ball
 kiss
 laugh
 pick
@@ -28,21 +28,21 @@ pullup
 punch
 push
 pushup
-ride bike
-ride horse
+ride_bike
+ride_horse
 run
-shake hands
-shoot ball
-shoot bow
-shoot gun
+shake_hands
+shoot_ball
+shoot_bow
+shoot_gun
 sit
 situp
 smile
 smoke
 somersault
 stand
-swing baseball
-sword exercise
+swing_baseball
+sword_exercise
 sword
 talk
 throw

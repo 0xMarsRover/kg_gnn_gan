@@ -36,7 +36,6 @@ class GoogleNet(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = torch.flatten(x, 1)
-        #x = x.view(x.size(0), -1)
         return x
 
 
@@ -45,7 +44,6 @@ class ResNet18(nn.Module):
     def __init__(self):
         super(ResNet18, self).__init__()
         resnet = models.resnet18(pretrained=True)
-        #self.relu = nn.ReLU(inplace=True)
         self.features = nn.Sequential(*list(resnet.children())[:-1])
 
     def forward(self, x):
@@ -60,7 +58,6 @@ class ResNet50(nn.Module):
     def __init__(self):
         super(ResNet50, self).__init__()
         resnet = models.resnet50(pretrained=True)
-        #self.relu = nn.ReLU(inplace=True)
         self.features = nn.Sequential(*list(resnet.children())[:-1])
 
     def forward(self, x):
@@ -75,7 +72,6 @@ class ResNet101(nn.Module):
     def __init__(self):
         super(ResNet101, self).__init__()
         resnet = models.resnet101(pretrained=True)
-        #self.relu = nn.ReLU(inplace=True)
         self.features = nn.Sequential(*list(resnet.children())[:-1])
 
     def forward(self, x):
@@ -112,7 +108,6 @@ elif MODEL == 'resnet101':
 else:
     print("No pretrained model selected !")
 
-
 # Image transforms
 preprocess = transforms.Compose([
     transforms.Resize(256),
@@ -127,12 +122,25 @@ if __name__ == "__main__":
     data_root = '/Volumes/Kellan/datasets/data_KG_GNN_GCN'
 
     if dataset == 'ucf101':
+        all_classes = []
         image_data_root = os.path.join(data_root, 'ucf101_images_400')
         #image_data_root = os.path.join(data_root, 'test_images_400')
+        # Get class names from a file
+        with open("../google images/ucf101_class_index.txt") as fp:
+            Lines = fp.readlines()
+            for line in Lines:
+                all_classes.append(line.strip())
 
     elif dataset == 'hmdb51':
+        all_classes = []
         image_data_root = os.path.join(data_root, 'hmdb51_images_400')
         #image_data_root = os.path.join(data_root, 'test_images_400')
+
+        # Get class names from a file
+        with open("../google images/hmdb51_class_index.txt") as fp:
+            Lines = fp.readlines()
+            for line in Lines:
+                all_classes.append(line.strip())
     else:
         print("Please select a dataset")
 
@@ -140,11 +148,13 @@ if __name__ == "__main__":
         os.remove(os.path.join(image_data_root, '.DS_Store'))
     else:
         # get all folder names as action classes
-        all_classes = os.listdir(image_data_root)
+        # TODO: check class order....
+        # all_classes = os.listdir(image_data_root)
         avg_action_embedding = np.empty((SIZE, 0))
 
         for action in all_classes:
             action_path = os.path.join(image_data_root, action)
+            print("Current Action Class is: ", action)
             if os.path.exists(os.path.join(action_path, '.DS_Store')):
                 # remove non-image file
                 os.remove(os.path.join(action_path, '.DS_Store'))
