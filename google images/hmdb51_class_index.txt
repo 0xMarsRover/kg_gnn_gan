@@ -14,7 +14,7 @@ fall_floor
 fencing
 flic_flac
 golf
-hand_stand
+handstand
 hit
 hug
 jump
@@ -42,8 +42,8 @@ smoke
 somersault
 stand
 swing_baseball
-sword_exercise
 sword
+sword_exercise
 talk
 throw
 turn

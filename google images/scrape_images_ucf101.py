@@ -17,6 +17,7 @@ response = google_images_download.googleimagesdownload()
 actions = ""
 # read action classes from a file
 # ucf101_class_index or hmdb51_class_index
+# TODO: Need to change the keywords of class names to input for image downloading
 with open("ucf101_class_index_renamed.txt") as fp:
     Lines = fp.readlines()
     for line in Lines:
@@ -28,7 +29,7 @@ chromedriver_dir = "/Users/Kellan/Desktop/chromedriver"
 # creating list of arguments
 # 100 images per class
 arguments = {"keywords": actions,
-             "limit": 200,
+             "limit": 400,
              "format": "jpg",
              "chromedriver": chromedriver_dir,
              "output_directory": output_dir_ucf}

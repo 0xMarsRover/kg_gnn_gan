@@ -8,12 +8,12 @@ Baseball Pitch
 Basketball Shooting
 Basketball Dunk
 Bench Press
-Biking
+ride bike
 Billiards Shot
 Blow Dry Hair
 Blowing Candles
 Body Weight Squats
-Bowling
+playing bowling
 Boxing Punching Bag
 Boxing Speed Bag
 Breaststroke
@@ -23,24 +23,24 @@ Cliff Diving
 Cricket Bowling
 Cricket Shot
 Cutting In Kitchen
-Diving
-Drumming
-Fencing
+diving springboards
+playing drum
+playing Fencing
 Field Hockey Penalty
 Floor Gymnastics
 Frisbee Catch
 Front Crawl
 Golf Swing
-Haircut
+barber cutting hair
 Hammer Throw
 Hammering
 Handstand Pushups
 Handstand Walking
 Head Massage
 High Jump
-Horse Race
-Horse Riding
-Hula Hoop
+racing horse
+riding horse
+playing hula Hoop
 Ice Dancing
 Javelin Throw
 Juggling Balls
@@ -53,7 +53,7 @@ Lunges
 Military Parade
 Mixing Batter
 Mopping Floor
-Nun chucks
+playing Nun chucks
 Parallel Bars
 Pizza Tossing
 Playing Guitar
@@ -74,7 +74,7 @@ Rafting
 Rock Climbing Indoor
 Rope Climbing
 Rowing
-Salsa Spins
+Salsa Spins dancing
 Shaving Beard
 Shotput
 Skate Boarding
@@ -98,4 +98,4 @@ Volleyball Spiking
 Walking with a dog
 Wall Pushups
 Writing On Board
-Yo Yo
+playing Yo Yo

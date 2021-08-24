@@ -49,7 +49,6 @@ class ResNet18(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = torch.flatten(x, 1)
-        print(x.shape)
         return x
 
 
@@ -63,7 +62,6 @@ class ResNet50(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = torch.flatten(x, 1)
-        print(x.shape)
         return x
 
 
@@ -77,8 +75,8 @@ class ResNet101(nn.Module):
     def forward(self, x):
         x = self.features(x)
         x = torch.flatten(x, 1)
-        print(x.shape)
         return x
+
 
 #TODO: check which layer should be used for feature extration
 # 1. average pooling ?
@@ -181,6 +179,7 @@ if __name__ == "__main__":
                 else:
                     # stack all image features into one numpy array
                     all_images_embedding = np.hstack((all_images_embedding, image_feature))
+                    # (feature size, number of image)
                     print("all_images_embedding", all_images_embedding.shape)
 
             # Save each image representation for each action class
