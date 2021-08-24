@@ -6,10 +6,19 @@ import os
 # when --class_embedding action_class_w2v
 #       --nz 300 --attSize 300
 
+# when --class_embedding avg_img_resnet18
+#       --nz 512 --attSize 512
+
+# when --class_embedding avg_img_resnet50
+#       --nz 2048 --attSize 2048
+
 # when --class_embedding avg_img_resnet101
 #       --nz 2048 --attSize 2048
 
 # when --class_embedding avg_img_googlenet
+#       --nz 1024 --attSize 1024
+
+# when --class_embedding avg_img_googlenet_me
 #       --nz 1024 --attSize 1024
 
 # when --class_embedding avg_desc_w2v

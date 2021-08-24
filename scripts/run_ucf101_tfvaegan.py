@@ -2,17 +2,23 @@ import os
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
 # Also consider --syn_num: how many number of features should be generated per class
 
-# Conducting different experiments
-# when --class_embedding attribute
-#       --nz 115 --attSize 115
-
+# Conducting different experiments accordign to different semantics
 # when --class_embedding action_class_w2v
 #       --nz 300 --attSize 300
+
+# when --class_embedding avg_img_resnet18
+#       --nz 512 --attSize 512
+
+# when --class_embedding avg_img_resnet50
+#       --nz 2048 --attSize 2048
 
 # when --class_embedding avg_img_resnet101
 #       --nz 2048 --attSize 2048
 
 # when --class_embedding avg_img_googlenet
+#       --nz 1024 --attSize 1024
+
+# when --class_embedding avg_img_googlenet_me
 #       --nz 1024 --attSize 1024
 
 # when --class_embedding avg_desc_w2v
@@ -23,6 +29,7 @@ import os
 
 # Number of splits range(30)
 # when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
+
 
 for n in range(1, 2):
     # n = n + 1
