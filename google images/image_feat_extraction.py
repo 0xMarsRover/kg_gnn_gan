@@ -1,6 +1,7 @@
 # Extracting visual features for images
 
 import torch
+import torch.nn as nn
 import torchvision.models as models
 import torchvision.transforms as transforms
 from PIL import Image
@@ -24,48 +25,81 @@ print(dataset)
 MODEL = opt.model
 print(MODEL)
 
-#TODO: check which layer should be used for feature extration
-# 1. average pooling ?
-# 2. alternative semantic embedding paper: activation of top FC layer
+
+# GoogLeNet - 1024D
+class GoogleNet(nn.Module):
+    def __init__(self):
+        super(GoogleNet, self).__init__()
+        googlenet = models.googlenet(pretrained=True)
+        self.features = nn.Sequential(*list(googlenet.children())[:-2])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        return x
+
+
+# ResNet18 - 512D
+class ResNet18(nn.Module):
+    def __init__(self):
+        super(ResNet18, self).__init__()
+        resnet = models.resnet18(pretrained=True)
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        return x
+
+
+# ResNet50 - 2048D
+class ResNet50(nn.Module):
+    def __init__(self):
+        super(ResNet50, self).__init__()
+        resnet = models.resnet50(pretrained=True)
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        return x
+
+
+# ResNet101 - 2048D
+class ResNet101(nn.Module):
+    def __init__(self):
+        super(ResNet101, self).__init__()
+        resnet = models.resnet101(pretrained=True)
+        self.features = nn.Sequential(*list(resnet.children())[:-1])
+
+    def forward(self, x):
+        x = self.features(x)
+        x = torch.flatten(x, 1)
+        return x
+
+
 if MODEL == 'googlenet':
     SIZE = 1024
-    model = models.googlenet(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = GoogleNet()
     model.eval()
 
 elif MODEL == 'resnet18':
     SIZE = 512
-    model = models.resnet18(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = ResNet18()
     model.eval()
 
 elif MODEL == 'resnet50':
     SIZE = 2048
-    model = models.resnet50(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = ResNet50()
     model.eval()
 
 elif MODEL == 'resnet101':
     SIZE = 2048
-    model = models.resnet101(pretrained=True)
-    # Use the model object to select the desired layer
-    layer = model._modules.get('avgpool')
-    print(layer)
-    # Set model to evaluation mode
+    model = ResNet101()
     model.eval()
 
 else:
     print("No pretrained model selected !")
-
 
 # Image transforms
 preprocess = transforms.Compose([
@@ -76,47 +110,30 @@ preprocess = transforms.Compose([
 ])
 
 
-def get_vector(image_name):
-
-    # Create a vector of zeros that will hold our feature vector
-    my_embedding = torch.zeros(1, SIZE, 1, 1)
-
-    try:
-        # Load the image
-        img = Image.open(image_name)
-        img = img.convert('RGB')
-        # preprocess image
-        t_img = preprocess(img).unsqueeze(0)
-
-        # Define a function that will copy the output of a layer
-        def copy_data(m, i, o):
-            my_embedding.copy_(o.data)
-
-        # Attach that function to our selected layer
-        h = layer.register_forward_hook(copy_data)
-        # Run the model on our transformed image
-        model(t_img)
-        # Detach our copy function from the layer
-        h.remove()
-
-    except Exception:
-        pass
-
-    # Return the feature vector (1, SIZE, 1, 1)
-    return my_embedding.numpy()
-
-
 if __name__ == "__main__":
 
     data_root = '/Volumes/Kellan/datasets/data_KG_GNN_GCN'
 
     if dataset == 'ucf101':
+        all_classes = []
         image_data_root = os.path.join(data_root, 'ucf101_images_400')
         #image_data_root = os.path.join(data_root, 'test_images_400')
+        # Get class names from a file
+        with open("ucf101_class_index.txt") as fp:
+            Lines = fp.readlines()
+            for line in Lines:
+                all_classes.append(line.strip())
 
     elif dataset == 'hmdb51':
+        all_classes = []
         image_data_root = os.path.join(data_root, 'hmdb51_images_400')
         #image_data_root = os.path.join(data_root, 'test_images_400')
+
+        # Get class names from a file
+        with open("hmdb51_class_index.txt") as fp:
+            Lines = fp.readlines()
+            for line in Lines:
+                all_classes.append(line.strip())
     else:
         print("Please select a dataset")
 
@@ -124,11 +141,13 @@ if __name__ == "__main__":
         os.remove(os.path.join(image_data_root, '.DS_Store'))
     else:
         # get all folder names as action classes
-        all_classes = os.listdir(image_data_root)
+        # TODO: check class order....
+        # all_classes = os.listdir(image_data_root)
         avg_action_embedding = np.empty((SIZE, 0))
 
         for action in all_classes:
             action_path = os.path.join(image_data_root, action)
+            print("Current Action Class is: ", action)
             if os.path.exists(os.path.join(action_path, '.DS_Store')):
                 # remove non-image file
                 os.remove(os.path.join(action_path, '.DS_Store'))
@@ -138,14 +157,24 @@ if __name__ == "__main__":
 
             for image in all_images_each_class:
                 image_path = os.path.join(action_path, image)
-                # reshape image features - (size, 1)
-                image_feature = get_vector(image_path).reshape(SIZE, 1)
+                try:
+                    img = Image.open(image_path)
+                    img = img.convert('RGB')
+                    # preprocess image
+                    t_img = preprocess(img).unsqueeze(0)
+                    # Feature extraction
+                    with torch.no_grad():
+                        image_feature = model(t_img).numpy().T
+                except Exception:
+                    pass
+
                 # deal with invalid images (skip it)
                 if np.all((image_feature == 0)):
                     print('Invalid Image !')
                 else:
                     # stack all image features into one numpy array
                     all_images_embedding = np.hstack((all_images_embedding, image_feature))
+                    # (feature size, number of image)
                     print("all_images_embedding", all_images_embedding.shape)
 
             # Save each image representation for each action class

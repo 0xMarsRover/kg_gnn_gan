@@ -9,16 +9,16 @@ Basketball Shooting
 Basketball Dunk
 Bench Press
 Biking
-Billiards Shot
+Billiards
 Blow Dry Hair
 Blowing Candles
 Body Weight Squats
 Bowling
 Boxing Punching Bag
 Boxing Speed Bag
-Breaststroke
+Breast Stroke
 Brushing Teeth
-Clean and Jerk
+Clean And Jerk
 Cliff Diving
 Cricket Bowling
 Cricket Shot
@@ -53,7 +53,7 @@ Lunges
 Military Parade
 Mixing Batter
 Mopping Floor
-Nun chucks
+Nunchucks
 Parallel Bars
 Pizza Tossing
 Playing Guitar
@@ -74,7 +74,7 @@ Rafting
 Rock Climbing Indoor
 Rope Climbing
 Rowing
-Salsa Spins
+Salsa Spin
 Shaving Beard
 Shotput
 Skate Boarding
@@ -95,7 +95,7 @@ Trampoline Jumping
 Typing
 Uneven Bars
 Volleyball Spiking
-Walking with dog
+Walking With Dog
 Wall Pushups
 Writing On Board
 Yo Yo

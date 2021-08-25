@@ -17,7 +17,7 @@ response = google_images_download.googleimagesdownload()
 actions = ""
 # read action classes from a file
 # ucf101_class_index or hmdb51_class_index
-with open("hmdb51_class_index_renamed.txt") as fp:
+with open("hmdb51_class_index_scraping.txt") as fp:
     Lines = fp.readlines()
     for line in Lines:
         actions = actions + line.strip() + ","

@@ -3,8 +3,8 @@
 
 #TODO: after downloading images:
 # 1. remove non-jpg or non-png images by:
-#       find . -name *.webp -type f -delete
-#       find . -name *.gif -type f -delete
+#       find . -name "*.webp" -type f -delete
+#       find . -name "*.gif" -type f -delete
 # 2. removing images if their sizes are lower than 20KB by:
 #       find . -size -20k -type f -delete
 
@@ -18,7 +18,7 @@ actions = ""
 # read action classes from a file
 # ucf101_class_index or hmdb51_class_index
 # TODO: Need to change the keywords of class names to input for image downloading
-with open("ucf101_class_index_renamed.txt") as fp:
+with open("ucf101_class_index_scraping.txt") as fp:
     Lines = fp.readlines()
     for line in Lines:
         actions = actions + line.strip() + ","
