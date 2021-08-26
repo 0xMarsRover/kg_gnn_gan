@@ -414,9 +414,9 @@ else:
     # ZSL:  best_zsl_acc
     #       best_zsl_acc_per_class,
     #       best_zsl_cm
-
     with open("exp_zsl_results.txt", "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Split Index: " + str(opt.split) + "\n")
         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc) + "\n")
         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class) + "\n")
         f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")

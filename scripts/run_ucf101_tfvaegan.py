@@ -40,8 +40,6 @@ import os
 
 
 for n in range(1, 2):
-    with open("exp_zsl_results.txt", "a+") as f:
-        f.write("Split Index: " + str(n) + "\n")
     # n = n + 1
     os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
     --dataset ucf101 --nclass_all 101 --zsl \
