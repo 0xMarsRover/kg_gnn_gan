@@ -30,6 +30,14 @@ import os
 # Number of splits range(30)
 # when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
 
+#TODO: Conducting 30-split experiment in one run (by for-loop)
+# 1. recording results into a local file for each split:
+#       a. The best Epoch
+#       b. The best average accuracy over test classes
+#       c. In the best epoch:
+#            i. accuracy per class
+#           ii. confusion matrix
+
 
 for n in range(1, 2):
     # n = n + 1

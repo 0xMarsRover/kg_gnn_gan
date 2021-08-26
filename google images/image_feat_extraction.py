@@ -119,6 +119,7 @@ if __name__ == "__main__":
         image_data_root = os.path.join(data_root, 'ucf101_images_400')
         #image_data_root = os.path.join(data_root, 'test_images_400')
         # Get class names from a file
+        # To make sure the produced features are correspond to correct action class
         with open("ucf101_class_index.txt") as fp:
             Lines = fp.readlines()
             for line in Lines:
