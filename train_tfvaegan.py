@@ -384,7 +384,7 @@ for epoch in range(0, opt.nepoch):
             best_zsl_acc = acc
             best_zsl_acc_per_class = acc_per_class
             best_zsl_cm = cm
-        print('ZSL unseen accuracy=%.4f \n' % acc)
+        print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc, epoch))
         #print('ZSL unseen accuracy per class\n', acc_per_class)
         #print('ZSL confusion matrix\n', cm)
 
