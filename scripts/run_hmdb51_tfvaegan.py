@@ -33,7 +33,7 @@ import os
 for n in range(1, 2):
     # n = n + 1
     os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
-    --dataset hmdb51 --nclass_all 51 --zsl \
+    --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
     --dataroot /content/drive/MyDrive/colab_data/action_datasets \
     --splits_path hmdb51_semantics --split {split} \
     --action_embedding i3d --resSize 8192 \
