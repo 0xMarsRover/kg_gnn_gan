@@ -163,7 +163,7 @@ def calc_gradient_penalty(netD, real_data, fake_data, input_att):
     return gradient_penalty
 
 
-# best_cm = []
+# TODO: Recording best_acc, best_acc_per_class, best_cm
 if opt.gzsl_od:
     best_gzsl_od_acc = 0
 
@@ -172,6 +172,8 @@ elif opt.gzsl:
 
 else:
     best_zsl_acc = 0
+    best_zsl_acc_per_class = []
+    best_zsl_cm = []
 
 # Training loop
 for epoch in range(0, opt.nepoch):
@@ -380,6 +382,8 @@ for epoch in range(0, opt.nepoch):
         cm = zsl_cls.cm
         if best_zsl_acc < acc:
             best_zsl_acc = acc
+            best_zsl_acc_per_class = acc_per_class
+            best_zsl_cm = cm
         print('ZSL unseen accuracy=%.4f \n' % acc)
         #print('ZSL unseen accuracy per class\n', acc_per_class)
         #print('ZSL confusion matrix\n', cm)
@@ -391,7 +395,7 @@ for epoch in range(0, opt.nepoch):
 
 # Showing Best results
 print('Showing Best Results for Dataset: ', opt.dataset)
-
+# TODO: Save results into local file for ZSL, GZSL, GZSL-OD
 if opt.gzsl_od:
     print('Best GZSL-OD seen accuracy is', best_acc_seen, best_acc_per_seen)
     print('Best GZSL-OD unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
@@ -407,4 +411,19 @@ elif opt.gzsl:
     #print('Best Simple GZSL unseen CM', best_cm_unseen)
 
 else:
+    # ZSL:  best_zsl_acc
+    #       best_zsl_acc_per_class,
+    #       best_zsl_cm
+
+    with open("exp_zsl_results.txt", "a+") as f:
+        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc) + "\n")
+        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class) + "\n")
+        f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+
     print('Best ZSL unseen accuracy is', best_zsl_acc)
+    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class)
+    print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+
+
+
