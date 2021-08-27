@@ -38,7 +38,7 @@ for n in range(1, 2):
     --splits_path hmdb51_semantics --split {split} \
     --action_embedding i3d --resSize 8192 \
     --class_embedding avg_img_googlenet_me --nz 1024 --attSize 1024 \
-    --nepoch 50 --batch_size 64 --syn_num 600 \
+    --nepoch 100 --batch_size 64 --syn_num 400 \
     --preprocessing --cuda --gammaD 10 --gammaG 10 \
     --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
     --lr 0.0001 --workers 8 --encoded_noise  \

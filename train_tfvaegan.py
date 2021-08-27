@@ -418,7 +418,7 @@ else:
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
         f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
 
-        # TODO: recording best epoch (check if it works or not)
+        # TODO: recording full confusion matrix
         f.write("Best Epoch: " + str(best_epoch) + "\n")
         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc) + "\n")
         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class) + "\n")
