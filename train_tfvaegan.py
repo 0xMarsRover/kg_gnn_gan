@@ -125,10 +125,6 @@ def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None):
             syn_noisev = Variable(syn_noise)
             syn_attv = Variable(syn_att)
 
-        # Original codes
-        # syn_noisev = Variable(syn_noise,volatile=True)
-        # syn_attv = Variable(syn_att,volatile=True)
-
         output = feedback_module(gen_out=syn_noisev, att=syn_attv, netG=netG, netDec=netDec, netF=netF)
         syn_feature.narrow(0, i * num, num).copy_(output.data.cpu())
         syn_label.narrow(0, i * num, num).fill_(iclass)
@@ -181,8 +177,7 @@ for epoch in range(0, opt.nepoch):
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
         for i in range(0, data.ntrain, opt.batch_size):
-            ######### Discriminator training ##############
-
+            # TODO: Discriminator training
             # unfreeze discrimator
             for p in netD.parameters():
                 p.requires_grad = True
@@ -191,7 +186,7 @@ for epoch in range(0, opt.nepoch):
             for p in netDec.parameters():
                 p.requires_grad = True
 
-            # Train D1 and Decoder
+            # TODO: Train D1 and Decoder
             gp_sum = 0
             for iter_d in range(opt.critic_iter):
                 sample()
@@ -199,7 +194,7 @@ for epoch in range(0, opt.nepoch):
                 input_resv = Variable(input_res)
                 input_attv = Variable(input_att)
 
-                # Training the auxillary module
+                # TODO: Training the auxillary module
                 netDec.zero_grad()
                 recons = netDec(input_resv)
                 R_cost = opt.recons_weight * WeightedL1(recons, input_attv)
@@ -221,7 +216,7 @@ for epoch in range(0, opt.nepoch):
                     noise.normal_(0, 1)
                     latent_code = Variable(noise)
 
-                # feedback loop
+                # TODO: feedback loop
                 if loop == 1:
                     fake = feedback_module(gen_out=latent_code, att=input_attv, netG=netG, netDec=netDec, netF=netF)
                 else:
@@ -246,7 +241,7 @@ for epoch in range(0, opt.nepoch):
             elif (gp_sum < 1.001).sum() > 0:
                 opt.lambda1 /= 1.1
 
-            ############# netG training ##############
+            # TODO:netG training
             # Train netG and Decoder
             for p in netD.parameters():
                 p.requires_grad = False
@@ -303,7 +298,8 @@ for epoch in range(0, opt.nepoch):
             optimizerG.step()
             if loop == 1:
                 optimizerF.step()
-            if opt.recons_weight > 0 and not opt.freeze_dec:  # not train decoder at feedback time
+            # not train decoder at feedback time
+            if opt.recons_weight > 0 and not opt.freeze_dec:
                 optimizerDec.step()
                 # Print losses
     print('[%d/%d]  Loss_D: %.4f Loss_G: %.4f, Wasserstein_dist:%.4f, vae_loss_seen:%.4f \n'
@@ -315,7 +311,7 @@ for epoch in range(0, opt.nepoch):
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
 
-    # Generalized zero-shot learning
+    # TODO: Generalized zero-shot learning
     if opt.gzsl_od:
         # OD based GZSL
         print("Performing Out-of-Distribution GZSL")
@@ -348,7 +344,7 @@ for epoch in range(0, opt.nepoch):
         print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
 
     elif opt.gzsl:
-        # simple Generalized zero-shot learning
+        # TODO: simple Generalized zero-shot learning
         print("Performing simple GZSL")
         train_X = torch.cat((data.train_feature, syn_feature), 0)
         train_Y = torch.cat((data.train_label, syn_label), 0)
@@ -369,7 +365,7 @@ for epoch in range(0, opt.nepoch):
         #print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
 
     else:
-        # Zero-shot learning
+        # TODO: Zero-shot learning
         print("Performing ZSL")
         # Train ZSL classifier
         zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
@@ -384,6 +380,7 @@ for epoch in range(0, opt.nepoch):
             best_zsl_acc = acc
             best_zsl_acc_per_class = acc_per_class
             best_zsl_cm = cm
+            best_epoch = epoch
         print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc, epoch))
         #print('ZSL unseen accuracy per class\n', acc_per_class)
         #print('ZSL confusion matrix\n', cm)
@@ -417,6 +414,12 @@ else:
     with open("exp_zsl_results.txt", "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
+
+        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+        f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
+
+        # TODO: recording best epoch (check if it works or not)
+        f.write("Best Epoch: " + str(best_epoch) + "\n")
         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc) + "\n")
         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class) + "\n")
         f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
