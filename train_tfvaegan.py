@@ -368,8 +368,8 @@ for epoch in range(0, opt.nepoch):
             # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
         print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-        #print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-        #print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
+        print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
+        print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
         #print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
         #print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
 
@@ -403,6 +403,11 @@ for epoch in range(0, opt.nepoch):
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
 if opt.gzsl_od:
+    with open("exp_gzsl_od_results.txt", "a+") as f:
+        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Results: OD-based GZSL Experiments" + "\n")
+        f.write("Split Index: " + str(opt.split) + "\n")
+
     print('Best GZSL-OD seen accuracy is', best_acc_seen, best_acc_per_seen)
     print('Best GZSL-OD unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
     print('Best GZSL-OD H is', best_gzsl_od_acc)
@@ -410,9 +415,9 @@ if opt.gzsl_od:
     #print('Best GZSL-OD unseen CM', best_cm_unseen)
 
 elif opt.gzsl:
-
     with open("exp_gzsl_results.txt", "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Results: Simple GZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
 
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
@@ -443,6 +448,7 @@ else:
     #       best_zsl_cm
     with open("exp_zsl_results.txt", "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Results: ZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
 
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
@@ -457,6 +463,4 @@ else:
     print('Best ZSL unseen accuracy is', best_zsl_acc)
     print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class)
     print('Best ZSL unseen confusion matrix is', best_zsl_cm)
-
-
 
