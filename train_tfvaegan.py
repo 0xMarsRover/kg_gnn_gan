@@ -381,7 +381,7 @@ for epoch in range(0, opt.nepoch):
         # Train ZSL classifier
         zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                         data, data.unseenclasses.size(0),
-                                        opt.cuda, opt.classifier_lr, 0.5, 25, opt.syn_num,
+                                        opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
                                         generalized=False, netDec=netDec,
                                         dec_size=opt.attSize, dec_hidden_size=4096)
         acc = zsl_cls.acc
