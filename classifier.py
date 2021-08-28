@@ -100,7 +100,7 @@ class CLASSIFIER:
         # early_stopping = EarlyStopping(patience=20, verbose=True)
 
         for epoch in range(self.nepoch):
-            print("Start Final Discriminative Classifier Training at epoch: ", epoch)
+            #print("Start Final Discriminative Classifier Training at epoch: ", epoch)
             for i in range(0, self.ntrain, self.batch_size):
                 self.model.zero_grad()
                 batch_input, batch_label = self.next_batch(self.batch_size)
@@ -146,12 +146,12 @@ class CLASSIFIER:
         return acc, acc_per_class
 
     def compute_per_class_acc_gzsl(self, test_label, predicted_label, target_classes):
-        acc_per_class = 0
-        for i in target_classes:
+        acc_per_class = torch.FloatTensor(target_classes).fill_(0)
+        for i in range(target_classes):
             idx = (test_label == i)
-            acc_per_class += torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
+            acc_per_class[i] = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
         #acc_per_class /= target_classes.size(0)
-        acc_mean = acc_per_class.mean()
+            acc_mean = acc_per_class.mean()
         return acc_mean, acc_per_class
 
     # Parameter: test_label is integer
