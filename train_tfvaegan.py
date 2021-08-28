@@ -30,6 +30,15 @@ data = util.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)
 print("Dataset: ", opt.dataset)
 
+if opt.gzsl_od:
+    print('Performing OD-based GZSL experiments!')
+
+elif opt.gzsl:
+    print('Performing Simple GZSL experiments!')
+else:
+    print('Performing ZSL experiments!')
+
+
 # Init modules: Encoder, Generator, Discriminator
 netE = model.Encoder(opt)
 netG = model.Generator(opt)

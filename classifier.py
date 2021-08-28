@@ -88,7 +88,6 @@ class CLASSIFIER:
                 best_acc_per_class = acc_per_class
                 best_model = copy.deepcopy(self.model)
                 best_cm = cm
-                # best_model = copy.deepcopy(self.model.state_dict())
         return best_acc, best_acc_per_class, best_model, best_cm
 
     def fit(self):
@@ -116,16 +115,17 @@ class CLASSIFIER:
             acc_seen = 0
             acc_unseen = 0
             self.model.eval()
-            acc_seen = self.val_gzsl(self.test_seen_feature, self.test_seen_label, self.seenclasses)
-            acc_unseen = self.val_gzsl(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
+            acc_seen, acc_per_seen = self.val_gzsl(self.test_seen_feature, self.test_seen_label, self.seenclasses)
+            acc_unseen, acc_per_unseen = self.val_gzsl(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
             H = 2 * acc_seen * acc_unseen / (acc_seen + acc_unseen)
             if H > best_H:
                 best_seen = acc_seen
+                best_acc_per_seen = acc_per_seen
+                best_acc_per_useen = acc_per_unseen
                 best_unseen = acc_unseen
                 best_H = H
                 best_model = copy.deepcopy(self.model)
-                # best_model = copy.deepcopy(self.model.state_dict())
-        return best_seen, best_unseen, best_H, epoch, best_model
+        return best_seen, best_acc_per_seen, best_unseen, best_acc_per_useen, best_H, epoch, best_model
 
     def next_batch(self, batch_size):
         start = self.index_in_epoch
@@ -179,16 +179,17 @@ class CLASSIFIER:
             _, predicted_label[start:end] = torch.max(output.data, 1)
             start = end
 
-        acc = self.compute_per_class_acc_gzsl(test_label, predicted_label, target_classes)
-        return acc
+        acc, acc_per_class = self.compute_per_class_acc_gzsl(test_label, predicted_label, target_classes)
+        return acc, acc_per_class
 
     def compute_per_class_acc_gzsl(self, test_label, predicted_label, target_classes):
         acc_per_class = 0
         for i in target_classes:
             idx = (test_label == i)
             acc_per_class += torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
-        acc_per_class /= target_classes.size(0)
-        return acc_per_class
+        #acc_per_class /= target_classes.size(0)
+        acc_mean = acc_per_class.mean()
+        return acc_mean, acc_per_class
 
     # Parameter: test_label is integer
     def val(self, test_X, test_label, target_classes):
