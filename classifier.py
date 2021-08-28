@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch.optim as optim
 import util
+import numpy as np
 import copy
 from sklearn.metrics import confusion_matrix
 
@@ -151,7 +152,7 @@ class CLASSIFIER:
         for i in target_classes:
             idx = (test_label == i)
             acc = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
-            acc_per_class = acc_per_class.append(acc)
+            acc_per_class = np.append(acc_per_class, acc)
         #acc_per_class /= target_classes.size(0)
             acc_mean = acc_per_class.mean()
             n += 1
