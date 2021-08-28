@@ -464,5 +464,5 @@ else:
 
     print('Best ZSL unseen accuracy is', best_zsl_acc)
     print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class)
-    print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+    #print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 

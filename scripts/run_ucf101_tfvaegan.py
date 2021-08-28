@@ -3,6 +3,9 @@ import os
 # Also consider --syn_num: how many number of features should be generated per class
 
 # Conducting different experiments accordign to different semantics
+# when --class_embedding attribute
+#       --nz 300 --attSize 115
+
 # when --class_embedding action_class_w2v
 #       --nz 300 --attSize 300
 
@@ -39,7 +42,7 @@ import os
 #           ii. confusion matrix
 
 
-class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 600,
+class_embedding = {'attribute': 115, 'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 600,
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024,
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
 for c, dim in class_embedding.items():
