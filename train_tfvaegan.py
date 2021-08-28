@@ -355,7 +355,7 @@ for epoch in range(0, opt.nepoch):
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         if best_gzsl_simple_acc < clsg.H:
             best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-            # best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
             # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
         print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
@@ -397,13 +397,34 @@ if opt.gzsl_od:
     print('Best GZSL-OD seen accuracy is', best_acc_seen, best_acc_per_seen)
     print('Best GZSL-OD unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
     print('Best GZSL-OD H is', best_gzsl_od_acc)
-    print('Best GZSL-OD seen CM', best_cm_seen)
-    print('Best GZSL-OD unseen CM', best_cm_unseen)
+    #print('Best GZSL-OD seen CM', best_cm_seen)
+    #print('Best GZSL-OD unseen CM', best_cm_unseen)
 
 elif opt.gzsl:
-    print('Best Simple GZSL seen accuracy is', best_acc_seen) #, best_acc_per_seen)
-    print('Best Simple GZSL unseen accuracy is', best_acc_unseen) #, best_acc_per_unseen)
-    print('Best Simple GZSL H is', best_gzsl_simple_acc)
+
+    with open("exp_gzsl_results.txt", "a+") as f:
+        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Split Index: " + str(opt.split) + "\n")
+
+        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+        f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
+
+        # TODO: recording full confusion matrix
+        f.write("Best Epoch: " + str(best_epoch) + "\n")
+        f.write("Best Simple GZSL seen accuracy: " + str(best_acc_seen) + "\n")
+        f.write("Best Simple GZSL seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
+
+        f.write("Best Simple GZSL unseen accuracy: " + str(best_acc_unseen) + "\n")
+        f.write("Best Simple GZSL unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
+        f.write("Best Simple GZSL H: " + str(best_gzsl_simple_acc) + "\n")
+        #f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+
+    print('Best Simple GZSL seen accuracy: ', best_acc_seen)
+    print('Best Simple GZSL seen accuracy per class: ', best_acc_per_seen)
+
+    print('Best Simple GZSL unseen accuracy: ', best_acc_unseen)
+    print('Best Simple GZSL unseen accuracy per class: ', best_acc_per_unseen)
+    print('Best Simple GZSL H: ', best_gzsl_simple_acc)
     #print('Best Simple GZSL seen CM', best_cm_seen)
     #print('Best Simple GZSL unseen CM', best_cm_unseen)
 
@@ -422,7 +443,7 @@ else:
         f.write("Best Epoch: " + str(best_epoch) + "\n")
         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc) + "\n")
         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class) + "\n")
-        f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+        #f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
     print('Best ZSL unseen accuracy is', best_zsl_acc)
     print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class)
