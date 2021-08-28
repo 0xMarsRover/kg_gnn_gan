@@ -146,8 +146,8 @@ class CLASSIFIER:
         return acc, acc_per_class
 
     def compute_per_class_acc_gzsl(self, test_label, predicted_label, target_classes):
-        acc_per_class = torch.FloatTensor(target_classes).fill_(0)
-        for i in range(target_classes):
+        acc_per_class = []
+        for i in target_classes:
             idx = (test_label == i)
             acc_per_class[i] = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
         #acc_per_class /= target_classes.size(0)
