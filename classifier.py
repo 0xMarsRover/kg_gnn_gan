@@ -92,10 +92,10 @@ class CLASSIFIER:
         return best_acc, best_acc_per_class, best_model, best_cm
 
     def fit(self):
-        #best_H = 0
-        #best_seen = 0
-        #best_unseen = 0
-        #best_cm = []
+        best_H = 0
+        best_seen = 0
+        best_unseen = 0
+        best_cm = []
         best_model = copy.deepcopy(self.model)
         # early_stopping = EarlyStopping(patience=20, verbose=True)
 
