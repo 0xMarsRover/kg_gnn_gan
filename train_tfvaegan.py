@@ -182,7 +182,7 @@ else:
 
 # Training loop
 for epoch in range(0, opt.nepoch):
-    print("Start Training at epoch: ", epoch)
+    print("Start VAEGAN Training at epoch: ", epoch)
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
         for i in range(0, data.ntrain, opt.batch_size):
@@ -328,12 +328,12 @@ for epoch in range(0, opt.nepoch):
         print('seen class size: ', seen_class)
         clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                      data, data.unseenclasses.size(0), opt.cuda,
-                                     _nepoch=30, generalized=True,
+                                     _nepoch=50, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         # _batch_size=opt.syn_num
         clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                      data, data.seenclasses.size(0), opt.cuda,
-                                     _nepoch=30, generalized=True,
+                                     _nepoch=50, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
         clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
@@ -359,7 +359,7 @@ for epoch in range(0, opt.nepoch):
         train_Y = torch.cat((data.train_label, syn_label), 0)
         nclass = opt.nclass_all
         clsg = classifier.CLASSIFIER(train_X, train_Y, data, nclass,
-                                     opt.cuda, _nepoch=30,
+                                     opt.cuda, _nepoch=50,
                                      _batch_size=128, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         if best_gzsl_simple_acc < clsg.H:

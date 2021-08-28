@@ -8,7 +8,7 @@ from sklearn.metrics import confusion_matrix
 
 
 class CLASSIFIER:
-    def __init__(self, _train_X, _train_Y, data_loader, _nclass, _cuda, _lr=0.001, _beta1=0.5, _nepoch=20,
+    def __init__(self, _train_X, _train_Y, data_loader, _nclass, _cuda, _lr=0.001, _beta1=0.5, _nepoch=50,
                  _batch_size=100, generalized=False, netDec=None, dec_size=4096, dec_hidden_size=4096):
         self.train_X = _train_X.clone()
         self.train_Y = _train_Y.clone()
@@ -53,7 +53,8 @@ class CLASSIFIER:
         self.ntrain = self.train_X.size()[0]
         if generalized:
             # gzsl
-            self.acc_seen, self.acc_unseen, self.H, self.epoch, self.best_model = self.fit()
+            self.acc_seen, self.acc_per_seen, self.acc_unseen, self.acc_per_unseen, \
+                self.H, self.best_model = self.fit()
         else:
             # zsl
             self.acc, self.acc_per_class, self.best_model, self.cm = self.fit_zsl()
@@ -91,29 +92,27 @@ class CLASSIFIER:
         return best_acc, best_acc_per_class, best_model, best_cm
 
     def fit(self):
-        best_H = 0
-        best_seen = 0
-        best_unseen = 0
-        best_cm = []
-        out = []
-
+        #best_H = 0
+        #best_seen = 0
+        #best_unseen = 0
+        #best_cm = []
         best_model = copy.deepcopy(self.model)
         # early_stopping = EarlyStopping(patience=20, verbose=True)
+
         for epoch in range(self.nepoch):
+            print("Start Final Discriminative Classifier Training at epoch: ", epoch)
             for i in range(0, self.ntrain, self.batch_size):
                 self.model.zero_grad()
                 batch_input, batch_label = self.next_batch(self.batch_size)
                 self.input.copy_(batch_input)
                 self.label.copy_(batch_label)
-
                 inputv = Variable(self.input)
                 labelv = Variable(self.label)
                 output = self.model(inputv)
                 loss = self.criterion(output, labelv)
                 loss.backward()
                 self.optimizer.step()
-            acc_seen = 0
-            acc_unseen = 0
+            # Set evaluation mode
             self.model.eval()
             acc_seen, acc_per_seen = self.val_gzsl(self.test_seen_feature, self.test_seen_label, self.seenclasses)
             acc_unseen, acc_per_unseen = self.val_gzsl(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
@@ -125,43 +124,7 @@ class CLASSIFIER:
                 best_unseen = acc_unseen
                 best_H = H
                 best_model = copy.deepcopy(self.model)
-        return best_seen, best_acc_per_seen, best_unseen, best_acc_per_useen, best_H, epoch, best_model
-
-    def next_batch(self, batch_size):
-        start = self.index_in_epoch
-        # shuffle the data at the first epoch
-        if self.epochs_completed == 0 and start == 0:
-            perm = torch.randperm(self.ntrain)
-            self.train_X = self.train_X[perm]
-            self.train_Y = self.train_Y[perm]
-        # the last batch
-        if start + batch_size > self.ntrain:
-            self.epochs_completed += 1
-            rest_num_examples = self.ntrain - start
-            if rest_num_examples > 0:
-                X_rest_part = self.train_X[start:self.ntrain]
-                Y_rest_part = self.train_Y[start:self.ntrain]
-            # shuffle the data
-            perm = torch.randperm(self.ntrain)
-            self.train_X = self.train_X[perm]
-            self.train_Y = self.train_Y[perm]
-            # start next epoch
-            start = 0
-            self.index_in_epoch = batch_size - rest_num_examples
-            end = self.index_in_epoch
-            X_new_part = self.train_X[start:end]
-            Y_new_part = self.train_Y[start:end]
-            # print(start, end)
-            if rest_num_examples > 0:
-                return torch.cat((X_rest_part, X_new_part), 0), torch.cat((Y_rest_part, Y_new_part), 0)
-            else:
-                return X_new_part, Y_new_part
-        else:
-            self.index_in_epoch += batch_size
-            end = self.index_in_epoch
-            # print(start, end)
-            # from index start to index end-1
-            return self.train_X[start:end], self.train_Y[start:end]
+        return best_seen, best_acc_per_seen, best_unseen, best_acc_per_useen, best_H, best_model
 
     def val_gzsl(self, test_X, test_label, target_classes):
         start = 0
@@ -244,6 +207,42 @@ class CLASSIFIER:
             new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
             start = end
         return new_test_X
+
+    def next_batch(self, batch_size):
+        start = self.index_in_epoch
+        # shuffle the data at the first epoch
+        if self.epochs_completed == 0 and start == 0:
+            perm = torch.randperm(self.ntrain)
+            self.train_X = self.train_X[perm]
+            self.train_Y = self.train_Y[perm]
+        # the last batch
+        if start + batch_size > self.ntrain:
+            self.epochs_completed += 1
+            rest_num_examples = self.ntrain - start
+            if rest_num_examples > 0:
+                X_rest_part = self.train_X[start:self.ntrain]
+                Y_rest_part = self.train_Y[start:self.ntrain]
+            # shuffle the data
+            perm = torch.randperm(self.ntrain)
+            self.train_X = self.train_X[perm]
+            self.train_Y = self.train_Y[perm]
+            # start next epoch
+            start = 0
+            self.index_in_epoch = batch_size - rest_num_examples
+            end = self.index_in_epoch
+            X_new_part = self.train_X[start:end]
+            Y_new_part = self.train_Y[start:end]
+            # print(start, end)
+            if rest_num_examples > 0:
+                return torch.cat((X_rest_part, X_new_part), 0), torch.cat((Y_rest_part, Y_new_part), 0)
+            else:
+                return X_new_part, Y_new_part
+        else:
+            self.index_in_epoch += batch_size
+            end = self.index_in_epoch
+            # print(start, end)
+            # from index start to index end-1
+            return self.train_X[start:end], self.train_Y[start:end]
 
 
 class LINEAR_LOGSOFTMAX_CLASSIFIER(nn.Module):
