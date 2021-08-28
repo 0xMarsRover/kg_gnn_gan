@@ -147,11 +147,13 @@ class CLASSIFIER:
 
     def compute_per_class_acc_gzsl(self, test_label, predicted_label, target_classes):
         acc_per_class = []
+        n = 0
         for i in target_classes:
             idx = (test_label == i)
-            acc_per_class[i] = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
+            acc_per_class[n] = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
         #acc_per_class /= target_classes.size(0)
             acc_mean = acc_per_class.mean()
+            n += 1
         return acc_mean, acc_per_class
 
     # Parameter: test_label is integer
