@@ -6,6 +6,7 @@ hmdb51_images/
 *.mat
 *.zip
 .DS_Store
+bert embedding/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
