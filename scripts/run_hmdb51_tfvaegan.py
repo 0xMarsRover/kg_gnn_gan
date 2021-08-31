@@ -29,10 +29,12 @@ import os
 
 # Number of splits range(30)
 # when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
-
+'''
 class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 600,
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024,
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
+'''
+class_embedding = {'bert_embedding_768': 768}
 
 for c, dim in class_embedding.items():
     for n in range(1, 2):
