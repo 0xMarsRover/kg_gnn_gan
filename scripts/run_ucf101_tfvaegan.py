@@ -41,10 +41,12 @@ import os
 #            i. accuracy per class
 #           ii. confusion matrix
 
-
+'''
 class_embedding = {'attribute': 115, 'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 600,
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024,
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
+'''
+class_embedding = {'bert_embedding': 1024}
 for c, dim in class_embedding.items():
     for n in range(1, 2):
         # n = n + 1
