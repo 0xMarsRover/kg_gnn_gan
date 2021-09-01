@@ -35,6 +35,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
 '''
 class_embedding = {'bert_embedding_768': 768}
+#class_embedding = {'bert_embedding_1024': 1024}
 
 for c, dim in class_embedding.items():
     for n in range(1, 2):
