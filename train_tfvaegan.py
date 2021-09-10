@@ -6,6 +6,7 @@ import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import numpy as np
 import random
+import os
 
 # load files
 import model
@@ -401,11 +402,13 @@ for epoch in range(0, opt.nepoch):
     netDec.train()
     netF.train()
 
+
+result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
 # Showing Best results
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
 if opt.gzsl_od:
-    with open("exp_gzsl_od_results.txt", "a+") as f:
+    with open(os.path.join(result_root, "exp_gzsl_od_results.txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: OD-based GZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
@@ -417,7 +420,7 @@ if opt.gzsl_od:
     #print('Best GZSL-OD unseen CM', best_cm_unseen)
 
 elif opt.gzsl:
-    with open("exp_gzsl_results.txt", "a+") as f:
+    with open(os.path.join(result_root, "exp_gzsl_results.txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: Simple GZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
@@ -448,7 +451,7 @@ else:
     # ZSL:  best_zsl_acc
     #       best_zsl_acc_per_class,
     #       best_zsl_cm
-    with open("exp_zsl_results.txt", "a+") as f:
+    with open(os.path.join(result_root, "exp_zsl_results.txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: ZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")

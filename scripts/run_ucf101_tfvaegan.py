@@ -46,11 +46,15 @@ class_embedding = {'attribute': 115, 'action_class_w2v': 300, 'avg_desc_w2v': 30
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024,
                    'bert_embedding_768': 768, 'bert_embedding_1024': 1024,
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
+
+class_embedding = {'bert_embedding_1024': 1024}
 '''
-class_embedding = {'bert_embedding_768': 768}
+
+class_embedding = {'attribute': 115, 'action_class_w2v': 300, 'avg_desc_w2v': 300,
+                   'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024, 'avg_img_resnet101': 2048}
 
 for c, dim in class_embedding.items():
-    for n in range(1, 2):
+    for n in range(1, 31):
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
         --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
