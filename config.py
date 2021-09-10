@@ -10,6 +10,9 @@ parser.add_argument('--split', type=int, default=1)
 # parser.add_argument('--object', action='store_true', default=False, help='add object info.')
 # parser.add_argument('--avg_wv', action='store_true', default=False, help='average between action and object.')
 parser.add_argument('--syn_num', type=int, default=150, help='number features to generate per class')
+
+parser.add_argument('--dual', action='store_true', default=False, help='enable dual VAEGAN')
+
 parser.add_argument('--zsl', action='store_true', default=False, help='enable zero-shot learning')
 parser.add_argument('--gzsl', action='store_true', default=False, help='enable generalized zero-shot learning')
 parser.add_argument('--gzsl_od', action='store_true', default=False, help='enable out-of-distribution based generalized zero-shot learning')
