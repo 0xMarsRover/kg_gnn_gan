@@ -451,7 +451,9 @@ else:
     # ZSL:  best_zsl_acc
     #       best_zsl_acc_per_class,
     #       best_zsl_cm
-    with open(os.path.join(result_root, "exp_zsl_results.txt"), "a+") as f:
+    with open(os.path.join(result_root, "exp_zsl_results_" +
+                                        opt.dataset + "_" +
+                                        opt.class_embedding + ".txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: ZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
