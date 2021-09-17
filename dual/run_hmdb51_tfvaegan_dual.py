@@ -2,44 +2,20 @@ import os
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
 # Also consider --syn_num: how many number of features should be generated per class
 
-# Conducting different experiments accordign to different semantics
-# when --class_embedding action_class_w2v
-#       --nz 300 --attSize 300
-
-# when --class_embedding avg_img_resnet18
-#       --nz 512 --attSize 512
-
-# when --class_embedding avg_img_resnet50
-#       --nz 2048 --attSize 2048
-
-# when --class_embedding avg_img_resnet101
-#       --nz 2048 --attSize 2048
-
-# when --class_embedding avg_img_googlenet
-#       --nz 1024 --attSize 1024
-
-# when --class_embedding avg_img_googlenet_me
-#       --nz 1024 --attSize 1024
-
-# when --class_embedding avg_desc_w2v
-#       --nz 300 --attSize 300
-
-# when --class_embedding fwv_k1_desc
-#       --nz 600 --attSize 600
-
 # Number of splits range(30)
-# when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
+
 '''
 class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 600,
-                   'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024, 'bert_embedding_1024': 1024
+                   'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024,
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
 '''
-class_embedding = {'bert_embedding_1024': 1024}
+
+class_embedding = {'avg_img_resnet101': 2048}
 
 for c, dim in class_embedding.items():
     for n in range(1, 6):
         # n = n + 1
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py \
         --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
         --dataroot /content/drive/MyDrive/colab_data/action_datasets \
         --splits_path hmdb51_semantics --split {split} \
