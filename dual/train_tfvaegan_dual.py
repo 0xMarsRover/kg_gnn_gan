@@ -341,7 +341,7 @@ for epoch in range(0, opt.nepoch):
     netG_text.eval()
     netDec_text.eval()
     netF_text.eval()
-    syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses, data.attribute, opt.syn_num,
+    syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses, data.attribute_text, opt.syn_num,
                                                   netF=netF_text, netDec=netDec_text)
 
     # TODO: Traing GAN-Image
@@ -482,7 +482,7 @@ for epoch in range(0, opt.nepoch):
     netG_image.eval()
     netDec_image.eval()
     netF_image.eval()
-    syn_feature_image, syn_label = generate_syn_feature(netG_image, data.unseenclasses, data.attribute, opt.syn_num,
+    syn_feature_image, syn_label = generate_syn_feature(netG_image, data.unseenclasses, data.attribute_image, opt.syn_num,
                                                   netF=netF_image, netDec=netDec_image)
 
     if opt.combined_syn == 'concat':
