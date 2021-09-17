@@ -222,21 +222,21 @@ for epoch in range(0, opt.nepoch):
             for iter_d in range(opt.critic_iter):
                 sample()
                 netD_text.zero_grad()
-                input_resv = Variable(input_res)
+                input_resv_text = Variable(input_res)
                 input_attv_text = Variable(input_att_text)
 
                 # TODO: Training the auxillary module
                 netDec_text.zero_grad()
-                recons = netDec_text(input_resv)
+                recons = netDec_text(input_resv_text)
                 R_cost = opt.recons_weight * WeightedL1(recons, input_attv_text)
                 # R_cost = opt.recons_weight*WeightedL1(recons, input_attv, bce=opt.bce_att, gt_bce=Variable(input_bce_att))
                 R_cost.backward()
                 optimizerDec_text.step()
-                criticD_real = netD_text(input_resv, input_attv_text)
+                criticD_real = netD_text(input_resv_text, input_attv_text)
                 criticD_real = opt.gammaD * criticD_real.mean()
                 criticD_real.backward(mone)
                 if opt.encoded_noise:
-                    means, log_var = netE_text(input_resv, input_attv_text)
+                    means, log_var = netE_text(input_resv_text, input_attv_text)
                     std = torch.exp(0.5 * log_var)
                     eps = torch.randn([opt.batch_size, opt.latent_size_text])
                     if opt.cuda:
@@ -285,8 +285,8 @@ for epoch in range(0, opt.nepoch):
             netE_text.zero_grad()
             netG_text.zero_grad()
             netF_text.zero_grad()
-            input_resv = Variable(input_res)
-            input_attv = Variable(input_att_text)
+            input_resv_text = Variable(input_res)
+            input_attv_text = Variable(input_att_text)
             # This is outside the opt.encoded_noise condition because of the vae loss
             means, log_var = netE_text(input_resv_text, input_attv_text)
             std = torch.exp(0.5 * log_var)
@@ -301,7 +301,7 @@ for epoch in range(0, opt.nepoch):
             else:
                 recon_x = netG_text(latent_code, c=input_attv_text)
 
-            vae_loss_seen = loss_fn(recon_x, input_resv, means, log_var)
+            vae_loss_seen = loss_fn(recon_x, input_resv_text, means, log_var)
             errG = vae_loss_seen
 
             if opt.encoded_noise:
@@ -364,21 +364,21 @@ for epoch in range(0, opt.nepoch):
             for iter_d in range(opt.critic_iter):
                 sample()
                 netD_image.zero_grad()
-                input_resv = Variable(input_res)
+                input_resv_image = Variable(input_res)
                 input_attv_image = Variable(input_att_image)
 
                 # TODO: Training the auxillary module
                 netDec_image.zero_grad()
-                recons = netDec_image(input_resv)
+                recons = netDec_image(input_resv_image)
                 R_cost = opt.recons_weight * WeightedL1(recons, input_attv_image)
                 # R_cost = opt.recons_weight*WeightedL1(recons, input_attv, bce=opt.bce_att, gt_bce=Variable(input_bce_att))
                 R_cost.backward()
                 optimizerDec_image.step()
-                criticD_real = netD_image(input_resv, input_attv_image)
+                criticD_real = netD_image(input_resv_image, input_attv_image)
                 criticD_real = opt.gammaD * criticD_real.mean()
                 criticD_real.backward(mone)
                 if opt.encoded_noise:
-                    means, log_var = netE_image(input_resv, input_attv_image)
+                    means, log_var = netE_image(input_resv_image, input_attv_image)
                     std = torch.exp(0.5 * log_var)
                     eps = torch.randn([opt.batch_size, opt.latent_size_image])
                     if opt.cuda:
@@ -427,10 +427,10 @@ for epoch in range(0, opt.nepoch):
             netE_image.zero_grad()
             netG_image.zero_grad()
             netF_image.zero_grad()
-            input_resv = Variable(input_res)
-            input_attv = Variable(input_att_image)
+            input_resv_image = Variable(input_res)
+            input_attv_image = Variable(input_att_image)
             # This is outside the opt.encoded_noise condition because of the vae loss
-            means, log_var = netE_image(input_resv, input_attv_image)
+            means, log_var = netE_image(input_resv_image, input_attv_image)
             std = torch.exp(0.5 * log_var)
             eps = torch.randn([opt.batch_size, opt.latent_size_image])
             if opt.cuda:
@@ -443,7 +443,7 @@ for epoch in range(0, opt.nepoch):
             else:
                 recon_x = netG_image(latent_code, c=input_attv_image)
 
-            vae_loss_seen = loss_fn(recon_x, input_resv, means, log_var)
+            vae_loss_seen = loss_fn(recon_x, input_resv_image, means, log_var)
             errG = vae_loss_seen
 
             if opt.encoded_noise:
