@@ -128,13 +128,13 @@ def sample():
     input_att_image.copy_(batch_att_image)
 
 
-def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None, attSize=None):
+def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None, attSize=None, nz=None):
     # unseen feature synthesis
     nclass = classes.size(0)
     syn_feature = torch.FloatTensor(nclass * num, opt.resSize)
     syn_label = torch.LongTensor(nclass * num)
     syn_att = torch.FloatTensor(num, attSize)
-    syn_noise = torch.FloatTensor(num, opt.nz)
+    syn_noise = torch.FloatTensor(num, nz)
     if opt.cuda:
         syn_att = syn_att.cuda()
         syn_noise = syn_noise.cuda()
@@ -342,7 +342,8 @@ for epoch in range(0, opt.nepoch):
     netDec_text.eval()
     netF_text.eval()
     syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses, data.attribute_text, opt.syn_num,
-                                                  netF=netF_text, netDec=netDec_text,attSize=opt.attSize_text)
+                                                        netF=netF_text, netDec=netDec_text,
+                                                        attSize=opt.attSize_text, nz=opt.nz_text)
 
     # TODO: Traing GAN-Image
     # feedback training loop
@@ -483,7 +484,8 @@ for epoch in range(0, opt.nepoch):
     netDec_image.eval()
     netF_image.eval()
     syn_feature_image, syn_label = generate_syn_feature(netG_image, data.unseenclasses, data.attribute_image, opt.syn_num,
-                                                  netF=netF_image, netDec=netDec_image, attSize=opt.attSize_image)
+                                                        netF=netF_image, netDec=netDec_image,
+                                                        attSize=opt.attSize_image, nz=opt.nz_image)
 
     if opt.combined_syn == 'concat':
         syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
