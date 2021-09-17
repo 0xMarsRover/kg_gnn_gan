@@ -7,10 +7,11 @@ parser.add_argument('--action_embedding', default='i3d') # action visual embeddi
 parser.add_argument('--class_embedding', default='action_class_w2v')
 parser.add_argument('--splits_path', default='ucf101/ucf101_semantics', help='or replace ucf101 with hmdb51')
 parser.add_argument('--split', type=int, default=1)
+parser.add_argument('--combined_syn', default='concat') # or avg
 
 parser.add_argument('--syn_num', type=int, default=150, help='number features to generate per class')
 
-parser.add_argument('--dual', action='store_true', default=False, help='enable dual VAEGAN')
+#parser.add_argument('--dual', action='store_true', default=False, help='enable dual VAEGAN')
 
 parser.add_argument('--zsl', action='store_true', default=False, help='enable zero-shot learning')
 parser.add_argument('--gzsl', action='store_true', default=False, help='enable generalized zero-shot learning')
@@ -20,8 +21,12 @@ parser.add_argument('--standardization', action='store_true', default=False)
 parser.add_argument('--workers', type=int, help='number of data loading workers', default=8)
 parser.add_argument('--batch_size', type=int, default=64, help='input batch size')
 parser.add_argument('--resSize', type=int, default=2048, help='size of visual features')
-parser.add_argument('--attSize', type=int, default=1024, help='size of semantic features')
-parser.add_argument('--nz', type=int, default=312, help='size of the latent z vector')
+
+parser.add_argument('--attSize_image', type=int, default=1024, help='size of semantic features')
+parser.add_argument('--nz_image', type=int, default=312, help='size of the latent z vector')
+parser.add_argument('--attSize_text', type=int, default=1024, help='size of semantic features')
+parser.add_argument('--nz_text', type=int, default=312, help='size of the latent z vector')
+
 parser.add_argument('--ngh', type=int, default=4096, help='size of the hidden units in generator')
 parser.add_argument('--ndh', type=int, default=1024, help='size of the hidden units in discriminator')
 parser.add_argument('--nepoch', type=int, default=2000, help='number of epochs to train for')
@@ -57,4 +62,6 @@ opt = parser.parse_args()
 opt.lambda2 = opt.lambda1
 opt.encoder_layer_sizes[0] = opt.resSize
 opt.decoder_layer_sizes[-1] = opt.resSize
-opt.latent_size = opt.attSize
+
+opt.latent_size_text = opt.attSize_text
+opt.latent_size_image = opt.attSize_image

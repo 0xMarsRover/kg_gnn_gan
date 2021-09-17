@@ -14,18 +14,33 @@ def weights_init(m):
 
 # Encoder
 class Encoder(nn.Module):
-    def __init__(self, opt):
+    def __init__(self, opt, semantics_type='text'):
         super(Encoder, self).__init__()
-        # encoder_layer_sizes (default: [8192, 4096])
-        layer_sizes = opt.encoder_layer_sizes
-        latent_size = opt.latent_size
-        layer_sizes[0] += latent_size
-        self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
-        self.fc3 = nn.Linear(layer_sizes[-1], latent_size*2)
-        self.lrelu = nn.LeakyReLU(0.2, True)
-        self.linear_means = nn.Linear(latent_size*2, latent_size)
-        self.linear_log_var = nn.Linear(latent_size*2, latent_size)
-        self.apply(weights_init)
+        if semantics_type == 'text':
+            # encoder_layer_sizes (default: [8192, 4096])
+            print("Training E with Text.")
+            layer_sizes = opt.encoder_layer_sizes
+            latent_size_text = opt.latent_size_text
+            layer_sizes[0] += latent_size_text
+            self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
+            self.fc3 = nn.Linear(layer_sizes[-1], latent_size_text*2)
+            self.lrelu = nn.LeakyReLU(0.2, True)
+            self.linear_means = nn.Linear(latent_size_text*2, latent_size_text)
+            self.linear_log_var = nn.Linear(latent_size_text*2, latent_size_text)
+            self.apply(weights_init)
+
+        if semantics_type == 'image':
+            # encoder_layer_sizes (default: [8192, 4096])
+            print("Training E with Image.")
+            layer_sizes = opt.encoder_layer_sizes
+            latent_size_image = opt.latent_size_image
+            layer_sizes[0] += latent_size_image
+            self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
+            self.fc3 = nn.Linear(layer_sizes[-1], latent_size_image*2)
+            self.lrelu = nn.LeakyReLU(0.2, True)
+            self.linear_means = nn.Linear(latent_size_image*2, latent_size_image)
+            self.linear_log_var = nn.Linear(latent_size_image*2, latent_size_image)
+            self.apply(weights_init)
 
     def forward(self, x, c=None):
         if c is not None: x = torch.cat((x, c), dim=-1)
@@ -38,16 +53,29 @@ class Encoder(nn.Module):
 
 # Decoder/Generator
 class Generator(nn.Module):
-    def __init__(self, opt):
+    def __init__(self, opt, semantics_type='text'):
         super(Generator, self).__init__()
-        layer_sizes = opt.decoder_layer_sizes
-        latent_size = opt.latent_size
-        input_size = latent_size * 2
-        self.fc1 = nn.Linear(input_size, layer_sizes[0])
-        self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])
-        self.lrelu = nn.LeakyReLU(0.2, True)
-        self.sigmoid = nn.Sigmoid()
-        self.apply(weights_init)
+        if semantics_type == 'text':
+            print("Training E with Text.")
+            layer_sizes = opt.decoder_layer_sizes
+            latent_size_text = opt.latent_size_text
+            input_size = latent_size_text * 2
+            self.fc1 = nn.Linear(input_size, layer_sizes[0])
+            self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])
+            self.lrelu = nn.LeakyReLU(0.2, True)
+            self.sigmoid = nn.Sigmoid()
+            self.apply(weights_init)
+
+        if semantics_type == 'image':
+            print("Training E with Image.")
+            layer_sizes = opt.decoder_layer_sizes
+            latent_size_image = opt.latent_size_image
+            input_size = latent_size_image * 2
+            self.fc1 = nn.Linear(input_size, layer_sizes[0])
+            self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])
+            self.lrelu = nn.LeakyReLU(0.2, True)
+            self.sigmoid = nn.Sigmoid()
+            self.apply(weights_init)
 
     def _forward(self, z, c=None):
         z = torch.cat((z, c), dim=-1)
@@ -69,12 +97,19 @@ class Generator(nn.Module):
 
 # conditional discriminator for inductive
 class Discriminator_D1(nn.Module):
-    def __init__(self, opt): 
+    def __init__(self, opt, semantics_type='text'):
         super(Discriminator_D1, self).__init__()
-        self.fc1 = nn.Linear(opt.resSize + opt.attSize, opt.ndh)
-        self.fc2 = nn.Linear(opt.ndh, 1)
-        self.lrelu = nn.LeakyReLU(0.2, True)
-        self.apply(weights_init)
+        if semantics_type == 'text':
+            self.fc1 = nn.Linear(opt.resSize + opt.attSize_text, opt.ndh)
+            self.fc2 = nn.Linear(opt.ndh, 1)
+            self.lrelu = nn.LeakyReLU(0.2, True)
+            self.apply(weights_init)
+
+        if semantics_type == 'image':
+            self.fc1 = nn.Linear(opt.resSize + opt.attSize_image, opt.ndh)
+            self.fc2 = nn.Linear(opt.ndh, 1)
+            self.lrelu = nn.LeakyReLU(0.2, True)
+            self.apply(weights_init)
 
     def forward(self, x, att):
         h = torch.cat((x, att), 1) 
@@ -85,7 +120,7 @@ class Discriminator_D1(nn.Module):
 
 # Feedback Modules
 class Feedback(nn.Module):
-    def __init__(self,opt):
+    def __init__(self, opt):
         super(Feedback, self).__init__()
         self.fc1 = nn.Linear(opt.ngh, opt.ngh)
         self.fc2 = nn.Linear(opt.ngh, opt.ngh)

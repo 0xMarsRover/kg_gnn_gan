@@ -56,27 +56,19 @@ class DATA_LOADER(object):
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
             # semantics embedding
-            print("Semantic Embedding: ", opt.class_embedding)
-            self.attribute = torch.from_numpy(matcontent[opt.class_embedding].T).float()
+            print("Text Semantic Embedding: ", opt.class_embedding_text)
+            self.attribute_text = torch.from_numpy(matcontent[opt.class_embedding].T).float()
             # L2 Norm.
-            self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
-                                                                                      self.attribute.size(1))
-            '''
-            # TODO: Dual GAN - semantic embedding for texts and images
-            if opt.class_embedding == 'text_image':
-                print("Semantic Embedding: ", opt.class_embedding)
-                # Text embedding
-                self.attribute_text = torch.from_numpy(matcontent[opt.class_embedding].T).float()
-                # L2 Norm.
-                self.attribute_text /= self.attribute_text.pow(2).sum(1).sqrt().unsqueeze(1).\
-                    expand(self.attribute_text.size(0), self.attribute_text.size(1))
+            self.attribute_text /= self.attribute_text.pow(2).sum(1).sqrt().unsqueeze(1).\
+                                    expand(self.attribute_text.size(0), self.attribute_text.size(1))
 
-                # Image embedding
-                self.attribute_image = torch.from_numpy(matcontent[opt.class_embedding].T).float()
-                # L2 Norm.
-                self.attribute_image /= self.attribute_image.pow(2).sum(1).sqrt().unsqueeze(1).\
-                    expand(self.attribute_image.size(0), self.attribute_image.size(1))
-            '''
+            print("Image Semantic Embedding: ", opt.class_embedding_image)
+            self.attribute_image = torch.from_numpy(matcontent[opt.class_embedding].T).float()
+            # L2 Norm.
+            self.attribute_image /= self.attribute_image.pow(2).sum(1).sqrt().unsqueeze(1).\
+                                    expand(self.attribute_image.size(0), self.attribute_image.size(1))
+
+
 
 
         # HMDB51 dataset
@@ -105,11 +97,17 @@ class DATA_LOADER(object):
             test_unseen_loc = matcontent['test_unseen_loc'].squeeze() - 1
 
             # semantics embedding
-            print("Semantic Embedding: ", opt.class_embedding)
-            self.attribute = torch.from_numpy(matcontent[opt.class_embedding].T).float()
+            print("Text Semantic Embedding: ", opt.class_embedding_text)
+            self.attribute_text = torch.from_numpy(matcontent[opt.class_embedding].T).float()
             # L2 Norm.
-            self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
-                                                                                      self.attribute.size(1))
+            self.attribute_text /= self.attribute_text.pow(2).sum(1).sqrt().unsqueeze(1).\
+                                    expand(self.attribute_text.size(0), self.attribute_text.size(1))
+
+            print("Image Semantic Embedding: ", opt.class_embedding_image)
+            self.attribute_image = torch.from_numpy(matcontent[opt.class_embedding].T).float()
+            # L2 Norm.
+            self.attribute_image /= self.attribute_image.pow(2).sum(1).sqrt().unsqueeze(1).\
+                                    expand(self.attribute_image.size(0), self.attribute_image.size(1))
 
         if not opt.validation:
             print("Disable cross validation mode")
@@ -165,6 +163,7 @@ class DATA_LOADER(object):
         idx = torch.randperm(self.ntrain)[0:seen_batch]
         batch_feature = self.train_feature[idx]
         batch_label = self.train_label[idx]
-        batch_att = self.attribute[batch_label]
-        return batch_feature, batch_att
+        batch_att_text = self.attribute_text[batch_label]
+        batch_att_image = self.attribute_image[batch_label]
+        return batch_feature, batch_att_text, batch_att_image
 
