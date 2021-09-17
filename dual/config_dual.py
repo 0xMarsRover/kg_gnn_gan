@@ -4,7 +4,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', default='ucf101', help='ucf101 or hmdb51')
 parser.add_argument('--dataroot', default='data', help='path to data root')
 parser.add_argument('--action_embedding', default='i3d') # action visual embedding
-parser.add_argument('--class_embedding', default='action_class_w2v')
+parser.add_argument('--class_embedding_text', default='action_class_w2v')
+parser.add_argument('--class_embedding_image', default='avg_img_resnet101')
 parser.add_argument('--splits_path', default='ucf101/ucf101_semantics', help='or replace ucf101 with hmdb51')
 parser.add_argument('--split', type=int, default=1)
 parser.add_argument('--combined_syn', default='concat') # or avg
