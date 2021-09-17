@@ -18,7 +18,6 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         if semantics_type == 'text':
             # encoder_layer_sizes (default: [8192, 4096])
-            print("Training E with Text.")
             layer_sizes = opt.encoder_layer_sizes
             latent_size_text = opt.latent_size_text
             layer_sizes[0] += latent_size_text
@@ -31,7 +30,6 @@ class Encoder(nn.Module):
 
         if semantics_type == 'image':
             # encoder_layer_sizes (default: [8192, 4096])
-            print("Training E with Image.")
             layer_sizes = opt.encoder_layer_sizes
             latent_size_image = opt.latent_size_image
             layer_sizes[0] += latent_size_image
@@ -56,7 +54,6 @@ class Generator(nn.Module):
     def __init__(self, opt, semantics_type='text'):
         super(Generator, self).__init__()
         if semantics_type == 'text':
-            print("Training E with Text.")
             layer_sizes = opt.decoder_layer_sizes
             latent_size_text = opt.latent_size_text
             input_size = latent_size_text * 2
@@ -67,7 +64,6 @@ class Generator(nn.Module):
             self.apply(weights_init)
 
         if semantics_type == 'image':
-            print("Training E with Image.")
             layer_sizes = opt.decoder_layer_sizes
             latent_size_image = opt.latent_size_image
             input_size = latent_size_image * 2

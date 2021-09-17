@@ -54,7 +54,7 @@ parser.add_argument('--gammaD', type=int, default=1000, help='weight on the W-GA
 parser.add_argument('--gammaG', type=int, default=1000, help='weight on the W-GAN loss')
 parser.add_argument('--gammaG_D2', type=int, default=1000, help='weight on the W-GAN loss')
 parser.add_argument('--gammaD2', type=int, default=1000, help='weight on the W-GAN loss')
-parser.add_argument("--latent_size", type=int, default=312)
+#parser.add_argument("--latent_size", type=int, default=312)
 parser.add_argument("--conditional", action='store_true',default=True)
 parser.add_argument('--freeze_dec', action='store_true', default=False, help='Freeze Decoder for fake samples')
 parser.add_argument('--bce_att', action='store_true', default=False, help='bce attributes')

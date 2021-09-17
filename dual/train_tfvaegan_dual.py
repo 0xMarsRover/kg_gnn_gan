@@ -238,7 +238,7 @@ for epoch in range(0, opt.nepoch):
                 if opt.encoded_noise:
                     means, log_var = netE_text(input_resv, input_attv)
                     std = torch.exp(0.5 * log_var)
-                    eps = torch.randn([opt.batch_size, opt.latent_size])
+                    eps = torch.randn([opt.batch_size, opt.latent_size_text])
                     if opt.cuda:
                         eps = eps.cuda()
                     eps = Variable(eps)
@@ -290,7 +290,7 @@ for epoch in range(0, opt.nepoch):
             # This is outside the opt.encoded_noise condition because of the vae loss
             means, log_var = netE_text(input_resv, input_attv)
             std = torch.exp(0.5 * log_var)
-            eps = torch.randn([opt.batch_size, opt.latent_size])
+            eps = torch.randn([opt.batch_size, opt.latent_size_text])
             if opt.cuda:
                 eps = eps.cuda()
             eps = Variable(eps)
@@ -379,7 +379,7 @@ for epoch in range(0, opt.nepoch):
                 if opt.encoded_noise:
                     means, log_var = netE_image(input_resv, input_attv)
                     std = torch.exp(0.5 * log_var)
-                    eps = torch.randn([opt.batch_size, opt.latent_size])
+                    eps = torch.randn([opt.batch_size, opt.latent_size_image])
                     if opt.cuda:
                         eps = eps.cuda()
                     eps = Variable(eps)
@@ -431,7 +431,7 @@ for epoch in range(0, opt.nepoch):
             # This is outside the opt.encoded_noise condition because of the vae loss
             means, log_var = netE_image(input_resv, input_attv)
             std = torch.exp(0.5 * log_var)
-            eps = torch.randn([opt.batch_size, opt.latent_size])
+            eps = torch.randn([opt.batch_size, opt.latent_size_image])
             if opt.cuda:
                 eps = eps.cuda()
             eps = Variable(eps)
