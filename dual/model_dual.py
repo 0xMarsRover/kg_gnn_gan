@@ -30,7 +30,6 @@ class Encoder(nn.Module):
 
         if semantics_type == 'image':
             # encoder_layer_sizes (default: [8192, 4096])
-            print("Encoder with image")
             layer_sizes = opt.encoder_layer_sizes
             latent_size_image = opt.latent_size_image
             layer_sizes[0] += latent_size_image
