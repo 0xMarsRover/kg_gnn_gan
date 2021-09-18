@@ -56,8 +56,6 @@ netD_text = model_dual.Discriminator_D1(opt, semantics_type='text')
 netF_text = model_dual.Feedback(opt)
 netDec_text = model_dual.AttDec(opt, opt.attSize_text)
 
-
-
 # Init Tensors
 input_res = torch.FloatTensor(opt.batch_size, opt.resSize)
 
@@ -158,18 +156,17 @@ def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None, 
 
 
 # setup optimizer
+optimizerD_image = optim.Adam(netD_image.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+optimizerE_image = optim.Adam(netE_image.parameters(), lr=opt.lr)
+optimizerG_image = optim.Adam(netG_image.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+optimizerF_image = optim.Adam(netF_image.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
+optimizerDec_image = optim.Adam(netDec_image.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
 
 optimizerD_text = optim.Adam(netD_text.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerE_text = optim.Adam(netE_text.parameters(), lr=opt.lr)
 optimizerG_text = optim.Adam(netG_text.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerF_text = optim.Adam(netF_text.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
 optimizerDec_text = optim.Adam(netDec_text.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
-
-optimizerD_image = optim.Adam(netD_image.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
-optimizerE_image = optim.Adam(netE_image.parameters(), lr=opt.lr)
-optimizerG_image = optim.Adam(netG_image.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
-optimizerF_image = optim.Adam(netF_image.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
-optimizerDec_image = optim.Adam(netDec_image.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
 
 
 def calc_gradient_penalty(netD, real_data, fake_data, input_att):
