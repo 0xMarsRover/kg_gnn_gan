@@ -206,13 +206,12 @@ for epoch in range(0, opt.nepoch):
     print("Start VAEGAN Training at epoch: ", epoch)
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
-        print("Training GAN-Text..")
+        print("Training GAN-Text at feedback loop: ", loop)
         for i in range(0, data.ntrain, opt.batch_size):
             # TODO: Discriminator training
             # unfreeze discrimator
             for p in netD_text.parameters():
                 p.requires_grad = True
-
             # unfreeze deocder
             for p in netDec_text.parameters():
                 p.requires_grad = True
@@ -354,7 +353,6 @@ for epoch in range(0, opt.nepoch):
             # unfreeze discrimator
             for p in netD_image.parameters():
                 p.requires_grad = True
-
             # unfreeze deocder
             for p in netDec_image.parameters():
                 p.requires_grad = True
@@ -626,7 +624,8 @@ else:
     #       best_zsl_cm
     with open(os.path.join(result_root, "exp_zsl_results_" +
                                         opt.dataset + "_" +
-                                        opt.class_embedding + ".txt"), "a+") as f:
+                                        opt.class_embedding_text +
+                                        opt.class_embedding_image + "_dual.txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: ZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
