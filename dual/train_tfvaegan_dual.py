@@ -40,7 +40,7 @@ elif opt.gzsl:
 else:
     print('Performing ZSL experiments!')
 
-
+'''
 # Init modules: Encoder, Generator, Discriminator
 netE_text = model_dual.Encoder(opt, semantics_type='text')
 netG_text = model_dual.Generator(opt, semantics_type='text')
@@ -48,7 +48,7 @@ netD_text = model_dual.Discriminator_D1(opt, semantics_type='text')
 # Init model_duals: Feedback module, auxillary module
 netF_text = model_dual.Feedback(opt)
 netDec_text = model_dual.AttDec(opt, opt.attSize_text)
-
+'''
 netE_image = model_dual.Encoder(opt, semantics_type='image')
 netG_image = model_dual.Generator(opt, semantics_type='image')
 netD_image = model_dual.Discriminator_D1(opt, semantics_type='image')
@@ -72,13 +72,14 @@ mone = one * -1
 
 # Cuda
 if opt.cuda:
+    '''
     netG_text.cuda()
     netD_text.cuda()
     netE_text.cuda()
     netDec_text.cuda()
     netF_text.cuda()
     noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
-
+    '''
     netG_image.cuda()
     netD_image.cuda()
     netE_image.cuda()
@@ -156,12 +157,13 @@ def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None, 
 
 
 # setup optimizer
+'''
 optimizerD_text = optim.Adam(netD_text.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerE_text = optim.Adam(netE_text.parameters(), lr=opt.lr)
 optimizerG_text = optim.Adam(netG_text.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerF_text = optim.Adam(netF_text.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
 optimizerDec_text = optim.Adam(netDec_text.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
-
+'''
 optimizerD_image = optim.Adam(netD_image.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerE_image = optim.Adam(netE_image.parameters(), lr=opt.lr)
 optimizerG_image = optim.Adam(netG_image.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
