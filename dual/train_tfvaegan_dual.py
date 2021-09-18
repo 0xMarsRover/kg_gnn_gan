@@ -72,19 +72,19 @@ mone = one * -1
 
 # Cuda
 if opt.cuda:
-    netG_text.cuda()
-    netD_text.cuda()
-    netE_text.cuda()
-    netDec_text.cuda()
-    netF_text.cuda()
-    noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
-
     netG_image.cuda()
     netD_image.cuda()
     netE_image.cuda()
     netDec_image.cuda()
     netF_image.cuda()
     noise_image, input_att_image = noise_image.cuda(), input_att_image.cuda()
+
+    netG_text.cuda()
+    netD_text.cuda()
+    netE_text.cuda()
+    netDec_text.cuda()
+    netF_text.cuda()
+    noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
 
     # input_bce_att = input_bce_att.cuda()
     input_res = input_res.cuda()
