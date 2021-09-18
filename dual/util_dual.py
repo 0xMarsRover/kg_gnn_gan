@@ -161,7 +161,6 @@ class DATA_LOADER(object):
 
     def next_seen_batch(self, seen_batch):
         idx = torch.randperm(self.ntrain)[0:seen_batch]
-        print("idx: ", idx)
         batch_feature = self.train_feature[idx]
         batch_label = self.train_label[idx]
         batch_att_text = self.attribute_text[batch_label]

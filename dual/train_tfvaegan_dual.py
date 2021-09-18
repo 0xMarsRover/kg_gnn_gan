@@ -362,6 +362,7 @@ for epoch in range(0, opt.nepoch):
             # TODO: Train D1 and Decoder
             gp_sum = 0
             for iter_d in range(opt.critic_iter):
+                # TODO: BUG -> init? or train dual in one loop?
                 sample()
                 netD_image.zero_grad()
                 input_resv_image = Variable(input_res)
