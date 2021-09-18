@@ -55,6 +55,17 @@ netD_image = model_dual.Discriminator_D1(opt, semantics_type='image')
 netF_image = model_dual.Feedback(opt)
 netDec_image = model_dual.AttDec(opt, opt.attSize_image)
 
+print(netE_text)
+print(netG_text)
+print(netD_text)
+print(netF_text)
+print(netDec_text)
+
+print(netE_image)
+print(netG_image)
+print(netD_image)
+print(netF_image)
+print(netDec_image)
 
 # Init Tensors
 input_res = torch.FloatTensor(opt.batch_size, opt.resSize)
