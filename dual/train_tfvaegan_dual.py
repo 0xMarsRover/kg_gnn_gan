@@ -205,6 +205,7 @@ else:
 for epoch in range(0, opt.nepoch):
     print("Start VAEGAN Training at epoch: ", epoch)
     # feedback training loop
+    '''
     for loop in range(0, opt.feedback_loop):
         print("Training GAN-Text at feedback loop: ", loop)
         for i in range(0, data.ntrain, opt.batch_size):
@@ -343,8 +344,9 @@ for epoch in range(0, opt.nepoch):
     syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses, data.attribute_text, opt.syn_num,
                                                         netF=netF_text, netDec=netDec_text,
                                                         attSize=opt.attSize_text, nz=opt.nz_text)
-    print("syn_feature_text_shape: ", syn_feature_text.shape)
-
+    #(25*800, 8192)
+    #print("syn_feature_text_shape: ", syn_feature_text.shape)
+    '''
     # TODO: Traing GAN-Image
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
