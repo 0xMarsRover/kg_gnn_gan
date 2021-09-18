@@ -489,6 +489,8 @@ for epoch in range(0, opt.nepoch):
 
     if opt.combined_syn == 'concat':
         syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
+    else:
+        print("Please choose the correct combination approaches.")
 
     # TODO: Generalized zero-shot learning
     if opt.gzsl_od:
