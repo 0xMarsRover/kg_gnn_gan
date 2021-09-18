@@ -28,7 +28,7 @@ class Encoder(nn.Module):
             self.linear_log_var = nn.Linear(latent_size_text*2, latent_size_text)
             self.apply(weights_init)
 
-        else:
+        if semantics_type == 'image':
             # encoder_layer_sizes (default: [8192, 4096])
             layer_sizes = opt.encoder_layer_sizes
             latent_size_image = opt.latent_size_image
