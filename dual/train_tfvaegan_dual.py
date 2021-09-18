@@ -230,7 +230,6 @@ for epoch in range(0, opt.nepoch):
                 netDec_image.zero_grad()
                 recons = netDec_image(input_resv_image)
                 R_cost = opt.recons_weight * WeightedL1(recons, input_attv_image)
-                # R_cost = opt.recons_weight*WeightedL1(recons, input_attv, bce=opt.bce_att, gt_bce=Variable(input_bce_att))
                 R_cost.backward()
                 optimizerDec_image.step()
                 criticD_real = netD_image(input_resv_image, input_attv_image)
