@@ -14,7 +14,7 @@ def weights_init(m):
 
 # Encoder
 class Encoder(nn.Module):
-    def __init__(self, opt, semantics_type='text'):
+    def __init__(self, opt, semantics_type=None):
         super(Encoder, self).__init__()
         if semantics_type == 'text':
             # encoder_layer_sizes (default: [8192, 4096])
