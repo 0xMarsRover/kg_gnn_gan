@@ -30,6 +30,7 @@ if torch.cuda.is_available() and not opt.cuda:
 data = util_dual.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)
 print("Dataset: ", opt.dataset)
+print("Dual GAN with ", opt.combined_syn)
 
 if opt.gzsl_od:
     print('Performing OD-based GZSL experiments!')
@@ -54,18 +55,6 @@ netD_image = model_dual.Discriminator_D1(opt, semantics_type='image')
 # Init model_duals: Feedback module, auxillary module
 netF_image = model_dual.Feedback(opt)
 netDec_image = model_dual.AttDec(opt, opt.attSize_image)
-
-print(netE_text)
-print(netG_text)
-print(netD_text)
-print(netF_text)
-print(netDec_text)
-
-print(netE_image)
-print(netG_image)
-print(netD_image)
-print(netF_image)
-print(netDec_image)
 
 # Init Tensors
 input_res = torch.FloatTensor(opt.batch_size, opt.resSize)
@@ -354,6 +343,7 @@ for epoch in range(0, opt.nepoch):
     syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses, data.attribute_text, opt.syn_num,
                                                         netF=netF_text, netDec=netDec_text,
                                                         attSize=opt.attSize_text, nz=opt.nz_text)
+    print("syn_feature_text_shape: ", syn_feature_text.shape)
 
     # TODO: Traing GAN-Image
     # feedback training loop
