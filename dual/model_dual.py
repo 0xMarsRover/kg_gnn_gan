@@ -28,7 +28,7 @@ class Encoder(nn.Module):
             self.linear_log_var = nn.Linear(latent_size_text*2, latent_size_text)
             self.apply(weights_init)
 
-        if semantics_type == 'image':
+        elif semantics_type == 'image':
             # encoder_layer_sizes (default: [8192, 4096])
             layer_sizes = opt.encoder_layer_sizes
             latent_size_image = opt.latent_size_image
@@ -39,6 +39,8 @@ class Encoder(nn.Module):
             self.linear_means = nn.Linear(latent_size_image*2, latent_size_image)
             self.linear_log_var = nn.Linear(latent_size_image*2, latent_size_image)
             self.apply(weights_init)
+        else:
+            print("Please indicate which type of semantic embedding is using.")
 
     def forward(self, x, c=None):
         if c is not None: x = torch.cat((x, c), dim=-1)
@@ -51,7 +53,7 @@ class Encoder(nn.Module):
 
 # Decoder/Generator
 class Generator(nn.Module):
-    def __init__(self, opt, semantics_type='text'):
+    def __init__(self, opt, semantics_type=None):
         super(Generator, self).__init__()
         if semantics_type == 'text':
             layer_sizes = opt.decoder_layer_sizes
@@ -63,7 +65,7 @@ class Generator(nn.Module):
             self.sigmoid = nn.Sigmoid()
             self.apply(weights_init)
 
-        if semantics_type == 'image':
+        elif semantics_type == 'image':
             layer_sizes = opt.decoder_layer_sizes
             latent_size_image = opt.latent_size_image
             input_size = latent_size_image * 2
@@ -72,6 +74,9 @@ class Generator(nn.Module):
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.sigmoid = nn.Sigmoid()
             self.apply(weights_init)
+
+        else:
+            print("Please indicate which type of semantic embedding is using.")
 
     def _forward(self, z, c=None):
         z = torch.cat((z, c), dim=-1)
@@ -93,7 +98,7 @@ class Generator(nn.Module):
 
 # conditional discriminator for inductive
 class Discriminator_D1(nn.Module):
-    def __init__(self, opt, semantics_type='text'):
+    def __init__(self, opt, semantics_type=None):
         super(Discriminator_D1, self).__init__()
         if semantics_type == 'text':
             self.fc1 = nn.Linear(opt.resSize + opt.attSize_text, opt.ndh)
@@ -101,11 +106,14 @@ class Discriminator_D1(nn.Module):
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.apply(weights_init)
 
-        if semantics_type == 'image':
+        elif semantics_type == 'image':
             self.fc1 = nn.Linear(opt.resSize + opt.attSize_image, opt.ndh)
             self.fc2 = nn.Linear(opt.ndh, 1)
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.apply(weights_init)
+
+        else:
+            print("Please indicate which type of semantic embedding is using.")
 
     def forward(self, x, att):
         h = torch.cat((x, att), 1) 
