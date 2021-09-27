@@ -9,7 +9,7 @@ from sklearn.metrics import confusion_matrix
 
 class CLASSIFIER:
     def __init__(self, _train_X, _train_Y, data_loader, _nclass, syn_feature, syn_label, _cuda, seen_classifier,
-                 unseen_classifier, _lr=0.001, _beta1=0.5, _nepoch=50, _batch_size=100, _hidden_size=512,
+                 unseen_classifier, _lr=0.001, _beta1=0.5, _nepoch=50, _batch_size=64, _hidden_size=512,
                  netDec=None, dec_size=4096, dec_hidden_size=4096):
         self.train_X = _train_X
         self.train_Y = _train_Y

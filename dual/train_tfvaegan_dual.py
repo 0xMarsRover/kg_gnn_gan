@@ -540,7 +540,7 @@ for epoch in range(0, opt.nepoch):
         nclass = opt.nclass_all
         clsg = classifier_dual.CLASSIFIER(train_X, train_Y, data, nclass,
                                      opt.cuda, _nepoch=50,
-                                     _batch_size=128, generalized=True,
+                                     _batch_size=64, generalized=True,
                                      netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
         if best_gzsl_simple_acc < clsg.H:
             best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H

@@ -15,7 +15,7 @@ class_embedding_image = {'avg_img_resnet101': 2048}
 
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
-        for n in range(1, 6):
+        for n in range(3, 11):
             # n = n + 1
             os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py \
             --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
