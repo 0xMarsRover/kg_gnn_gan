@@ -557,7 +557,7 @@ for epoch in range(0, opt.nepoch):
                                         data, data.unseenclasses.size(0),
                                         opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
                                         generalized=False, netDec=netDec_image,
-                                        dec_size=opt.attSize_image+opt.attSize_text, dec_hidden_size=4096)
+                                        dec_size=opt.attSize_image, dec_hidden_size=4096)
         acc = zsl_cls.acc
         acc_per_class = zsl_cls.acc_per_class
         cm = zsl_cls.cm
