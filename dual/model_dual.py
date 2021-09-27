@@ -23,7 +23,8 @@ class Encoder(nn.Module):
             print("text layer_sizes:", layer_sizes[0], layer_sizes[-1])
             latent_size_text = opt.latent_size_text
             print("latent_size_text:", latent_size_text)
-            layer_sizes[0] += latent_size_text
+            #layer_sizes[0] += latent_size_text
+            layer_sizes[0] = 8492
             print("text layer_sizes[0]:", layer_sizes[0])
             self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
             self.fc3 = nn.Linear(layer_sizes[-1], latent_size_text*2)
