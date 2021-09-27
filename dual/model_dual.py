@@ -51,12 +51,8 @@ class Encoder(nn.Module):
 
     def forward(self, x, c=None):
         if c is not None: x = torch.cat((x, c), dim=-1)
-        print("forward()->x: ", x.shape)
-        print("forward()->c: ", c.shape)
         x = self.lrelu(self.fc1(x)) #(batch_size, 4096)
-        print("forward()->x: ", x.shape)
         x = self.lrelu(self.fc3(x)) #(batch_size, 600)
-        print("forward()->x: ", x.shape)
         means = self.linear_means(x)
         log_vars = self.linear_log_var(x)
         return means, log_vars
