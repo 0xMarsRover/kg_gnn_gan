@@ -20,9 +20,11 @@ class Encoder(nn.Module):
         if semantics_type == 'text':
             # encoder_layer_sizes (default: [8192, 4096])
             #layer_sizes = opt.encoder_layer_sizes
-            print(layer_sizes[0], layer_sizes[-1])
+            print("text layer_sizes:", layer_sizes[0], layer_sizes[-1])
             latent_size_text = opt.latent_size_text
+            print("latent_size_text:", latent_size_text)
             layer_sizes[0] += latent_size_text
+            print("text layer_sizes[0]:", layer_sizes[0])
             self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
             self.fc3 = nn.Linear(layer_sizes[-1], latent_size_text*2)
             self.lrelu = nn.LeakyReLU(0.2, True)
@@ -33,9 +35,11 @@ class Encoder(nn.Module):
         elif semantics_type == 'image':
             # encoder_layer_sizes (default: [8192, 4096])
             #layer_sizes = opt.encoder_layer_sizes
-            print(layer_sizes[0], layer_sizes[-1])
+            print("image layer_sizes:", layer_sizes[0], layer_sizes[-1])
             latent_size_image = opt.latent_size_image
+            print("latent_size_image:", latent_size_image)
             layer_sizes[0] += latent_size_image
+            print("image layer_sizes[0]:", layer_sizes[0])
             self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
             self.fc3 = nn.Linear(layer_sizes[-1], latent_size_image*2)
             self.lrelu = nn.LeakyReLU(0.2, True)
@@ -47,8 +51,12 @@ class Encoder(nn.Module):
 
     def forward(self, x, c=None):
         if c is not None: x = torch.cat((x, c), dim=-1)
+        print("forward()->x: ", x.shape)
+        print("forward()->c: ", c.shape)
         x = self.lrelu(self.fc1(x)) #(batch_size, 4096)
+        print("forward()->x: ", x.shape)
         x = self.lrelu(self.fc3(x)) #(batch_size, 600)
+        print("forward()->x: ", x.shape)
         means = self.linear_means(x)
         log_vars = self.linear_log_var(x)
         return means, log_vars
