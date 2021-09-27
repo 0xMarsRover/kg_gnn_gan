@@ -21,11 +21,11 @@ class Encoder(nn.Module):
             # encoder_layer_sizes (default: [8192, 4096])
             #layer_sizes_text = opt.encoder_layer_sizes
             layer_sizes_text = [8192, 4096]
-            print("text layer_sizes:", layer_sizes_text[0], layer_sizes_text[-1])
+            #print("text layer_sizes:", layer_sizes_text[0], layer_sizes_text[-1])
             latent_size_text = opt.latent_size_text
-            print("latent_size_text:", latent_size_text)
+            #print("latent_size_text:", latent_size_text)
             layer_sizes_text[0] += latent_size_text
-            print("text layer_sizes[0]:", layer_sizes_text[0])
+            #print("text layer_sizes[0]:", layer_sizes_text[0])
             self.fc1 = nn.Linear(layer_sizes_text[0], layer_sizes_text[-1])
             self.fc3 = nn.Linear(layer_sizes_text[-1], latent_size_text*2)
             self.lrelu = nn.LeakyReLU(0.2, True)
@@ -37,11 +37,11 @@ class Encoder(nn.Module):
             # encoder_layer_sizes (default: [8192, 4096])
             #layer_sizes_image = opt.encoder_layer_sizes
             layer_sizes_image = [8192, 4096]
-            print("image layer_sizes:", layer_sizes_image[0], layer_sizes_image[-1])
+            #print("image layer_sizes:", layer_sizes_image[0], layer_sizes_image[-1])
             latent_size_image = opt.latent_size_image
-            print("latent_size_image:", latent_size_image)
+            #print("latent_size_image:", latent_size_image)
             layer_sizes_image[0] += latent_size_image
-            print("image layer_sizes[0]:", layer_sizes_image[0])
+            #print("image layer_sizes[0]:", layer_sizes_image[0])
             self.fc1 = nn.Linear(layer_sizes_image[0], layer_sizes_image[-1])
             self.fc3 = nn.Linear(layer_sizes_image[-1], latent_size_image*2)
             self.lrelu = nn.LeakyReLU(0.2, True)

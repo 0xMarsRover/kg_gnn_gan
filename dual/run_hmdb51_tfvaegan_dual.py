@@ -24,7 +24,7 @@ for c_t, dim_t in class_embedding_text.items():
             --action_embedding i3d --resSize 8192 \
             --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
             --class_embedding_image {semantics_i} --nz_image {semantics_dimension_i} --attSize_image {semantics_dimension_i} \
-            --nepoch 100 --batch_size 64 --syn_num 400 \
+            --nepoch 100 --batch_size 64 --syn_num 800 \
             --preprocessing --cuda --gammaD 10 --gammaG 10 \
             --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
             --lr 0.0001 --workers 8 --encoded_noise  \
