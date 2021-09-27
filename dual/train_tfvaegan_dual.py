@@ -207,7 +207,7 @@ for epoch in range(0, opt.nepoch):
     # TODO: Traing GAN-Image
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
-        print("Training GAN-Image..")
+        #print("Training GAN-Image..")
         for i in range(0, data.ntrain, opt.batch_size):
             # TODO: Discriminator training
             # unfreeze discrimator
