@@ -19,7 +19,8 @@ class Encoder(nn.Module):
 
         if semantics_type == 'text':
             # encoder_layer_sizes (default: [8192, 4096])
-            layer_sizes_text = opt.encoder_layer_sizes
+            #layer_sizes_text = opt.encoder_layer_sizes
+            layer_sizes_text = [8192, 4096]
             print("text layer_sizes:", layer_sizes_text[0], layer_sizes_text[-1])
             latent_size_text = opt.latent_size_text
             print("latent_size_text:", latent_size_text)
