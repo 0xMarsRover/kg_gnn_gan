@@ -16,18 +16,17 @@ def weights_init(m):
 class Encoder(nn.Module):
     def __init__(self, opt, semantics_type=None):
         super(Encoder, self).__init__()
-        layer_sizes = opt.encoder_layer_sizes
+
         if semantics_type == 'text':
             # encoder_layer_sizes (default: [8192, 4096])
-            #layer_sizes = opt.encoder_layer_sizes
-            print("text layer_sizes:", layer_sizes[0], layer_sizes[-1])
+            layer_sizes_text = opt.encoder_layer_sizes
+            print("text layer_sizes:", layer_sizes_text[0], layer_sizes_text[-1])
             latent_size_text = opt.latent_size_text
             print("latent_size_text:", latent_size_text)
-            #layer_sizes[0] += latent_size_text
-            layer_sizes[0] = 8492
-            print("text layer_sizes[0]:", layer_sizes[0])
-            self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
-            self.fc3 = nn.Linear(layer_sizes[-1], latent_size_text*2)
+            layer_sizes_text[0] += latent_size_text
+            print("text layer_sizes[0]:", layer_sizes_text[0])
+            self.fc1 = nn.Linear(layer_sizes_text[0], layer_sizes_text[-1])
+            self.fc3 = nn.Linear(layer_sizes_text[-1], latent_size_text*2)
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.linear_means = nn.Linear(latent_size_text*2, latent_size_text)
             self.linear_log_var = nn.Linear(latent_size_text*2, latent_size_text)
@@ -35,14 +34,14 @@ class Encoder(nn.Module):
 
         elif semantics_type == 'image':
             # encoder_layer_sizes (default: [8192, 4096])
-            #layer_sizes = opt.encoder_layer_sizes
-            print("image layer_sizes:", layer_sizes[0], layer_sizes[-1])
+            layer_sizes_image = opt.encoder_layer_sizes
+            print("image layer_sizes:", layer_sizes_image[0], layer_sizes_image[-1])
             latent_size_image = opt.latent_size_image
             print("latent_size_image:", latent_size_image)
-            layer_sizes[0] += latent_size_image
-            print("image layer_sizes[0]:", layer_sizes[0])
-            self.fc1 = nn.Linear(layer_sizes[0], layer_sizes[-1])
-            self.fc3 = nn.Linear(layer_sizes[-1], latent_size_image*2)
+            layer_sizes_image[0] += latent_size_image
+            print("image layer_sizes[0]:", layer_sizes_image[0])
+            self.fc1 = nn.Linear(layer_sizes_image[0], layer_sizes_image[-1])
+            self.fc3 = nn.Linear(layer_sizes_image[-1], latent_size_image*2)
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.linear_means = nn.Linear(latent_size_image*2, latent_size_image)
             self.linear_log_var = nn.Linear(latent_size_image*2, latent_size_image)
@@ -64,21 +63,21 @@ class Generator(nn.Module):
     def __init__(self, opt, semantics_type=None):
         super(Generator, self).__init__()
         if semantics_type == 'text':
-            layer_sizes = opt.decoder_layer_sizes
+            layer_sizes_text = opt.decoder_layer_sizes
             latent_size_text = opt.latent_size_text
             input_size = latent_size_text * 2
-            self.fc1 = nn.Linear(input_size, layer_sizes[0])
-            self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])
+            self.fc1 = nn.Linear(input_size, layer_sizes_text[0])
+            self.fc3 = nn.Linear(layer_sizes_text[0], layer_sizes_text[1])
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.sigmoid = nn.Sigmoid()
             self.apply(weights_init)
 
         elif semantics_type == 'image':
-            layer_sizes = opt.decoder_layer_sizes
+            layer_sizes_image = opt.decoder_layer_sizes
             latent_size_image = opt.latent_size_image
             input_size = latent_size_image * 2
-            self.fc1 = nn.Linear(input_size, layer_sizes[0])
-            self.fc3 = nn.Linear(layer_sizes[0], layer_sizes[1])
+            self.fc1 = nn.Linear(input_size, layer_sizes_image[0])
+            self.fc3 = nn.Linear(layer_sizes_image[0], layer_sizes_image[1])
             self.lrelu = nn.LeakyReLU(0.2, True)
             self.sigmoid = nn.Sigmoid()
             self.apply(weights_init)
