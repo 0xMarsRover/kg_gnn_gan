@@ -637,11 +637,12 @@ else:
                                         opt.class_embedding_text +
                                         opt.class_embedding_image + "_dual.txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-        f.write("Results: ZSL Experiments" + "\n")
+        f.write("Results: ZSL Experiments on Dual GAN" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
 
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-        f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
+        f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+        f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
         # TODO: recording full confusion matrix
         f.write("Best Epoch: " + str(best_epoch) + "\n")
