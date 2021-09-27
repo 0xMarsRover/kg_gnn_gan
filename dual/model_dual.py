@@ -64,7 +64,8 @@ class Generator(nn.Module):
     def __init__(self, opt, semantics_type=None):
         super(Generator, self).__init__()
         if semantics_type == 'text':
-            layer_sizes_text = opt.decoder_layer_sizes
+            #layer_sizes_text = opt.decoder_layer_sizes # [4096, 8192]
+            layer_sizes_text = [4096, 8192]
             latent_size_text = opt.latent_size_text
             input_size = latent_size_text * 2
             self.fc1 = nn.Linear(input_size, layer_sizes_text[0])
@@ -74,7 +75,8 @@ class Generator(nn.Module):
             self.apply(weights_init)
 
         elif semantics_type == 'image':
-            layer_sizes_image = opt.decoder_layer_sizes
+            #layer_sizes_image = opt.decoder_layer_sizes
+            layer_sizes_image = [4096, 8192]
             latent_size_image = opt.latent_size_image
             input_size = latent_size_image * 2
             self.fc1 = nn.Linear(input_size, layer_sizes_image[0])
