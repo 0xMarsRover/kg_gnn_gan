@@ -57,13 +57,13 @@ class DATA_LOADER(object):
 
             # semantics embedding
             print("Text Semantic Embedding: ", opt.class_embedding_text)
-            self.attribute_text = torch.from_numpy(matcontent[opt.class_embedding].T).float()
+            self.attribute_text = torch.from_numpy(matcontent[opt.class_embedding_text].T).float()
             # L2 Norm.
             self.attribute_text /= self.attribute_text.pow(2).sum(1).sqrt().unsqueeze(1).\
                                     expand(self.attribute_text.size(0), self.attribute_text.size(1))
 
             print("Image Semantic Embedding: ", opt.class_embedding_image)
-            self.attribute_image = torch.from_numpy(matcontent[opt.class_embedding].T).float()
+            self.attribute_image = torch.from_numpy(matcontent[opt.class_embedding_image].T).float()
             # L2 Norm.
             self.attribute_image /= self.attribute_image.pow(2).sum(1).sqrt().unsqueeze(1).\
                                     expand(self.attribute_image.size(0), self.attribute_image.size(1))
