@@ -416,14 +416,14 @@ if opt.gzsl_od:
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
         f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
 
-    # TODO: recording full confusion matrix
-    f.write("Best Epoch: " + str(best_epoch) + "\n")
-    f.write('Best GZSL-OD seen accuracy is ' + str(best_acc_seen) + "\n")
-    f.write("Best GZSL-OD seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
+        # TODO: recording full confusion matrix
+        f.write("Best Epoch: " + str(best_epoch) + "\n")
+        f.write('Best GZSL-OD seen accuracy is ' + str(best_acc_seen) + "\n")
+        f.write("Best GZSL-OD seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
 
-    f.write('Best GZSL-OD unseen accuracy is' + str(best_acc_unseen) + "\n")
-    f.write("Best GZSL-OD unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
-    f.write('Best GZSL-OD H is ' + str(best_gzsl_od_acc) + "\n")
+        f.write('Best GZSL-OD unseen accuracy is' + str(best_acc_unseen) + "\n")
+        f.write("Best GZSL-OD unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
+        f.write('Best GZSL-OD H is ' + str(best_gzsl_od_acc) + "\n")
     #print('Best GZSL-OD seen CM', best_cm_seen)
     #print('Best GZSL-OD unseen CM', best_cm_unseen)best_gzsl_od_acc
 
