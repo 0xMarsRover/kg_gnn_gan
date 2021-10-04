@@ -408,7 +408,9 @@ result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
 if opt.gzsl_od:
-    with open(os.path.join(result_root, "exp_gzsl_od_results.txt"), "a+") as f:
+    with open(os.path.join(result_root, "exp_gzsl_od_results_" +
+                                        opt.dataset + "_" +
+                                        opt.class_embedding + ".txt"), "a+") as f:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: OD-based GZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
