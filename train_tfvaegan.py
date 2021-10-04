@@ -413,11 +413,19 @@ if opt.gzsl_od:
         f.write("Results: OD-based GZSL Experiments" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
 
-    print('Best GZSL-OD seen accuracy is', best_acc_seen, best_acc_per_seen)
-    print('Best GZSL-OD unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
-    print('Best GZSL-OD H is', best_gzsl_od_acc)
+        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+        f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
+
+    # TODO: recording full confusion matrix
+    f.write("Best Epoch: " + str(best_epoch) + "\n")
+    f.write('Best GZSL-OD seen accuracy is ' + str(best_acc_seen) + "\n")
+    f.write("Best GZSL-OD seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
+
+    f.write('Best GZSL-OD unseen accuracy is' + str(best_acc_unseen) + "\n")
+    f.write("Best GZSL-OD unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
+    f.write('Best GZSL-OD H is ' + str(best_gzsl_od_acc) + "\n")
     #print('Best GZSL-OD seen CM', best_cm_seen)
-    #print('Best GZSL-OD unseen CM', best_cm_unseen)
+    #print('Best GZSL-OD unseen CM', best_cm_unseen)best_gzsl_od_acc
 
 elif opt.gzsl:
     with open(os.path.join(result_root, "exp_gzsl_results.txt"), "a+") as f:
