@@ -424,6 +424,13 @@ if opt.gzsl_od:
         f.write('Best GZSL-OD unseen accuracy is' + str(best_acc_unseen) + "\n")
         f.write("Best GZSL-OD unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
         f.write('Best GZSL-OD H is ' + str(best_gzsl_od_acc) + "\n")
+
+    print('Best GZSL-OD GZSL seen accuracy: ', best_acc_seen)
+    print('Best GZSL-OD GZSL seen accuracy per class: ', best_acc_per_seen)
+
+    print('Best GZSL-OD GZSL unseen accuracy: ', best_acc_unseen)
+    print('Best GZSL-OD GZSL unseen accuracy per class: ', best_acc_per_unseen)
+    print('Best GZSL-OD GZSL H: ', best_gzsl_od_acc)
     #print('Best GZSL-OD seen CM', best_cm_seen)
     #print('Best GZSL-OD unseen CM', best_cm_unseen)best_gzsl_od_acc
 
