@@ -326,20 +326,19 @@ for epoch in range(0, opt.nepoch):
         # OD based GZSL
         print("Performing Out-of-Distribution GZSL")
         seen_class = data.seenclasses.size(0)
-        print('seen class size: ', seen_class)
         clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                      data, data.unseenclasses.size(0), opt.cuda,
-                                     _nepoch=50, generalized=True,
+                                     _nepoch=30, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         # _batch_size=opt.syn_num
         clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                      data, data.seenclasses.size(0), opt.cuda,
-                                     _nepoch=50, generalized=True,
+                                     _nepoch=30, generalized=True,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
         clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                              data, seen_class, syn_feature, syn_label,
-                                             opt.cuda, clss, clsu, _batch_size=128,
+                                             opt.cuda, clss, clsu, _nepoch=30,
                                              netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
         if best_gzsl_od_acc < clsg.H:
