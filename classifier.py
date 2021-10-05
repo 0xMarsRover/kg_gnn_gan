@@ -96,6 +96,8 @@ class CLASSIFIER:
         best_H = 0
         best_seen = 0
         best_unseen = 0
+        best_acc_per_seen =[]
+        best_acc_per_useen =[]
         best_cm = []
         best_model = copy.deepcopy(self.model)
         # early_stopping = EarlyStopping(patience=20, verbose=True)
