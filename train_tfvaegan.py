@@ -338,7 +338,7 @@ for epoch in range(0, opt.nepoch):
 
         clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                              data, seen_class, syn_feature, syn_label,
-                                             opt.cuda, clss, clsu, _nepoch=50, _batch_size=128,
+                                             opt.cuda, clss, clsu, _nepoch=50, _batch_size=64,
                                              netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
         if best_gzsl_od_acc < clsg.H:
