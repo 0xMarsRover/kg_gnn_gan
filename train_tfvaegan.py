@@ -328,7 +328,7 @@ for epoch in range(0, opt.nepoch):
         seen_class = data.seenclasses.size(0)
         clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                      data, data.unseenclasses.size(0), opt.cuda,
-                                     _nepoch=30, generalized=True, _batch_size=128
+                                     _nepoch=30, generalized=True, _batch_size=128,
                                      netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
         # _batch_size=opt.syn_num
         clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
