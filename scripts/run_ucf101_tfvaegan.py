@@ -51,14 +51,13 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300,
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024, 'avg_img_resnet101': 2048}
 '''
 
-class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300,
-                   'avg_img_googlenet_me': 1024, 'avg_img_resnet101': 2048}
+class_embedding = {'action_class_w2v': 300}
 
 for c, dim in class_embedding.items():
-    for n in range(6, 11):
+    for n in range(1, 6):
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
-        --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
+        --dataset ucf101 --nclass_all 101 --gzsl_od --manualSeed 806 \
         --dataroot /content/drive/MyDrive/colab_data/action_datasets \
         --splits_path ucf101_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
