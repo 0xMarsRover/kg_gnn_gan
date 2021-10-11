@@ -335,7 +335,8 @@ for epoch in range(0, opt.nepoch):
     #saved_generated_labels = np.hstack((saved_generated_labels, syn_label.resize(-1, 1)))
     #saved_generated_feats = np.hstack((saved_generated_feats, syn_feature))
     saved_generated_label_feat = np.hstack((syn_label.resize(syn_label.size(0), 1), syn_feature))
-    dict_saved_generated_label_feat[str(epoch)] = saved_generated_label_feat
+    epoch_str = 'epoch_' + str(epoch)
+    dict_saved_generated_label_feat[epoch_str] = saved_generated_label_feat
 
 # save generated unseen visual feat.
 saving_data_papth = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
