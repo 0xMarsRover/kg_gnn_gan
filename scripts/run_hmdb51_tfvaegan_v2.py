@@ -39,7 +39,7 @@ class_embedding = {'action_class_w2v': 300}
 for c, dim in class_embedding.items():
     for n in range(1, 6):
         # n = n + 1
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan_saving_unseen.py \
         --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
         --dataroot /content/drive/MyDrive/colab_data/action_datasets \
         --splits_path hmdb51_semantics --split {split} \
