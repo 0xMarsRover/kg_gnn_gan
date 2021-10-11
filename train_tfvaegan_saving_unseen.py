@@ -7,6 +7,7 @@ from torch.autograd import Variable
 import numpy as np
 import random
 import os
+import scipy.io as sio
 
 # load files
 import model
@@ -181,6 +182,9 @@ else:
     best_zsl_acc_per_class = []
     best_zsl_cm = []
 
+saved_generated_feats = np.empty((opt.resSize, 0))
+saved_generated_labels = np.empty((data.unseenclasses, 0))
+
 # Training loop
 for epoch in range(0, opt.nepoch):
     print("Start VAEGAN Training at epoch: ", epoch)
@@ -322,7 +326,16 @@ for epoch in range(0, opt.nepoch):
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
 
+    # TODO: Saving generated visual features for all unseen classes per epoch
+    # size: 8192 * number of visual features & unseen classes * epoch
+    # Example(HMDB51): 8192 * 800 * 25 * 100
+
+
+
+
+
     # TODO: Generalized zero-shot learning
+    # TODO: Read generated unseen visual features from saved file
     if opt.gzsl_od:
         # OD based GZSL
         print("Performing Out-of-Distribution GZSL")

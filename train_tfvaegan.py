@@ -320,6 +320,8 @@ for epoch in range(0, opt.nepoch):
     netF.eval()
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
+    print(syn_feature.shape)
+    print(syn_label.shape)
 
     # TODO: Generalized zero-shot learning
     if opt.gzsl_od:
