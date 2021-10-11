@@ -327,6 +327,7 @@ for epoch in range(0, opt.nepoch):
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
 
+
     # TODO: Saving generated visual features for all unseen classes per epoch
     # size: 8192 * number of visual features & unseen classes * epoch
     # Example(HMDB51): 8192 * 800 * 25 * 100
