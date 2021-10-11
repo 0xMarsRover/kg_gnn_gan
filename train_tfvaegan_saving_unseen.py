@@ -327,14 +327,14 @@ for epoch in range(0, opt.nepoch):
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
 
-
     # TODO: Saving generated visual features for all unseen classes per epoch
     # size: 8192 * number of visual features & unseen classes * epoch
     # Example(HMDB51): 8192 * 800 * 25 * 100
     # syn_feature: torch.Size([20000, 8192])
     # syn_label: torch.Size([20000])
-    saved_generated_label_feat = np.hstack((np.hstack((saved_generated_labels, syn_label)),
-                                            np.hstack((saved_generated_feats, syn_feature))))
+    saved_generated_feats = np.hstack((saved_generated_labels, syn_label))
+    saved_generated_labels = np.hstack((saved_generated_feats, syn_feature))
+    saved_generated_label_feat = np.hstack((saved_generated_labels, saved_generated_feats))
 
     dict_saved_generated_label_feat[epoch] = saved_generated_label_feat
 
