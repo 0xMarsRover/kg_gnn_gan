@@ -182,8 +182,9 @@ else:
     best_zsl_acc_per_class = []
     best_zsl_cm = []
 
-saved_generated_feats = np.empty((opt.resSize, 0))
-saved_generated_labels = np.empty((data.unseenclasses, 0))
+saved_generated_feats = np.empty((0, opt.resSize))
+saved_generated_labels = np.empty((0, data.unseenclasses))
+dict_saved_generated_label_feat = {}
 
 # Training loop
 for epoch in range(0, opt.nepoch):
@@ -329,91 +330,100 @@ for epoch in range(0, opt.nepoch):
     # TODO: Saving generated visual features for all unseen classes per epoch
     # size: 8192 * number of visual features & unseen classes * epoch
     # Example(HMDB51): 8192 * 800 * 25 * 100
+    # syn_feature: torch.Size([20000, 8192])
+    # syn_label: torch.Size([20000])
+    saved_generated_label_feat = np.hstack((np.hstack((saved_generated_labels, syn_label)),
+                                            np.hstack((saved_generated_feats, syn_feature))))
 
+    dict_saved_generated_label_feat[epoch] = saved_generated_label_feat
 
+# save generated unseen visual feat.
+saving_data_papth = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
+sio.savemat(saving_data_papth + '/Unseen_Visual_Feat_' + opt.dataset + '_' +
+            opt.class_embedding + '_' +
+            'split_' + opt.split + '.mat',
+            dict_saved_generated_label_feat)
 
+# TODO: Generalized zero-shot learning
+# TODO: Read generated unseen visual features from saved file
+if opt.gzsl_od:
+    # OD based GZSL
+    print("Performing Out-of-Distribution GZSL")
+    seen_class = data.seenclasses.size(0)
+    clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
+                                 data, data.unseenclasses.size(0), opt.cuda,
+                                 _nepoch=30, generalized=True, _batch_size=128,
+                                 netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+    # _batch_size=opt.syn_num
+    clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
+                                 data, data.seenclasses.size(0), opt.cuda,
+                                 _nepoch=30, generalized=True, _batch_size=128,
+                                 netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
+    clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
+                                         data, seen_class, syn_feature, syn_label,
+                                         opt.cuda, clss, clsu, _nepoch=30, _batch_size=128,
+                                         netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
 
-    # TODO: Generalized zero-shot learning
-    # TODO: Read generated unseen visual features from saved file
-    if opt.gzsl_od:
-        # OD based GZSL
-        print("Performing Out-of-Distribution GZSL")
-        seen_class = data.seenclasses.size(0)
-        clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
-                                     data, data.unseenclasses.size(0), opt.cuda,
-                                     _nepoch=30, generalized=True, _batch_size=128,
-                                     netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
-        # _batch_size=opt.syn_num
-        clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
-                                     data, data.seenclasses.size(0), opt.cuda,
-                                     _nepoch=30, generalized=True, _batch_size=128,
-                                     netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+    if best_gzsl_od_acc < clsg.H:
+        best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
+        best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+        best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
+        best_epoch = epoch
 
-        clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
-                                             data, seen_class, syn_feature, syn_label,
-                                             opt.cuda, clss, clsu, _nepoch=30, _batch_size=128,
-                                             netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+    print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
+    print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
+    print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
+    #print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
+    #print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
 
-        if best_gzsl_od_acc < clsg.H:
-            best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-            best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-            best_epoch = epoch
+elif opt.gzsl:
+    # TODO: simple Generalized zero-shot learning
+    print("Performing simple GZSL")
+    train_X = torch.cat((data.train_feature, syn_feature), 0)
+    train_Y = torch.cat((data.train_label, syn_label), 0)
+    nclass = opt.nclass_all
+    clsg = classifier.CLASSIFIER(train_X, train_Y, data, nclass,
+                                 opt.cuda, _nepoch=50,
+                                 _batch_size=128, generalized=True,
+                                 netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+    if best_gzsl_simple_acc < clsg.H:
+        best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
+        best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+        best_epoch = epoch
+        # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
-        print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-        print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
-        print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
-        #print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
-        #print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
+    print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
+    print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
+    print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
+    #print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
+    #print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
 
-    elif opt.gzsl:
-        # TODO: simple Generalized zero-shot learning
-        print("Performing simple GZSL")
-        train_X = torch.cat((data.train_feature, syn_feature), 0)
-        train_Y = torch.cat((data.train_label, syn_label), 0)
-        nclass = opt.nclass_all
-        clsg = classifier.CLASSIFIER(train_X, train_Y, data, nclass,
-                                     opt.cuda, _nepoch=50,
-                                     _batch_size=128, generalized=True,
-                                     netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
-        if best_gzsl_simple_acc < clsg.H:
-            best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-            best_epoch = epoch
-            # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
+else:
+    # TODO: Zero-shot learning
+    print("Performing ZSL")
+    # Train ZSL classifier
+    zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
+                                    data, data.unseenclasses.size(0),
+                                    opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                    generalized=False, netDec=netDec,
+                                    dec_size=opt.attSize, dec_hidden_size=4096)
+    acc = zsl_cls.acc
+    acc_per_class = zsl_cls.acc_per_class
+    cm = zsl_cls.cm
+    if best_zsl_acc < acc:
+        best_zsl_acc = acc
+        best_zsl_acc_per_class = acc_per_class
+        best_zsl_cm = cm
+        best_epoch = epoch
+    print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc, epoch))
+    #print('ZSL unseen accuracy per class\n', acc_per_class)
+    #print('ZSL confusion matrix\n', cm)
 
-        print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-        print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-        print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
-        #print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
-        #print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
-
-    else:
-        # TODO: Zero-shot learning
-        print("Performing ZSL")
-        # Train ZSL classifier
-        zsl_cls = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
-                                        data, data.unseenclasses.size(0),
-                                        opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                        generalized=False, netDec=netDec,
-                                        dec_size=opt.attSize, dec_hidden_size=4096)
-        acc = zsl_cls.acc
-        acc_per_class = zsl_cls.acc_per_class
-        cm = zsl_cls.cm
-        if best_zsl_acc < acc:
-            best_zsl_acc = acc
-            best_zsl_acc_per_class = acc_per_class
-            best_zsl_cm = cm
-            best_epoch = epoch
-        print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc, epoch))
-        #print('ZSL unseen accuracy per class\n', acc_per_class)
-        #print('ZSL confusion matrix\n', cm)
-
-    # reset modules to training mode
-    netG.train()
-    netDec.train()
-    netF.train()
+# reset modules to training mode
+netG.train()
+netDec.train()
+netF.train()
 
 
 result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
