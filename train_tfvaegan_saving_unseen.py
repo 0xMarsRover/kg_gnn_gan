@@ -332,7 +332,7 @@ for epoch in range(0, opt.nepoch):
     # Example(HMDB51): 8192 * 800 * 25 * 100
     # syn_feature: torch.Size([20000, 8192])
     # syn_label: torch.Size([20000])
-    saved_generated_labels = np.hstack((saved_generated_labels, syn_label))
+    saved_generated_labels = np.hstack((saved_generated_labels, syn_label.resize(-1, 1)))
     saved_generated_feats = np.hstack((saved_generated_feats, syn_feature))
     saved_generated_label_feat = np.hstack((saved_generated_labels, saved_generated_feats))
 
