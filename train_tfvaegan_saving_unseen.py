@@ -342,7 +342,7 @@ for epoch in range(0, opt.nepoch):
 saving_data_papth = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
 sio.savemat(saving_data_papth + '/Unseen_Visual_Feat_' + opt.dataset + '_' +
             opt.class_embedding + '_' +
-            'split_' + str(opt.split) + '.mat',
+            'split' + str(opt.split) + '.mat',
             dict_saved_generated_label_feat)
 
 # TODO: Generalized zero-shot learning
