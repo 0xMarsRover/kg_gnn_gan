@@ -183,7 +183,7 @@ else:
     best_zsl_cm = []
 
 saved_generated_feats = np.empty((0, opt.resSize))
-saved_generated_labels = np.empty((0, data.unseenclasses.size(0)))
+saved_generated_labels = np.empty((0, 1))
 dict_saved_generated_label_feat = {}
 
 # Training loop
