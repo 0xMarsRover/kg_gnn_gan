@@ -562,11 +562,17 @@ for epoch in range(0, opt.nepoch):
         # TODO: Zero-shot learning
         print("Performing ZSL")
         # Train ZSL classifier_dual
-        zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
-                                        data, data.unseenclasses.size(0),
-                                        opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                        generalized=False, netDec=netDec_image,
-                                        dec_size=opt.attSize_image, dec_hidden_size=4096)
+        if opt.syn_num == 'concat':
+            zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
+                                            data, data.unseenclasses.size(0),
+                                            opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                            generalized=False, dec_size=opt.attSize_image, dec_hidden_size=4096)
+        else:
+            zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
+                                            data, data.unseenclasses.size(0),
+                                            opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                            generalized=False, netDec=netDec_image,
+                                            dec_size=opt.attSize_image, dec_hidden_size=4096)
         acc = zsl_cls.acc
         acc_per_class = zsl_cls.acc_per_class
         cm = zsl_cls.cm

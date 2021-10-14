@@ -34,12 +34,8 @@ class CLASSIFIER:
             self.input_dim += dec_hidden_size
             self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.nclass)
             self.train_X = self.compute_dec_out(self.train_X, self.input_dim)
-            if opt.combined_syn == 'concat':
-                self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim + opt.resSize)
-                self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim + opt.resSize)
-            else:
-                self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim)
-                self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim)
+            self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim)
+            self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim)
 
         self.model.apply(util_dual.weights_init)
         self.criterion = nn.NLLLoss()
@@ -203,7 +199,6 @@ class CLASSIFIER:
         start = 0
         ntest = test_X.size()[0]
         new_test_X = torch.zeros(ntest, new_size)
-        print('init new_test_X.shape', new_test_X.shape)
 
         for i in range(0, ntest, self.batch_size):
             end = min(ntest, start + self.batch_size)
@@ -213,13 +208,9 @@ class CLASSIFIER:
             else:
                 with torch.no_grad():
                     inputX = Variable(test_X[start:end])
-            print('inputX.shape', inputX.shape)
             feat1 = self.netDec(inputX)
-            print('feat1.shape', feat1.shape)
             feat2 = self.netDec.getLayersOutDet()
-            print('feat2.shape', feat2.shape)
             new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
-            print('new_test_X.shape', new_test_X.shape)
             start = end
         return new_test_X
 
