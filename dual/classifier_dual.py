@@ -101,7 +101,7 @@ class CLASSIFIER:
         # early_stopping = EarlyStopping(patience=20, verbose=True)
 
         for epoch in range(self.nepoch):
-            #print("Start Final Discriminative Classifier Training at epoch: ", epoch)
+            print("Start Final Discriminative Classifier Training at epoch: ", epoch)
             for i in range(0, self.ntrain, self.batch_size):
                 self.model.zero_grad()
                 batch_input, batch_label = self.next_batch(self.batch_size)
