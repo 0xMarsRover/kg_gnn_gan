@@ -199,7 +199,7 @@ class CLASSIFIER:
         start = 0
         ntest = test_X.size()[0]
         if opt.combined_syn == 'concat':
-            new_test_X = torch.zeros(ntest, new_size*2)
+            new_test_X = torch.zeros(ntest, new_size + self.train_X.size(1))
         else:
             new_test_X = torch.zeros(ntest, new_size)
 
