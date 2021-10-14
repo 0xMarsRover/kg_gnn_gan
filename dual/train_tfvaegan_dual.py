@@ -7,6 +7,9 @@ from torch.autograd import Variable
 import numpy as np
 import random
 import os
+from sklearn import decomposition
+from sklearn.preprocessing import StandardScaler
+
 
 # load files
 import model_dual
@@ -345,7 +348,7 @@ for epoch in range(0, opt.nepoch):
                                                         opt.syn_num,
                                                         netF=netF_image, netDec=netDec_image,
                                                         attSize=opt.attSize_image, nz=opt.nz_image)
-
+    # TODO: Text-GAN training
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
         for i in range(0, data.ntrain, opt.batch_size):
@@ -487,9 +490,11 @@ for epoch in range(0, opt.nepoch):
     #(25*800, 8192)
     #print("syn_feature_text_shape: ", syn_feature_text.shape)
 
-    if opt.combined_syn == 'concat':
-        syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1) # (25*800, 8192*2)
-        print("syn_feature shape", syn_feature.shape)
+    if opt.combined_syn == 'concat_pca':
+        # (25*800, 8192*2)
+        pca = decomposition.PCA(n_components=opt.resSize)
+        syn_feature = pca.fit_transform(StandardScaler()
+                                        .fit_transform(torch.cat((syn_feature_text, syn_feature_image), 1)))
 
     elif opt.combined_syn == 'avg':
         syn_feature = (syn_feature_text + syn_feature_image) / 2
