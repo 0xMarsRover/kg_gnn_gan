@@ -28,7 +28,7 @@ class CLASSIFIER:
         self.cuda = _cuda
         self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.nclass)
         self.netDec = netDec
-        if self.netDec:
+        if self.netDec is not None:
             self.netDec.eval()
             self.input_dim = self.input_dim + dec_size
             self.input_dim += dec_hidden_size
