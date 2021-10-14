@@ -207,9 +207,12 @@ class CLASSIFIER:
                 with torch.no_grad():
                     inputX = Variable(test_X[start:end])
             feat1 = self.netDec(inputX)
+            print('feat1 shape: ', feat1.shape)
             feat2 = self.netDec.getLayersOutDet()
+            print('feat2 shape: ', feat2.shape)
             new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
             start = end
+            print('new_test_X shape: ', new_test_X.shape)
         return new_test_X
 
     def next_batch(self, batch_size):
