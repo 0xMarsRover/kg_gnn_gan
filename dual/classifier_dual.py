@@ -198,7 +198,7 @@ class CLASSIFIER:
     def compute_dec_out(self, test_X, new_size):
         start = 0
         ntest = test_X.size()[0]
-        if opt.combined_syn == 'sum':
+        if opt.combined_syn == 'concat':
             new_test_X = torch.zeros(ntest, new_size*2)
         else:
             new_test_X = torch.zeros(ntest, new_size)
