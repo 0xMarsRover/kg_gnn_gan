@@ -36,7 +36,6 @@ class CLASSIFIER:
             self.train_X = self.compute_dec_out(self.train_X, self.input_dim)
             self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim)
             self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim)
-
         self.model.apply(util_dual.weights_init)
         self.criterion = nn.NLLLoss()
         self.input = torch.FloatTensor(_batch_size, self.input_dim)
