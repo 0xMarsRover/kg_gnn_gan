@@ -563,6 +563,7 @@ for epoch in range(0, opt.nepoch):
         print("Performing ZSL")
         # Train ZSL classifier_dual
         if opt.syn_num == 'concat':
+            print("zsl WITH CONCAT")
             zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
                                             data, data.unseenclasses.size(0),
                                             opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
