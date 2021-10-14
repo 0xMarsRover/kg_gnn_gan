@@ -493,11 +493,9 @@ for epoch in range(0, opt.nepoch):
 
     elif opt.combined_syn == 'avg':
         syn_feature = (syn_feature_text + syn_feature_image) / 2
-        #print("syn_feature shape", syn_feature.shape)
 
     elif opt.combined_syn == 'sum':
         syn_feature = syn_feature_text + syn_feature_image
-        #print("syn_feature shape", syn_feature.shape)
 
     else:
         print("Please choose the correct combination approaches.")
@@ -562,19 +560,11 @@ for epoch in range(0, opt.nepoch):
         # TODO: Zero-shot learning
         print("Performing ZSL")
         # Train ZSL classifier_dual
-        if opt.combined_syn == 'concat':
-            print("zsl WITH CONCAT")
-            zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
-                                            data, data.unseenclasses.size(0),
-                                            opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                            generalized=False, netDec=None,
-                                            dec_size=opt.attSize_image, dec_hidden_size=4096)
-        else:
-            zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
-                                            data, data.unseenclasses.size(0),
-                                            opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                            generalized=False, netDec=netDec_image,
-                                            dec_size=opt.attSize_image, dec_hidden_size=4096)
+        zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
+                                        data, data.unseenclasses.size(0),
+                                        opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                        generalized=False, netDec=netDec_image,
+                                        dec_size=opt.attSize_image, dec_hidden_size=4096)
         acc = zsl_cls.acc
         acc_per_class = zsl_cls.acc_per_class
         cm = zsl_cls.cm
