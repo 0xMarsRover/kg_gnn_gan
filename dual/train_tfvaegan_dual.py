@@ -488,7 +488,7 @@ for epoch in range(0, opt.nepoch):
     #print("syn_feature_text_shape: ", syn_feature_text.shape)
 
     if opt.combined_syn == 'concat':
-        syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
+        syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1) # (25*800, 8192*2)
         print("syn_feature shape", syn_feature.shape)
 
     elif opt.combined_syn == 'avg':

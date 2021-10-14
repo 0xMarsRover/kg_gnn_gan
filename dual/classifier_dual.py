@@ -6,6 +6,7 @@ import util_dual
 import numpy as np
 import copy
 from sklearn.metrics import confusion_matrix
+from config_dual import opt
 
 
 class CLASSIFIER:
@@ -197,7 +198,11 @@ class CLASSIFIER:
     def compute_dec_out(self, test_X, new_size):
         start = 0
         ntest = test_X.size()[0]
-        new_test_X = torch.zeros(ntest, new_size)
+        if opt.combined_syn == 'sum':
+            new_test_X = torch.zeros(ntest, new_size*2)
+        else:
+            new_test_X = torch.zeros(ntest, new_size)
+
         for i in range(0, ntest, self.batch_size):
             end = min(ntest, start + self.batch_size)
             if self.cuda:
@@ -207,12 +212,9 @@ class CLASSIFIER:
                 with torch.no_grad():
                     inputX = Variable(test_X[start:end])
             feat1 = self.netDec(inputX)
-            print('feat1 shape: ', feat1.shape)
             feat2 = self.netDec.getLayersOutDet()
-            print('feat2 shape: ', feat2.shape)
             new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
             start = end
-            print('new_test_X shape: ', new_test_X.shape)
         return new_test_X
 
     def next_batch(self, batch_size):
