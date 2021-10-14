@@ -489,7 +489,7 @@ for epoch in range(0, opt.nepoch):
 
     if opt.combined_syn == 'concat':
         syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
-        #print("syn_feature shape", syn_feature.shape)
+        print("syn_feature shape", syn_feature.shape)
 
     elif opt.combined_syn == 'avg':
         syn_feature = (syn_feature_text + syn_feature_image) / 2
@@ -561,8 +561,8 @@ for epoch in range(0, opt.nepoch):
         zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
                                         data, data.unseenclasses.size(0),
                                         opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                        generalized=False, netDec=netDec_text,
-                                        dec_size=opt.attSize_text, dec_hidden_size=4096)
+                                        generalized=False, netDec=netDec_image,
+                                        dec_size=opt.attSize_image, dec_hidden_size=4096)
         acc = zsl_cls.acc
         acc_per_class = zsl_cls.acc_per_class
         cm = zsl_cls.cm
@@ -639,6 +639,7 @@ else:
         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
         f.write("Results: ZSL Experiments on Dual GAN" + "\n")
         f.write("Split Index: " + str(opt.split) + "\n")
+        f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
 
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
         f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
