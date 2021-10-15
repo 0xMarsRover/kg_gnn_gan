@@ -196,10 +196,7 @@ class CLASSIFIER:
     def compute_dec_out(self, test_X, new_size):
         start = 0
         ntest = test_X.size()[0]
-        if opt.combined_syn == 'concat':
-            new_test_X = torch.zeros(ntest, new_size - opt.resSize)
-        else:
-            new_test_X = torch.zeros(ntest, new_size)
+        new_test_X = torch.zeros(ntest, new_size)
 
         for i in range(0, ntest, self.batch_size):
             end = min(ntest, start + self.batch_size)

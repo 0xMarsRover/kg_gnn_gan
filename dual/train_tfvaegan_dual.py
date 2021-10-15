@@ -496,8 +496,8 @@ for epoch in range(0, opt.nepoch):
         syn_feature = pca.fit_transform(StandardScaler()
                                         .fit_transform(torch.cat((syn_feature_text, syn_feature_image), 1)))
 
-    elif opt.combined_syn == 'concat':
-        syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
+    #elif opt.combined_syn == 'concat':
+     #   syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
 
     elif opt.combined_syn == 'avg':
         syn_feature = (syn_feature_text + syn_feature_image) / 2
