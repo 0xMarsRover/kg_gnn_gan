@@ -7,6 +7,9 @@ from torch.autograd import Variable
 import numpy as np
 import random
 import os
+from sklearn import decomposition
+from sklearn.preprocessing import StandardScaler
+
 
 # load files
 import model_dual
@@ -197,21 +200,9 @@ elif opt.gzsl:
     best_gzsl_simple_acc = 0
 
 else:
-    best_zsl_acc_avg = 0
-    best_zsl_acc_per_class_avg = []
-    #best_zsl_cm = []
-
-    best_zsl_acc_sum = 0
-    best_zsl_acc_per_class_sum = []
-
-    best_zsl_acc_max = 0
-    best_zsl_acc_per_class_max = []
-
-    best_zsl_acc_min = 0
-    best_zsl_acc_per_class_min = []
-
-
-# fusion_methods = ['avg', 'sum', 'max', 'min']
+    best_zsl_acc = 0
+    best_zsl_acc_per_class = []
+    best_zsl_cm = []
 
 # Training loop
 for epoch in range(0, opt.nepoch):
@@ -358,6 +349,7 @@ for epoch in range(0, opt.nepoch):
                                                         netF=netF_image, netDec=netDec_image,
                                                         attSize=opt.attSize_image, nz=opt.nz_image)
     # TODO: Text-GAN training
+    # feedback training loop
     for loop in range(0, opt.feedback_loop):
         for i in range(0, data.ntrain, opt.batch_size):
             # TODO: Discriminator training
@@ -492,385 +484,115 @@ for epoch in range(0, opt.nepoch):
     netG_text.eval()
     netDec_text.eval()
     netF_text.eval()
-    syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses,
-                                                       data.attribute_text, opt.syn_num,
-                                                       netF=netF_text, netDec=netDec_text,
-                                                       attSize=opt.attSize_text, nz=opt.nz_text)
-    # (unseen classes * number of syn feat, 8192)
+    syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses, data.attribute_text, opt.syn_num,
+                                                        netF=netF_text, netDec=netDec_text,
+                                                        attSize=opt.attSize_text, nz=opt.nz_text)
+    #(25*800, 8192)
+    #print("syn_feature_text_shape: ", syn_feature_text.shape)
 
-    fusion_methods = ['avg', 'sum', 'max', 'min', 'weighted_avg']
-    for fusion in fusion_methods:
-        if opt.combined_syn == 'avg':
-            syn_feature_avg = (syn_feature_text + syn_feature_image) / 2
-            # TODO: Generalized zero-shot learning
-            if opt.gzsl_od:
-                # OD based GZSL
-                print("Performing Out-of-Distribution GZSL")
-                seen_class = data.seenclasses.size(0)
-                print('seen class size: ', seen_class)
-                # TODO: not sure to use which netDec?
-                clsu = classifier_dual.CLASSIFIER(syn_feature_avg, util_dual.map_label(syn_label, data.unseenclasses),
-                                                  data, data.unseenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                # _batch_size=opt.syn_num
-                clss = classifier_dual.CLASSIFIER(data.train_feature,
-                                                  util_dual.map_label(data.train_label, data.seenclasses),
-                                                  data, data.seenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
+    if opt.combined_syn == 'concat_pca':
+        # (25*800, 8192*2)
+        pca = decomposition.PCA(n_components=opt.resSize)
+        syn_feature = pca.fit_transform(StandardScaler()
+                                        .fit_transform(torch.cat((syn_feature_text, syn_feature_image), 1)))
 
-                clsg = classifier_entropy_dual.CLASSIFIER(data.train_feature,
-                                                          util_dual.map_label(data.train_label, data.seenclasses),
-                                                          data, seen_class, syn_feature_avg, syn_label,
-                                                          opt.cuda, clss, clsu, _batch_size=128,
-                                                          netDec=netDec_image, dec_size=opt.attSize_image,
-                                                          dec_hidden_size=4096)
+    #elif opt.combined_syn == 'concat':
+     #   syn_feature = torch.cat((syn_feature_text, syn_feature_image), 1)
 
-                if best_gzsl_od_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-                    best_epoch = epoch
+    elif opt.combined_syn == 'avg':
+        syn_feature = (syn_feature_text + syn_feature_image) / 2
 
-                print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
-                print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
-                # print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
+    elif opt.combined_syn == 'sum':
+        syn_feature = syn_feature_text + syn_feature_image
 
-            elif opt.gzsl:
-                # TODO: simple Generalized zero-shot learning
-                print("Performing simple GZSL")
-                train_X = torch.cat((data.train_feature, syn_feature_avg), 0)
-                train_Y = torch.cat((data.train_label, syn_label), 0)
-                nclass = opt.nclass_all
-                clsg = classifier_dual.CLASSIFIER(train_X, train_Y, data, nclass,
-                                                  opt.cuda, _nepoch=50,
-                                                  _batch_size=64, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                if best_gzsl_simple_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_epoch = epoch
-                    # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
+    else:
+        print("Please choose the correct combination approaches.")
 
-                print(
-                    'Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-                print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
-                # print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
+    # TODO: Generalized zero-shot learning
+    if opt.gzsl_od:
+        # OD based GZSL
+        print("Performing Out-of-Distribution GZSL")
+        seen_class = data.seenclasses.size(0)
+        print('seen class size: ', seen_class)
+        # TODO: not sure to use which netDec?
+        clsu = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
+                                     data, data.unseenclasses.size(0), opt.cuda,
+                                     _nepoch=50, generalized=True,
+                                     netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
+        # _batch_size=opt.syn_num
+        clss = classifier_dual.CLASSIFIER(data.train_feature, util_dual.map_label(data.train_label, data.seenclasses),
+                                     data, data.seenclasses.size(0), opt.cuda,
+                                     _nepoch=50, generalized=True,
+                                     netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
 
-            else:
-                # TODO: Zero-shot learning
-                print("Performing ZSL")
-                # Train ZSL classifier_dual
-                zsl_cls_avg = classifier_dual.CLASSIFIER(syn_feature_avg, util_dual.map_label(syn_label, data.unseenclasses),
-                                                     data, data.unseenclasses.size(0),
-                                                     opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                                     generalized=False, netDec=netDec_image,
-                                                     dec_size=opt.attSize_image, dec_hidden_size=4096)
-                acc_avg = zsl_cls.acc
-                acc_per_class_avg = zsl_cls_avg.acc_per_class
-                # cm = zsl_cls.cm
-                if best_zsl_acc_avg < acc_avg:
-                    best_zsl_acc_avg = acc_avg
-                    best_zsl_acc_per_class_avg = acc_per_class_avg
-                    # best_zsl_cm = cm
-                    best_epoch_avg = epoch
-                print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_avg, epoch))
-                # print('ZSL unseen accuracy per class\n', acc_per_class)
-                # print('ZSL confusion matrix\n', cm)
+        clsg = classifier_entropy_dual.CLASSIFIER(data.train_feature, util_dual.map_label(data.train_label, data.seenclasses),
+                                             data, seen_class, syn_feature, syn_label,
+                                             opt.cuda, clss, clsu, _batch_size=128,
+                                             netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
 
-            # reset modules to training mode
-            netG_text.train()
-            netDec_text.train()
-            netF_text.train()
+        if best_gzsl_od_acc < clsg.H:
+            best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
+            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+            best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
+            best_epoch = epoch
 
-            netG_image.train()
-            netDec_image.train()
-            netF_image.train()
+        print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
+        print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
+        print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
+        #print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
+        #print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
 
-        elif opt.combined_syn == 'sum':
-            syn_feature_sum = syn_feature_text + syn_feature_image
-            # TODO: Generalized zero-shot learning
-            if opt.gzsl_od:
-                # OD based GZSL
-                print("Performing Out-of-Distribution GZSL")
-                seen_class = data.seenclasses.size(0)
-                print('seen class size: ', seen_class)
-                # TODO: not sure to use which netDec?
-                clsu = classifier_dual.CLASSIFIER(syn_feature_sum, util_dual.map_label(syn_label, data.unseenclasses),
-                                                  data, data.unseenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                # _batch_size=opt.syn_num
-                clss = classifier_dual.CLASSIFIER(data.train_feature,
-                                                  util_dual.map_label(data.train_label, data.seenclasses),
-                                                  data, data.seenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
+    elif opt.gzsl:
+        # TODO: simple Generalized zero-shot learning
+        print("Performing simple GZSL")
+        train_X = torch.cat((data.train_feature, syn_feature), 0)
+        train_Y = torch.cat((data.train_label, syn_label), 0)
+        nclass = opt.nclass_all
+        clsg = classifier_dual.CLASSIFIER(train_X, train_Y, data, nclass,
+                                     opt.cuda, _nepoch=50,
+                                     _batch_size=64, generalized=True,
+                                     netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
+        if best_gzsl_simple_acc < clsg.H:
+            best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
+            best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
+            best_epoch = epoch
+            # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
 
-                clsg = classifier_entropy_dual.CLASSIFIER(data.train_feature,
-                                                          util_dual.map_label(data.train_label, data.seenclasses),
-                                                          data, seen_class, syn_feature_sum, syn_label,
-                                                          opt.cuda, clss, clsu, _batch_size=128,
-                                                          netDec=netDec_image, dec_size=opt.attSize_image,
-                                                          dec_hidden_size=4096)
+        print('Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
+        print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
+        print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
+        #print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
+        #print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
 
-                if best_gzsl_od_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-                    best_epoch = epoch
+    else:
+        # TODO: Zero-shot learning
+        print("Performing ZSL")
+        # Train ZSL classifier_dual
+        zsl_cls = classifier_dual.CLASSIFIER(syn_feature, util_dual.map_label(syn_label, data.unseenclasses),
+                                        data, data.unseenclasses.size(0),
+                                        opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                        generalized=False, netDec=netDec_image,
+                                        dec_size=opt.attSize_image, dec_hidden_size=4096)
+        acc = zsl_cls.acc
+        acc_per_class = zsl_cls.acc_per_class
+        cm = zsl_cls.cm
+        if best_zsl_acc < acc:
+            best_zsl_acc = acc
+            best_zsl_acc_per_class = acc_per_class
+            best_zsl_cm = cm
+            best_epoch = epoch
+        print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc, epoch))
+        #print('ZSL unseen accuracy per class\n', acc_per_class)
+        #print('ZSL confusion matrix\n', cm)
 
-                print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
-                print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
-                # print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
+    # reset modules to training mode
+    netG_text.train()
+    netDec_text.train()
+    netF_text.train()
 
-            elif opt.gzsl:
-                # TODO: simple Generalized zero-shot learning
-                print("Performing simple GZSL")
-                train_X = torch.cat((data.train_feature, syn_feature_sum), 0)
-                train_Y = torch.cat((data.train_label, syn_label), 0)
-                nclass = opt.nclass_all
-                clsg = classifier_dual.CLASSIFIER(train_X, train_Y, data, nclass,
-                                                  opt.cuda, _nepoch=50,
-                                                  _batch_size=64, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                if best_gzsl_simple_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_epoch = epoch
-                    # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-
-                print(
-                    'Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-                print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
-                # print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
-
-            else:
-                # TODO: Zero-shot learning
-                print("Performing ZSL")
-                # Train ZSL classifier_dual
-                zsl_cls_sum = classifier_dual.CLASSIFIER(syn_feature_sum, util_dual.map_label(syn_label, data.unseenclasses),
-                                                     data, data.unseenclasses.size(0),
-                                                     opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                                     generalized=False, netDec=netDec_image,
-                                                     dec_size=opt.attSize_image, dec_hidden_size=4096)
-                acc_sum = zsl_cls_sum.acc
-                acc_per_class_sum = zsl_cls_sum.acc_per_class
-                # cm = zsl_cls.cm
-                if best_zsl_acc_sum < acc_sum:
-                    best_zsl_acc_sum = acc_sum
-                    best_zsl_acc_per_class_sum = acc_per_class_sum
-                    # best_zsl_cm = cm
-                    best_epoch_sum = epoch
-                print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_sum, epoch))
-                # print('ZSL unseen accuracy per class\n', acc_per_class)
-                # print('ZSL confusion matrix\n', cm)
-
-            # reset modules to training mode
-            netG_text.train()
-            netDec_text.train()
-            netF_text.train()
-
-            netG_image.train()
-            netDec_image.train()
-            netF_image.train()
-
-        elif opt.combined_syn == 'max':
-            syn_feature_max = torch.max(torch.hstack((syn_feature_text, syn_feature_image)), 1)[0]
-            # TODO: Generalized zero-shot learning
-            if opt.gzsl_od:
-                # OD based GZSL
-                print("Performing Out-of-Distribution GZSL")
-                seen_class = data.seenclasses.size(0)
-                print('seen class size: ', seen_class)
-                # TODO: not sure to use which netDec?
-                clsu = classifier_dual.CLASSIFIER(syn_feature_max, util_dual.map_label(syn_label, data.unseenclasses),
-                                                  data, data.unseenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                # _batch_size=opt.syn_num
-                clss = classifier_dual.CLASSIFIER(data.train_feature,
-                                                  util_dual.map_label(data.train_label, data.seenclasses),
-                                                  data, data.seenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-
-                clsg = classifier_entropy_dual.CLASSIFIER(data.train_feature,
-                                                          util_dual.map_label(data.train_label, data.seenclasses),
-                                                          data, seen_class, syn_feature_max, syn_label,
-                                                          opt.cuda, clss, clsu, _batch_size=128,
-                                                          netDec=netDec_image, dec_size=opt.attSize_image,
-                                                          dec_hidden_size=4096)
-
-                if best_gzsl_od_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-                    best_epoch = epoch
-
-                print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
-                print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
-                # print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
-
-            elif opt.gzsl:
-                # TODO: simple Generalized zero-shot learning
-                print("Performing simple GZSL")
-                train_X = torch.cat((data.train_feature, syn_feature_max), 0)
-                train_Y = torch.cat((data.train_label, syn_label), 0)
-                nclass = opt.nclass_all
-                clsg = classifier_dual.CLASSIFIER(train_X, train_Y, data, nclass,
-                                                  opt.cuda, _nepoch=50,
-                                                  _batch_size=64, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                if best_gzsl_simple_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_epoch = epoch
-                    # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-
-                print(
-                    'Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-                print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
-                # print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
-
-            else:
-                # TODO: Zero-shot learning
-                print("Performing ZSL")
-                # Train ZSL classifier_dual
-                zsl_cls_max = classifier_dual.CLASSIFIER(syn_feature_max, util_dual.map_label(syn_label, data.unseenclasses),
-                                                     data, data.unseenclasses.size(0),
-                                                     opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                                     generalized=False, netDec=netDec_image,
-                                                     dec_size=opt.attSize_image, dec_hidden_size=4096)
-                acc_max = zsl_cls.acc
-                acc_per_class_max = zsl_cls.acc_per_class
-                # cm = zsl_cls.cm
-                if best_zsl_acc_max < acc_max:
-                    best_zsl_acc_max = acc_max
-                    best_zsl_acc_per_class_max = acc_per_class_max
-                    # best_zsl_cm = cm
-                    best_epoch_max = epoch
-                print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max, epoch))
-                # print('ZSL unseen accuracy per class\n', acc_per_class)
-                # print('ZSL confusion matrix\n', cm)
-
-            # reset modules to training mode
-            netG_text.train()
-            netDec_text.train()
-            netF_text.train()
-
-            netG_image.train()
-            netDec_image.train()
-            netF_image.train()
-
-        elif opt.combined_syn == 'min':
-            syn_feature_min = torch.min(torch.hstack((syn_feature_text, syn_feature_image)), 1)[0]
-            # TODO: Generalized zero-shot learning
-            if opt.gzsl_od:
-                # OD based GZSL
-                print("Performing Out-of-Distribution GZSL")
-                seen_class = data.seenclasses.size(0)
-                print('seen class size: ', seen_class)
-                # TODO: not sure to use which netDec?
-                clsu = classifier_dual.CLASSIFIER(syn_feature_min, util_dual.map_label(syn_label, data.unseenclasses),
-                                                  data, data.unseenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                # _batch_size=opt.syn_num
-                clss = classifier_dual.CLASSIFIER(data.train_feature,
-                                                  util_dual.map_label(data.train_label, data.seenclasses),
-                                                  data, data.seenclasses.size(0), opt.cuda,
-                                                  _nepoch=50, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-
-                clsg = classifier_entropy_dual.CLASSIFIER(data.train_feature,
-                                                          util_dual.map_label(data.train_label, data.seenclasses),
-                                                          data, seen_class, syn_feature_min, syn_label,
-                                                          opt.cuda, clss, clsu, _batch_size=128,
-                                                          netDec=netDec_image, dec_size=opt.attSize_image,
-                                                          dec_hidden_size=4096)
-
-                if best_gzsl_od_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-                    best_epoch = epoch
-
-                print('GZSL-OD: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('GZSL-OD: Acc per seen classes \n', clsg.acc_per_seen)
-                print('GZSL-OD: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('GZSL-OD: seen confusion matrix: \n', clsg.cm_seen)
-                # print('GZSL-OD: unseen confusion matrix: \n', clsg.cm_unseen)
-
-            elif opt.gzsl:
-                # TODO: simple Generalized zero-shot learning
-                print("Performing simple GZSL")
-                train_X = torch.cat((data.train_feature, syn_feature_min), 0)
-                train_Y = torch.cat((data.train_label, syn_label), 0)
-                nclass = opt.nclass_all
-                clsg = classifier_dual.CLASSIFIER(train_X, train_Y, data, nclass,
-                                                  opt.cuda, _nepoch=50,
-                                                  _batch_size=64, generalized=True,
-                                                  netDec=netDec_image, dec_size=opt.attSize_image, dec_hidden_size=4096)
-                if best_gzsl_simple_acc < clsg.H:
-                    best_acc_seen, best_acc_unseen, best_gzsl_simple_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
-                    best_acc_per_seen, best_acc_per_unseen = clsg.acc_per_seen, clsg.acc_per_unseen
-                    best_epoch = epoch
-                    # best_cm_seen, best_cm_unseen = clsg.cm_seen, clsg.cm_unseen
-
-                print(
-                    'Simple GZSL: Acc seen=%.4f, Acc unseen=%.4f, h=%.4f \n' % (clsg.acc_seen, clsg.acc_unseen, clsg.H))
-                print('Simple GZSL: Acc per seen classes \n', clsg.acc_per_seen)
-                print('Simple GZSL: Acc per unseen classes \n', clsg.acc_per_unseen)
-                # print('Simple GZSL: seen confusion matrix: \n', clsg.cm_seen)
-                # print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
-
-            else:
-                # TODO: Zero-shot learning
-                print("Performing ZSL")
-                # Train ZSL classifier_dual
-                zsl_cls = classifier_dual.CLASSIFIER(syn_feature_min, util_dual.map_label(syn_label, data.unseenclasses),
-                                                     data, data.unseenclasses.size(0),
-                                                     opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                                     generalized=False, netDec=netDec_image,
-                                                     dec_size=opt.attSize_image, dec_hidden_size=4096)
-                acc_min = zsl_cls.acc
-                acc_per_class_min = zsl_cls.acc_per_class
-                # cm = zsl_cls.cm
-                if best_zsl_acc_min < acc_min:
-                    best_zsl_acc_min = acc_min
-                    best_zsl_acc_per_class_min = acc_per_class_min
-                    # best_zsl_cm = cm
-                    best_epoch_min = epoch
-                print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_min, epoch))
-                # print('ZSL unseen accuracy per class\n', acc_per_class)
-                # print('ZSL confusion matrix\n', cm)
-
-            # reset modules to training mode
-            netG_text.train()
-            netDec_text.train()
-            netF_text.train()
-
-            netG_image.train()
-            netDec_image.train()
-            netF_image.train()
-
-        else:
-            print("Please choose the correct combination approaches.")
-
+    netG_image.train()
+    netDec_image.train()
+    netF_image.train()
 
 result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
 # Showing Best results
@@ -920,106 +642,26 @@ else:
     # ZSL:  best_zsl_acc
     #       best_zsl_acc_per_class,
     #       best_zsl_cm
-    if opt.combined_syn == 'avg':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
+    with open(os.path.join(result_root, "exp_zsl_results_" +
+                                        opt.dataset + "_" +
+                                        opt.class_embedding_text +
+                                        opt.class_embedding_image + "_dual.txt"), "a+") as f:
+        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+        f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+        f.write("Split Index: " + str(opt.split) + "\n")
+        f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
 
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+        f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+        f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_avg) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_avg) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_avg) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+        # TODO: recording full confusion matrix
+        f.write("Best Epoch: " + str(best_epoch) + "\n")
+        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc) + "\n")
+        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class) + "\n")
+        #f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
-        print('Best ZSL unseen accuracy is', best_zsl_acc_avg)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_avg)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
-
-    elif opt.combined_syn == 'sum':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
-
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
-
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_sum) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_sum) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_sum) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
-
-        print('Best ZSL unseen accuracy is', best_zsl_acc_sum)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_sum)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
-
-    elif opt.combined_syn == 'max':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
-
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
-
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_max) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
-
-        print('Best ZSL unseen accuracy is', best_zsl_acc_max)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
-
-    elif opt.combined_syn == 'min':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
-
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
-
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_min) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_min) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_min) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
-
-        print('Best ZSL unseen accuracy is', best_zsl_acc_min)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_min)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
-
-    else:
-        print("Please choose the correct combination approaches.")
+    print('Best ZSL unseen accuracy is', best_zsl_acc)
+    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class)
+    #print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
