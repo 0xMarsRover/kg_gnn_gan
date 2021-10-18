@@ -498,7 +498,7 @@ for epoch in range(0, opt.nepoch):
                                                        attSize=opt.attSize_text, nz=opt.nz_text)
     # (unseen classes * number of syn feat, 8192)
 
-    fusion_methods = ['avg', 'sum', 'max', 'min', 'weighted_avg']
+    fusion_methods = ['sum', 'max', 'min', 'weighted_avg']
     for fusion in fusion_methods:
         if opt.combined_syn == 'avg':
             syn_feature_avg = (syn_feature_text + syn_feature_image) / 2
