@@ -1027,5 +1027,5 @@ else:
             # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
         else:
-            print("Please choose the correct combination approaches.")
+            print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
 
