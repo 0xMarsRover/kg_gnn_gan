@@ -500,8 +500,8 @@ for epoch in range(0, opt.nepoch):
 
     fusion_methods = ['sum', 'max', 'min', 'weighted_avg']
     for fusion in fusion_methods:
-        print("Feature Fusion Method: ", opt.combined_syn)
-        if opt.combined_syn == 'avg':
+        print("Feature Fusion Method: ", fusion)
+        if fusion == 'avg':
             syn_feature_avg = (syn_feature_text + syn_feature_image) / 2
             # TODO: Generalized zero-shot learning
             if opt.gzsl_od:
@@ -593,7 +593,7 @@ for epoch in range(0, opt.nepoch):
             netDec_image.train()
             netF_image.train()
 
-        elif opt.combined_syn == 'sum':
+        elif fusion == 'sum':
             syn_feature_sum = syn_feature_text + syn_feature_image
             # TODO: Generalized zero-shot learning
             if opt.gzsl_od:
@@ -685,7 +685,7 @@ for epoch in range(0, opt.nepoch):
             netDec_image.train()
             netF_image.train()
 
-        elif opt.combined_syn == 'max':
+        elif fusion == 'max':
             syn_feature_max = torch.max(torch.hstack((syn_feature_text, syn_feature_image)), 1)[0]
             # TODO: Generalized zero-shot learning
             if opt.gzsl_od:
@@ -777,7 +777,7 @@ for epoch in range(0, opt.nepoch):
             netDec_image.train()
             netF_image.train()
 
-        elif opt.combined_syn == 'min':
+        elif fusion == 'min':
             syn_feature_min = torch.min(torch.hstack((syn_feature_text, syn_feature_image)), 1)[0]
             # TODO: Generalized zero-shot learning
             if opt.gzsl_od:
@@ -921,106 +921,107 @@ else:
     # ZSL:  best_zsl_acc
     #       best_zsl_acc_per_class,
     #       best_zsl_cm
-    if opt.combined_syn == 'avg':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
+    for fusion_save in fusion_methods:
+        if fusion_save == 'avg':
+            with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                opt.dataset + "_" +
+                                                opt.class_embedding_text + "_" +
+                                                opt.class_embedding_image + "_" +
+                                                fusion_save + "_dual.txt"), "a+") as f:
+                f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+                f.write("Split Index: " + str(opt.split) + "\n")
+                f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
 
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+                f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_avg) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_avg) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_avg) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                # TODO: recording full confusion matrix
+                f.write("Best Epoch: " + str(best_epoch_avg) + "\n")
+                f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_avg) + "\n")
+                f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_avg) + "\n")
+                # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
-        print('Best ZSL unseen accuracy is', best_zsl_acc_avg)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_avg)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+            print('Best ZSL unseen accuracy is', best_zsl_acc_avg)
+            print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_avg)
+            # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
-    elif opt.combined_syn == 'sum':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
+        elif fusion_save == 'sum':
+            with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                opt.dataset + "_" +
+                                                opt.class_embedding_text + "_" +
+                                                opt.class_embedding_image + "_" +
+                                                fusion_save + "_dual.txt"), "a+") as f:
+                f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+                f.write("Split Index: " + str(opt.split) + "\n")
+                f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
 
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+                f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_sum) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_sum) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_sum) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                # TODO: recording full confusion matrix
+                f.write("Best Epoch: " + str(best_epoch_sum) + "\n")
+                f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_sum) + "\n")
+                f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_sum) + "\n")
+                # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
-        print('Best ZSL unseen accuracy is', best_zsl_acc_sum)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_sum)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+            print('Best ZSL unseen accuracy is', best_zsl_acc_sum)
+            print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_sum)
+            # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
-    elif opt.combined_syn == 'max':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
+        elif fusion_save == 'max':
+            with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                opt.dataset + "_" +
+                                                opt.class_embedding_text + "_" +
+                                                opt.class_embedding_image + "_" +
+                                                fusion_save + "_dual.txt"), "a+") as f:
+                f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+                f.write("Split Index: " + str(opt.split) + "\n")
+                f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
 
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+                f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_max) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                # TODO: recording full confusion matrix
+                f.write("Best Epoch: " + str(best_epoch_max) + "\n")
+                f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
+                f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
+                # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
-        print('Best ZSL unseen accuracy is', best_zsl_acc_max)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+            print('Best ZSL unseen accuracy is', best_zsl_acc_max)
+            print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max)
+            # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
-    elif opt.combined_syn == 'min':
-        with open(os.path.join(result_root, "exp_zsl_results_" +
-                                            opt.dataset + "_" +
-                                            opt.class_embedding_text +
-                                            opt.class_embedding_image +
-                                            opt.combined_syn + "_dual.txt"), "a+") as f:
-            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-            f.write("Results: ZSL Experiments on Dual GAN" + "\n")
-            f.write("Split Index: " + str(opt.split) + "\n")
-            f.write("Feature Fusion Method: " + str(opt.combined_syn) + "\n")
+        elif fusion_save == 'min':
+            with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                opt.dataset + "_" +
+                                                opt.class_embedding_text + "_" +
+                                                opt.class_embedding_image + "_" +
+                                                fusion_save + "_dual.txt"), "a+") as f:
+                f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+                f.write("Split Index: " + str(opt.split) + "\n")
+                f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
 
-            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+                f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-            # TODO: recording full confusion matrix
-            f.write("Best Epoch: " + str(best_epoch_min) + "\n")
-            f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_min) + "\n")
-            f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_min) + "\n")
-            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                # TODO: recording full confusion matrix
+                f.write("Best Epoch: " + str(best_epoch_min) + "\n")
+                f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_min) + "\n")
+                f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_min) + "\n")
+                # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
-        print('Best ZSL unseen accuracy is', best_zsl_acc_min)
-        print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_min)
-        # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+            print('Best ZSL unseen accuracy is', best_zsl_acc_min)
+            print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_min)
+            # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
-    else:
-        print("Please choose the correct combination approaches.")
+        else:
+            print("Please choose the correct combination approaches.")
 
