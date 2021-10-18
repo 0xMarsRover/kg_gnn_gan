@@ -686,7 +686,8 @@ for epoch in range(0, opt.nepoch):
             netF_image.train()
 
         elif fusion == 'max':
-            syn_feature_max = torch.max(torch.hstack((syn_feature_text, syn_feature_image)), 1)[0]
+            syn_feature_max = torch.max(torch.hstack((syn_feature_text, syn_feature_image)), 1)[0]\
+                                .reshape(syn_feature_text[0], 1)
             # TODO: Generalized zero-shot learning
             if opt.gzsl_od:
                 # OD based GZSL
