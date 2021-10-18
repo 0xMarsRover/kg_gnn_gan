@@ -30,7 +30,7 @@ if torch.cuda.is_available() and not opt.cuda:
 data = util_dual.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)
 print("Dataset: ", opt.dataset)
-print("Dual GAN with ", opt.combined_syn)
+print("Dual GAN Experiments for sum/max/min feature fusion.")
 
 if opt.gzsl_od:
     print('Performing OD-based GZSL experiments!')
