@@ -498,7 +498,7 @@ for epoch in range(0, opt.nepoch):
                                                        attSize=opt.attSize_text, nz=opt.nz_text)
     # (unseen classes * number of syn feat, 8192)
 
-    fusion_methods = ['sum', 'max', 'min', 'weighted_avg']
+    fusion_methods = ['sum', 'max', 'min']
     for fusion in fusion_methods:
         print("Feature Fusion Method: ", fusion)
         if fusion == 'avg':
@@ -870,7 +870,7 @@ for epoch in range(0, opt.nepoch):
             netF_image.train()
 
         else:
-            print("Please choose the correct combination approaches.")
+            print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
 
 
 result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
@@ -943,6 +943,7 @@ else:
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_avg) + "\n")
                 # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
+            print('Fusion Method: ', fusion_save)
             print('Best ZSL unseen accuracy is', best_zsl_acc_avg)
             print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_avg)
             # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
@@ -968,6 +969,7 @@ else:
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_sum) + "\n")
                 # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
+            print('Fusion Method: ', fusion_save)
             print('Best ZSL unseen accuracy is', best_zsl_acc_sum)
             print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_sum)
             # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
@@ -993,6 +995,7 @@ else:
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
                 # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
+            print('Fusion Method: ', fusion_save)
             print('Best ZSL unseen accuracy is', best_zsl_acc_max)
             print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max)
             # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
@@ -1018,6 +1021,7 @@ else:
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_min) + "\n")
                 # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
+            print('Fusion Method: ', fusion_save)
             print('Best ZSL unseen accuracy is', best_zsl_acc_min)
             print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_min)
             # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
