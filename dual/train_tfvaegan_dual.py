@@ -500,6 +500,7 @@ for epoch in range(0, opt.nepoch):
 
     fusion_methods = ['sum', 'max', 'min', 'weighted_avg']
     for fusion in fusion_methods:
+        print("Feature Fusion Method: ", opt.combined_syn)
         if opt.combined_syn == 'avg':
             syn_feature_avg = (syn_feature_text + syn_feature_image) / 2
             # TODO: Generalized zero-shot learning
@@ -756,7 +757,7 @@ for epoch in range(0, opt.nepoch):
                                                      generalized=False, netDec=netDec_image,
                                                      dec_size=opt.attSize_image, dec_hidden_size=4096)
                 acc_max = zsl_cls_max.acc
-                acc_per_class_max = zsl_cls.acc_per_class
+                acc_per_class_max = zsl_cls_max.acc_per_class
                 # cm = zsl_cls.cm
                 if best_zsl_acc_max < acc_max:
                     best_zsl_acc_max = acc_max
