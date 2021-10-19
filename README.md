@@ -1,9 +1,7 @@
-# Knowledge Graph + Graph Neural Network + Generative Adversarial Network
+# Multi-Source Knowledge with Generative Adversarial Network for Zero-Shot Action Recognition
 
-This work aims to produce enriched semantic embedding by the GNN-based model 
-learned from a knowledge graph for each action class. 
-Then the produced semantic embedding can be considered as input to the GAN-based framework to generate
-visual features of unseen classes to achieve the ZSL and GZSL tasks in the field of human action recognition.
+This work aims to produce enriched semantic embedding by including 
+the knowledgesources from text and image for action classes.
 
 ### Image-based semantic embedding for action classes
 
