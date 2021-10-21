@@ -497,7 +497,6 @@ for epoch in range(0, opt.nepoch):
                                                        netF=netF_text, netDec=netDec_text,
                                                        attSize=opt.attSize_text, nz=opt.nz_text)
     # (unseen classes * number of syn feat, 8192)
-
     fusion_methods = ['sum', 'max', 'min']
     for fusion in fusion_methods:
         print("Feature Fusion Method: ", fusion)
