@@ -1,5 +1,4 @@
-# Multi-Source Knowledge with Generative Adversarial Network for Zero-Shot Action Recognition
-
+# Combining Text and Image Knowledge with GANs for Zero-Shot ActionRecognition in videos
 This work aims to produce enriched semantic embedding by including 
 the knowledgesources from text and image for action classes.
 
