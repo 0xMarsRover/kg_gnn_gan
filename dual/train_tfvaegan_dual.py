@@ -563,7 +563,8 @@ for epoch in range(0, opt.nepoch):
                 # print('Simple GZSL: unseen confusion matrix: \n', clsg.cm_unseen)
 
             else:
-                # TODO: Zero-shot learning
+                #TODO: Zero-shot learning
+                # Developing classifiers, such SVM
                 print("Performing ZSL")
                 # Train ZSL classifier_dual
                 zsl_cls_avg = classifier_dual.CLASSIFIER(syn_feature_avg, util_dual.map_label(syn_label, data.unseenclasses),
