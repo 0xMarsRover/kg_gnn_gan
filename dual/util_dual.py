@@ -32,7 +32,7 @@ class DATA_LOADER(object):
 
         if opt.dataset == "ucf101":
             # Argparse:
-            # --dataroot '/content/drive/MyDrive/colab_data/action_datasets/'
+            # --dataroot '/ichec/work/tud01/kaiqiang/action_datasets/'
             # --splits_path ucf101_semantics
             # --split = 1 (or 2 ... 30)
             # --dataset ucf101

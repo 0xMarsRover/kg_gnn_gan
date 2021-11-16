@@ -872,7 +872,7 @@ for epoch in range(0, opt.nepoch):
             print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
 
 
-result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
+result_root = '/ichec/home/users/kaiqiang/kg_gnn_gan/dual'
 # Showing Best results
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
