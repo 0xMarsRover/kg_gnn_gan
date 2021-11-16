@@ -9,6 +9,7 @@ from sklearn.metrics import confusion_matrix
 from config_dual import opt
 
 
+# Softmax Classifier
 class CLASSIFIER:
     def __init__(self, _train_X, _train_Y, data_loader, _nclass, _cuda, _lr=0.001, _beta1=0.5, _nepoch=50,
                  _batch_size=64, generalized=False, netDec=None, dec_size=4096, dec_hidden_size=4096):
@@ -247,7 +248,6 @@ class CLASSIFIER:
             # print(start, end)
             # from index start to index end-1
             return self.train_X[start:end], self.train_Y[start:end]
-
 
 class LINEAR_LOGSOFTMAX_CLASSIFIER(nn.Module):
     def __init__(self, input_dim, nclass):

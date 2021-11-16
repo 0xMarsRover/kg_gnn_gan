@@ -210,16 +210,14 @@ else:
     best_zsl_acc_min = 0
     best_zsl_acc_per_class_min = []
 
-
-# fusion_methods = ['avg', 'sum', 'max', 'min']
-
-# Training loop
+# Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
+
     print("Start VAEGAN Training at epoch: ", epoch)
-    # TODO: Traing GAN-Image
     # feedback training loop
     for loop in range(0, opt.feedback_loop):
         #print("Training GAN-Image..")
+        # TODO: Traing GAN-Image
         for i in range(0, data.ntrain, opt.batch_size):
             # TODO: Discriminator training
             # unfreeze discrimator
@@ -497,9 +495,11 @@ for epoch in range(0, opt.nepoch):
                                                        netF=netF_text, netDec=netDec_text,
                                                        attSize=opt.attSize_text, nz=opt.nz_text)
     # (unseen classes * number of syn feat, 8192)
+    # Fusing generated visual features for unseen classes
     fusion_methods = ['sum', 'max', 'min']
     for fusion in fusion_methods:
         print("Feature Fusion Method: ", fusion)
+        # Avg fusion method
         if fusion == 'avg':
             syn_feature_avg = (syn_feature_text + syn_feature_image) / 2
             # TODO: Generalized zero-shot learning
@@ -593,6 +593,7 @@ for epoch in range(0, opt.nepoch):
             netDec_image.train()
             netF_image.train()
 
+        # Sum fusion method
         elif fusion == 'sum':
             syn_feature_sum = syn_feature_text + syn_feature_image
             # TODO: Generalized zero-shot learning
@@ -657,6 +658,7 @@ for epoch in range(0, opt.nepoch):
 
             else:
                 # TODO: Zero-shot learning
+                '''
                 print("Performing ZSL")
                 # Train ZSL classifier_dual
                 zsl_cls_sum = classifier_dual.CLASSIFIER(syn_feature_sum, util_dual.map_label(syn_label, data.unseenclasses),
@@ -666,6 +668,7 @@ for epoch in range(0, opt.nepoch):
                                                      dec_size=opt.attSize_image, dec_hidden_size=4096)
                 acc_sum = zsl_cls_sum.acc
                 acc_per_class_sum = zsl_cls_sum.acc_per_class
+                '''
                 # cm = zsl_cls.cm
                 if best_zsl_acc_sum < acc_sum:
                     best_zsl_acc_sum = acc_sum
@@ -685,6 +688,7 @@ for epoch in range(0, opt.nepoch):
             netDec_image.train()
             netF_image.train()
 
+        # Max fusion method
         elif fusion == 'max':
             syn_feature_max = torch.max(syn_feature_image, syn_feature_text)
             # TODO: Generalized zero-shot learning
@@ -777,6 +781,7 @@ for epoch in range(0, opt.nepoch):
             netDec_image.train()
             netF_image.train()
 
+        # Min fusion method
         elif fusion == 'min':
             syn_feature_min = torch.min(syn_feature_image, syn_feature_text)
             # TODO: Generalized zero-shot learning
