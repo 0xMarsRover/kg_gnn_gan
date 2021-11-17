@@ -795,9 +795,7 @@ for epoch in range(0, opt.nepoch):
                     print("Training and Testing final classifier: ", classifier)
                     zsl_cls_max_svm = svm_classifier_dual.SVM_CLASSIFIER(syn_feature_max,
                                                                          util_dual.map_label(syn_label, data.unseenclasses),
-                                                                         data, data.unseenclasses.size(0),
-                                                                         opt.cuda, 30,
-                                                                         opt.syn_num, generalized=False)
+                                                                         data, data.unseenclasses.size(0), generalized=False)
                     acc_max_svm = zsl_cls_max_svm.acc
                     acc_per_class_max_svm = zsl_cls_max_svm.acc_per_class
                     # cm_svm = zsl_cls_sum_svm.cm
@@ -1018,9 +1016,10 @@ else:
                                                     fusion_save + "_" +
                                                     classifier + "_dual.txt"), "a+") as f:
                     f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-                    f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+                    f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                     f.write("Split Index: " + str(opt.split) + "\n")
                     f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
+                    f.write("Supervised Learning Classifier: " + str(classifier) + "\n")
 
                     f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
                     f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")

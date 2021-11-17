@@ -11,116 +11,72 @@ from sklearn import svm
 
 
 class SVM_CLASSIFIER:
-    def __init__(self, _train_X, _train_Y, data_loader, _nclass, _cuda,
-                 _nepoch=50, _batch_size=64, generalized=False):
+    def __init__(self, _train_X, _train_Y, data_loader, _nclass, generalized=False):
+
+        # ZSL:
+        #   train_X: syn_unseen_feat;
+        #   train_Y: unseen_label
+        # GZSL:
+        #   train_X: real_seen_feat + syn_unseen_feat;
+        #   train_Y: seen_label + unseen_label
 
         self.train_X = _train_X.clone()
         self.train_Y = _train_Y.clone()
+
+        # real seen feature and seen label for test
         self.test_seen_feature = data_loader.test_seen_feature.clone()
         self.test_seen_label = data_loader.test_seen_label
-
+        # real unseen feature and unseen label for test
         self.test_unseen_feature = data_loader.test_unseen_feature.clone()
         self.test_unseen_label = data_loader.test_unseen_label
-        self.seenclasses = data_loader.seenclasses
-        self.unseenclasses = data_loader.unseenclasses
-        self.batch_size = _batch_size
-        self.nepoch = _nepoch
-        self.nclass = _nclass
-        self.input_dim = _train_X.size(1)
-        self.cuda = _cuda
-        '''
-        self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.nclass)
-        self.netDec = netDec
-        if self.netDec:
-            self.netDec.eval()
-            self.input_dim = self.input_dim + dec_size
-            self.input_dim += dec_hidden_size
-            self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.nclass)
-            self.train_X = self.compute_dec_out(self.train_X, self.input_dim)
-            self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim)
-            self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim)
-        self.lr = _lr
-        self.beta1 = _beta1
-        self.optimizer = optim.Adam(self.model.parameters(), lr=_lr, betas=(_beta1, 0.999))
-        self.model.apply(util_dual.weights_init)
-        self.criterion = nn.NLLLoss()
-        '''
-        self.input = torch.FloatTensor(_batch_size, self.input_dim)
-        self.label = torch.LongTensor(_batch_size)
 
-        # self.test_on_seen = test_on_seen
-        if self.cuda:
-            '''
-            self.model.cuda()
-            self.criterion.cuda()
-            '''
-            self.input = self.input.cuda()
-            self.label = self.label.cuda()
-        self.index_in_epoch = 0
-        self.epochs_completed = 0
+        # number of seen classes
+        self.seenclasses = data_loader.seenclasses
+        # number of unseen classes
+        self.unseenclasses = data_loader.unseenclasses
+        # number of all classes
+        self.nclass = _nclass
+        # input dimesion
+        self.input_dim = _train_X.size(1)
+        # number of classes for training
         self.ntrain = self.train_X.size()[0]
+        # Init svm classifier
+        self.clf = svm.SVC(kernel='rbf', decision_function_shape='ovr', gamma='auto')
+
         if generalized:
             # gzsl
             self.acc_seen, self.acc_per_seen, self.acc_unseen, self.acc_per_unseen, \
-                self.H, self.best_model = self.fit()
+                self.H, self.best_model = self.fit_gzsl()
         else:
             # zsl
-            self.acc, self.acc_per_class, self.best_model, self.cm = self.fit_zsl()
+            self.acc, self.acc_per_class, self.cm = self.fit_zsl()
 
     # training for zsl
     def fit_zsl(self):
-
-        clf = svm.SVC(kernel='linear')
-
         best_acc = 0
-        mean_loss = 0
-        acc_per_class = []
+        best_acc_per_class = []
         best_cm = []
-        last_loss_epoch = 1e8
-        best_model = copy.deepcopy(self.model)
-        for epoch in range(self.nepoch):
-            for i in range(0, self.ntrain, self.batch_size):
-                self.model.zero_grad()
-                batch_input, batch_label = self.next_batch(self.batch_size)
 
-                self.input.copy_(batch_input)
-                self.label.copy_(batch_label)
+        # svm training
+        self.clf.fit(self.train_X, self.train_Y)
 
-                inputv = Variable(self.input)
-                labelv = Variable(self.label)
-                output = self.model(inputv)
-                loss = self.criterion(output, labelv)
-                mean_loss += loss.data
-                loss.backward()
-                self.optimizer.step()
-            self.model.eval()
-            # print('Training classifier loss= ', loss.data[0])
-            acc, acc_per_class, cm = self.val(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
-            # print('acc %.4f' % (acc))
-            if acc > best_acc:
-                best_acc = acc
-                best_acc_per_class = acc_per_class
-                best_model = copy.deepcopy(self.model)
-                best_cm = cm
-        return best_acc, best_acc_per_class, best_model, best_cm
+        acc, acc_per_class, cm = self.val_zsl(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
+        # print('acc %.4f' % (acc))
+        if acc > best_acc:
+            best_acc = acc
+            best_acc_per_class = acc_per_class
+            best_cm = cm
+        return best_acc, best_acc_per_class, best_cm
 
     # Parameter: test_label is integer
     # Validating for zsl
-    def val(self, test_X, test_label, target_classes):
-        start = 0
+    def val_zsl(self, test_X, test_label, target_classes):
+        '''
         ntest = test_X.size()[0]
         predicted_label = torch.LongTensor(test_label.size())
-        for i in range(0, ntest, self.batch_size):
-            end = min(ntest, start + self.batch_size)
-            if self.cuda:
-                with torch.no_grad():
-                    inputX = Variable(test_X[start:end].cuda())
-            else:
-                with torch.no_grad():
-                    inputX = Variable(test_X[start:end])
-            output = self.model(inputX)
-            _, predicted_label[start:end] = torch.max(output.data, 1)
-            start = end
+        '''
+        # prediction stage
+        predicted_label = self.clf.predict(test_X)
 
         acc, acc_per_class = self.compute_per_class_acc(util_dual.map_label(test_label, target_classes),
                                                         predicted_label, target_classes.size(0))
@@ -130,7 +86,7 @@ class SVM_CLASSIFIER:
         return acc, acc_per_class, cm
 
     # training for gzsl
-    def fit(self):
+    def fit_gzsl(self):
         best_H = 0
         best_seen = 0
         best_unseen = 0
@@ -227,38 +183,3 @@ class SVM_CLASSIFIER:
             start = end
         return new_test_X
 
-    def next_batch(self, batch_size):
-        start = self.index_in_epoch
-        # shuffle the data at the first epoch
-        if self.epochs_completed == 0 and start == 0:
-            perm = torch.randperm(self.ntrain)
-            self.train_X = self.train_X[perm]
-            self.train_Y = self.train_Y[perm]
-        # the last batch
-        if start + batch_size > self.ntrain:
-            self.epochs_completed += 1
-            rest_num_examples = self.ntrain - start
-            if rest_num_examples > 0:
-                X_rest_part = self.train_X[start:self.ntrain]
-                Y_rest_part = self.train_Y[start:self.ntrain]
-            # shuffle the data
-            perm = torch.randperm(self.ntrain)
-            self.train_X = self.train_X[perm]
-            self.train_Y = self.train_Y[perm]
-            # start next epoch
-            start = 0
-            self.index_in_epoch = batch_size - rest_num_examples
-            end = self.index_in_epoch
-            X_new_part = self.train_X[start:end]
-            Y_new_part = self.train_Y[start:end]
-            # print(start, end)
-            if rest_num_examples > 0:
-                return torch.cat((X_rest_part, X_new_part), 0), torch.cat((Y_rest_part, Y_new_part), 0)
-            else:
-                return X_new_part, Y_new_part
-        else:
-            self.index_in_epoch += batch_size
-            end = self.index_in_epoch
-            # print(start, end)
-            # from index start to index end-1
-            return self.train_X[start:end], self.train_Y[start:end]
