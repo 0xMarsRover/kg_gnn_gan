@@ -788,8 +788,8 @@ for epoch in range(0, opt.nepoch):
                                                      dec_size=opt.attSize_image, dec_hidden_size=4096)
                 acc_max = zsl_cls_max.acc
                 acc_per_class_max = zsl_cls_max.acc_per_class
-                '''
                 # cm = zsl_cls.cm
+                '''
 
                 for classifier in final_classifier:
                     print("Training and Testing final classifier: ", classifier)
