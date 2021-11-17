@@ -6,8 +6,9 @@
 #SBATCH --partition GpuQ
 #SBATCH --nodes 1
 #SBATCH --time=02:00:00
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH --mail-user=kaiqiang.x.huang@mytudublin.ie
+#SBATCH --mail-type=ALL,TIME_LIMIT_80
 #SBATCH --output=res_dual_hmdb51.out
 
 module load conda/2
