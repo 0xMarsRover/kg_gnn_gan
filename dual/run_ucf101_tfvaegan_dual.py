@@ -10,7 +10,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
 '''
 
-class_embedding_text = {'avg_desc_w2v': 300}
+class_embedding_text = {'action_class_w2v': 300}
 class_embedding_image = {'avg_img_resnet101': 2048}
 
 # current experiment status for ucf101 (need to run)

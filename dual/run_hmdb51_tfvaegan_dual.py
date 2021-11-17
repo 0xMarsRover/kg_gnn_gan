@@ -9,7 +9,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024, 'avg_img_resnet101': 2048}
 '''
 
-class_embedding_text = {'action_class_w2v': 300}
+class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_googlenet_me': 1024}
 
 # current experiment status for hmdb51 (need to run)
@@ -20,7 +20,7 @@ class_embedding_image = {'avg_img_googlenet_me': 1024}
 
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
-        for n in range(21, 31):
+        for n in range(16, 31):
             # n = n + 1
             # CUDA_LAUNCH_BLOCKING=1
             os.system('''time python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py \
