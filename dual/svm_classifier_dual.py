@@ -155,14 +155,3 @@ class SVM_CLASSIFIER:
     # New function: get confusion matrix
     def compute_confusion_matrix(self, test_label, predicted_label):
         return confusion_matrix(test_label, predicted_label)
-
-    '''
-    def compute_per_class_acc(self, test_label, predicted_label, nclass):
-        acc_per_class = torch.FloatTensor(nclass).fill_(0)
-        for i in range(nclass):
-            idx = (test_label == i)
-            acc_per_class[i] = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
-            acc_mean = acc_per_class.mean()
-        return acc_mean, acc_per_class
-    '''
-
