@@ -778,7 +778,7 @@ for epoch in range(0, opt.nepoch):
 
             else:
                 # TODO: Zero-shot learning
-                print("Performing ZSL")
+                print("Performing ZSL classifier stage.")
                 # Train ZSL classifier_dual
                 '''
                 zsl_cls_max = classifier_dual.CLASSIFIER(syn_feature_max, util_dual.map_label(syn_label, data.unseenclasses),

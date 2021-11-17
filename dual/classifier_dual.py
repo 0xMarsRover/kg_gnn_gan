@@ -249,6 +249,7 @@ class CLASSIFIER:
             # from index start to index end-1
             return self.train_X[start:end], self.train_Y[start:end]
 
+
 class LINEAR_LOGSOFTMAX_CLASSIFIER(nn.Module):
     def __init__(self, input_dim, nclass):
         super(LINEAR_LOGSOFTMAX_CLASSIFIER, self).__init__()

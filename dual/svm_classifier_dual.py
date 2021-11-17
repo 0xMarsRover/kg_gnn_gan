@@ -41,7 +41,8 @@ class SVM_CLASSIFIER:
         # number of classes for training
         self.ntrain = self.train_X.size()[0]
         # Init svm classifier
-        self.clf = svm.SVC(kernel='rbf', decision_function_shape='ovr', gamma='auto')
+        #self.clf = svm.SVC(kernel='rbf', decision_function_shape='ovr', gamma='auto')
+        self.clf = svm.SVC(kernel='linear', decision_function_shape='ovr')
 
         if generalized:
             # gzsl
@@ -59,6 +60,7 @@ class SVM_CLASSIFIER:
 
         # svm training
         self.clf.fit(self.train_X, self.train_Y)
+        print('SVM training Successful.')
 
         acc, acc_per_class, cm = self.val_zsl(self.test_unseen_feature, self.test_unseen_label, self.unseenclasses)
         # print('acc %.4f' % (acc))
@@ -77,6 +79,7 @@ class SVM_CLASSIFIER:
         '''
         # prediction stage
         predicted_label = self.clf.predict(test_X)
+        print('SVM testing successful')
 
         acc, acc_per_class = self.compute_per_class_acc(util_dual.map_label(test_label, target_classes),
                                                         predicted_label, target_classes.size(0))
