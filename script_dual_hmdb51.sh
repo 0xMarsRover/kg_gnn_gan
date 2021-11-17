@@ -16,6 +16,6 @@ module load cuda/11.2
 
 source activate /ichec/home/users/kaiqiang/py39
 
-echo "Dual GAN for HMDB51"
+echo "Dual GAN for HMDB51 with multi-GPU"
 
 time python ./dual/run_hmdb51_tfvaegan_dual.py

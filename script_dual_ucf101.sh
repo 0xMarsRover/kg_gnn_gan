@@ -16,6 +16,6 @@ module load cuda/11.2
 
 source activate /ichec/home/users/kaiqiang/py39
 
-echo "Dual GAN for UCF101"
+echo "Dual GAN for UCF101 multi-GPU"
 
 time python ./dual/run_ucf101_tfvaegan_dual.py
