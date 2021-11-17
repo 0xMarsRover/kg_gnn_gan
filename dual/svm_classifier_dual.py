@@ -73,19 +73,16 @@ class SVM_CLASSIFIER:
     # Parameter: test_label is integer
     # Validating for zsl
     def val_zsl(self, test_X, test_label, target_classes):
-        '''
-        ntest = test_X.size()[0]
-        predicted_label = torch.LongTensor(test_label.size())
-        '''
         # prediction stage
         predicted_label = self.clf.predict(test_X)
         print('SVM testing successful')
 
-        acc, acc_per_class = self.compute_per_class_acc(util_dual.map_label(test_label, target_classes),
-                                                        predicted_label, target_classes.size(0))
-
+        # calculate confusion matrix
         cm = self.compute_confusion_matrix(util_dual.map_label(test_label, target_classes),
-                                           predicted_label, target_classes.size(0))
+                                           predicted_label)
+        acc_per_class = cm.diagonal() / cm.sum(axis=1)
+        acc = acc_per_class.mean()
+
         return acc, acc_per_class, cm
 
     # training for gzsl
@@ -155,6 +152,11 @@ class SVM_CLASSIFIER:
             n += 1
         return acc_mean, acc_per_class
 
+    # New function: get confusion matrix
+    def compute_confusion_matrix(self, test_label, predicted_label):
+        return confusion_matrix(test_label, predicted_label)
+
+    '''
     def compute_per_class_acc(self, test_label, predicted_label, nclass):
         acc_per_class = torch.FloatTensor(nclass).fill_(0)
         for i in range(nclass):
@@ -162,27 +164,5 @@ class SVM_CLASSIFIER:
             acc_per_class[i] = torch.sum(test_label[idx] == predicted_label[idx]) / torch.sum(idx)
             acc_mean = acc_per_class.mean()
         return acc_mean, acc_per_class
-
-    # New function: get confusion matrix
-    def compute_confusion_matrix(self, test_label, predicted_label, nclass):
-        return confusion_matrix(test_label, predicted_label)
-
-    def compute_dec_out(self, test_X, new_size):
-        start = 0
-        ntest = test_X.size()[0]
-        new_test_X = torch.zeros(ntest, new_size)
-
-        for i in range(0, ntest, self.batch_size):
-            end = min(ntest, start + self.batch_size)
-            if self.cuda:
-                with torch.no_grad():
-                    inputX = Variable(test_X[start:end].cuda())
-            else:
-                with torch.no_grad():
-                    inputX = Variable(test_X[start:end])
-            feat1 = self.netDec(inputX)
-            feat2 = self.netDec.getLayersOutDet()
-            new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
-            start = end
-        return new_test_X
+    '''
 
