@@ -13,9 +13,15 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_resnet101': 2048}
 
+# current experiment status for ucf101 (need to run)
+# action + googlenet    -> finished
+# desc + googlenet      -> finished
+# action + resnet101    -> 23-30
+# desc + resnet101      -> 23-30
+
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
-        for n in range(19, 31):
+        for n in range(23, 31):
             # n = n + 1
             # CUDA_LAUNCH_BLOCKING=1
             os.system('''time python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py \
