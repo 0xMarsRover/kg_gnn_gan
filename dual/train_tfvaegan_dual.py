@@ -90,6 +90,7 @@ if opt.cuda:
     one = one.cuda()
     mone = mone.cuda()
 
+    # if failed to use multi-GPU, revert the codes below
     '''
     netG_image.cuda()
     netD_image.cuda()
