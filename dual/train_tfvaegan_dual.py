@@ -208,6 +208,11 @@ else:
     best_zsl_acc_sum_svm = 0
     best_zsl_acc_per_class_sum_svm = []
 
+    best_zsl_acc_max_svm = 0
+    best_zsl_acc_per_class_max_svm = []
+
+    best_zsl_acc_min_svm = 0
+    best_zsl_acc_per_class_min_svm = []
 
     best_zsl_acc_max = 0
     best_zsl_acc_per_class_max = []
@@ -775,6 +780,7 @@ for epoch in range(0, opt.nepoch):
                 # TODO: Zero-shot learning
                 print("Performing ZSL")
                 # Train ZSL classifier_dual
+                '''
                 zsl_cls_max = classifier_dual.CLASSIFIER(syn_feature_max, util_dual.map_label(syn_label, data.unseenclasses),
                                                      data, data.unseenclasses.size(0),
                                                      opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
@@ -782,24 +788,28 @@ for epoch in range(0, opt.nepoch):
                                                      dec_size=opt.attSize_image, dec_hidden_size=4096)
                 acc_max = zsl_cls_max.acc
                 acc_per_class_max = zsl_cls_max.acc_per_class
+                '''
                 # cm = zsl_cls.cm
-                if best_zsl_acc_max < acc_max:
-                    best_zsl_acc_max = acc_max
-                    best_zsl_acc_per_class_max = acc_per_class_max
-                    # best_zsl_cm = cm
-                    best_epoch_max = epoch
-                print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max, epoch))
-                # print('ZSL unseen accuracy per class\n', acc_per_class)
-                # print('ZSL confusion matrix\n', cm)
 
-            # reset modules to training mode
-            netG_text.train()
-            netDec_text.train()
-            netF_text.train()
+                for classifier in final_classifier:
+                    print("Training and Testing final classifier: ", classifier)
+                    zsl_cls_max_svm = svm_classifier_dual.SVM_CLASSIFIER(syn_feature_max,
+                                                                         util_dual.map_label(syn_label, data.unseenclasses),
+                                                                         data, data.unseenclasses.size(0),
+                                                                         opt.cuda, 30,
+                                                                         opt.syn_num, generalized=False)
+                    acc_max_svm = zsl_cls_max_svm.acc
+                    acc_per_class_max_svm = zsl_cls_max_svm.acc_per_class
+                    # cm_svm = zsl_cls_sum_svm.cm
 
-            netG_image.train()
-            netDec_image.train()
-            netF_image.train()
+                    if best_zsl_acc_max_svm < acc_max_svm:
+                        best_zsl_acc_max_svm = acc_max_svm
+                        best_zsl_acc_per_class_max_svm = acc_per_class_max_svm
+                        # best_zsl_cm = cm
+                        best_epoch_max = epoch
+                    print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max_svm, epoch))
+                    # print('ZSL unseen accuracy per class\n', acc_per_class)
+                    # print('ZSL confusion matrix\n', cm)
 
         # Min fusion method
         elif fusion == 'min':
