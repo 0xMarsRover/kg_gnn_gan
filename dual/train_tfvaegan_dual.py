@@ -941,7 +941,7 @@ elif opt.gzsl:
 
 else:
     # ZSL:  best_zsl_acc
-    #       best_zsl_acc_per_class,
+    #       best_zsl_acc_per_class
     #       best_zsl_cm
     for fusion_save in fusion_methods:
         if fusion_save == 'avg':

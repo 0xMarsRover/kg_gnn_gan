@@ -36,7 +36,7 @@ class SVM_CLASSIFIER:
         self.unseenclasses = data_loader.unseenclasses
         # number of all classes
         self.nclass = _nclass
-        # input dimesion
+        # input dimension
         self.input_dim = _train_X.size(1)
         # number of classes for training
         self.ntrain = self.train_X.size()[0]
