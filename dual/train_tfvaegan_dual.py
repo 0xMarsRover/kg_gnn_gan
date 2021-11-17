@@ -70,8 +70,27 @@ one = torch.tensor(1, dtype=torch.float)
 # one = torch.FloatTensor([1])
 mone = one * -1
 
-# Cuda
+# Cuda: multi-GPU training
 if opt.cuda:
+    torch.nn.DataParallel(netG_image).cuda()
+    torch.nn.DataParallel(netD_image).cuda()
+    torch.nn.DataParallel(netE_image).cuda()
+    torch.nn.DataParallel(netDec_image).cuda()
+    torch.nn.DataParallel(netF_image).cuda()
+    noise_image, input_att_image = noise_image.cuda(), input_att_image.cuda()
+
+    torch.nn.DataParallel(netG_text).cuda()
+    torch.nn.DataParallel(netD_text).cuda()
+    torch.nn.DataParallel(netE_text).cuda()
+    torch.nn.DataParallel(netDec_text).cuda()
+    torch.nn.DataParallel(netF_text).cuda()
+    noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
+
+    input_res = input_res.cuda()
+    one = one.cuda()
+    mone = mone.cuda()
+
+    '''
     netG_image.cuda()
     netD_image.cuda()
     netE_image.cuda()
@@ -90,6 +109,7 @@ if opt.cuda:
     input_res = input_res.cuda()
     one = one.cuda()
     mone = mone.cuda()
+    '''
 
 
 def loss_fn(recon_x, x, mean, log_var):
@@ -211,7 +231,7 @@ else:
     best_zsl_acc_per_class_min = []
 
 
-# fusion_methods = ['avg', 'sum', 'max', 'min']
+fusion_methods = ['sum', 'max', 'min']
 
 # Training loop
 for epoch in range(0, opt.nepoch):
@@ -497,7 +517,7 @@ for epoch in range(0, opt.nepoch):
                                                        netF=netF_text, netDec=netDec_text,
                                                        attSize=opt.attSize_text, nz=opt.nz_text)
     # (unseen classes * number of syn feat, 8192)
-    fusion_methods = ['sum', 'max', 'min']
+    #fusion_methods = ['sum', 'max', 'min']
     for fusion in fusion_methods:
         print("Feature Fusion Method: ", fusion)
         if fusion == 'avg':
