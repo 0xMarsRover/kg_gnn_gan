@@ -9,6 +9,8 @@ hmdb51_images/
 bert embedding/
 *.png
 .idea/
+*.txt
+*.log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
