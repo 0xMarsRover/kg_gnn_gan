@@ -36,6 +36,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 '''
 class_embedding = {'action_class_w2v': 300}
 
+# Do not run this script: generated unseen data cannot be saved due to large size.
 for c, dim in class_embedding.items():
     for n in range(1, 2):
         # n = n + 1

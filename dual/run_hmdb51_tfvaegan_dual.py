@@ -13,7 +13,7 @@ class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_googlenet_me': 1024}
 
 # current experiment status for hmdb51 (need to run)
-# action + googlenet    -> 21-30
+# action + googlenet    -> finished
 # desc + googlenet      -> 16-30
 # action + resnet101    -> 19-30
 # desc + resnet101      -> 19-30

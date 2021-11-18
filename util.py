@@ -61,24 +61,6 @@ class DATA_LOADER(object):
             # L2 Norm.
             self.attribute /= self.attribute.pow(2).sum(1).sqrt().unsqueeze(1).expand(self.attribute.size(0),
                                                                                       self.attribute.size(1))
-            '''
-            # TODO: Dual GAN - semantic embedding for texts and images
-            if opt.class_embedding == 'text_image':
-                print("Semantic Embedding: ", opt.class_embedding)
-                # Text embedding
-                self.attribute_text = torch.from_numpy(matcontent[opt.class_embedding].T).float()
-                # L2 Norm.
-                self.attribute_text /= self.attribute_text.pow(2).sum(1).sqrt().unsqueeze(1).\
-                    expand(self.attribute_text.size(0), self.attribute_text.size(1))
-
-                # Image embedding
-                self.attribute_image = torch.from_numpy(matcontent[opt.class_embedding].T).float()
-                # L2 Norm.
-                self.attribute_image /= self.attribute_image.pow(2).sum(1).sqrt().unsqueeze(1).\
-                    expand(self.attribute_image.size(0), self.attribute_image.size(1))
-            '''
-
-
         # HMDB51 dataset
         elif opt.dataset == "hmdb51":
             # Argparse:
