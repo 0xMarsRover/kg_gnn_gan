@@ -8,7 +8,7 @@ parser.add_argument('--class_embedding_text', default='action_class_w2v')
 parser.add_argument('--class_embedding_image', default='avg_img_resnet101')
 parser.add_argument('--splits_path', default='ucf101/ucf101_semantics', help='or replace ucf101 with hmdb51')
 parser.add_argument('--split', type=int, default=1)
-parser.add_argument('--combined_syn', default='concat') # or avg
+#parser.add_argument('--combined_syn', default='avg')
 
 parser.add_argument('--syn_num', type=int, default=150, help='number features to generate per class')
 
