@@ -1,5 +1,6 @@
 from __future__ import print_function
 import torch
+import torch.nn.functional
 import torch.autograd as autograd
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
@@ -23,6 +24,8 @@ random.seed(opt.manualSeed)
 torch.manual_seed(opt.manualSeed)
 if opt.cuda:
     torch.cuda.manual_seed_all(opt.manualSeed)
+    # Display number of gpus available
+    print("There are ", torch.cuda.device_count(), "GPUs available.")
 cudnn.benchmark = True
 if torch.cuda.is_available() and not opt.cuda:
     print("WARNING: You have a CUDA device, so you should run with --cuda")
@@ -36,7 +39,7 @@ if opt.gzsl_od:
     print('Performing OD-based GZSL experiments!')
 
 elif opt.gzsl:
-    print('Performing Simple GZSL experiments!')
+    print('Performing Simple GZSL experiments (logsoftmax classifier)!')
 else:
     print('Performing ZSL experiments!')
 
@@ -210,7 +213,7 @@ def calc_gradient_penalty(netD, real_data, fake_data, input_att):
     return gradient_penalty
 
 
-# TODO: Recording best_acc, best_acc_per_class, best_cm
+# Recording best_acc, best_acc_per_class, best_cm
 if opt.gzsl_od:
     best_gzsl_od_acc = 0
 
@@ -231,7 +234,7 @@ else:
     best_zsl_acc_min = 0
     best_zsl_acc_per_class_min = []
 
-
+# ['avg', 'sum', 'max', 'min']
 fusion_methods = ['sum', 'max', 'min']
 
 # Training loop
@@ -587,11 +590,12 @@ for epoch in range(0, opt.nepoch):
                 # TODO: Zero-shot learning
                 print("Performing ZSL")
                 # Train ZSL classifier_dual
-                zsl_cls_avg = classifier_dual.CLASSIFIER(syn_feature_avg, util_dual.map_label(syn_label, data.unseenclasses),
-                                                     data, data.unseenclasses.size(0),
-                                                     opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                                     generalized=False, netDec=netDec_image,
-                                                     dec_size=opt.attSize_image, dec_hidden_size=4096)
+                zsl_cls_avg = classifier_dual.CLASSIFIER(syn_feature_avg,
+                                                         util_dual.map_label(syn_label, data.unseenclasses),
+                                                         data, data.unseenclasses.size(0),
+                                                         opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                                         generalized=False, netDec=netDec_image,
+                                                         dec_size=opt.attSize_image, dec_hidden_size=4096)
                 acc_avg = zsl_cls_avg.acc
                 acc_per_class_avg = zsl_cls_avg.acc_per_class
                 # cm = zsl_cls.cm
@@ -771,11 +775,12 @@ for epoch in range(0, opt.nepoch):
                 # TODO: Zero-shot learning
                 print("Performing ZSL")
                 # Train ZSL classifier_dual
-                zsl_cls_max = classifier_dual.CLASSIFIER(syn_feature_max, util_dual.map_label(syn_label, data.unseenclasses),
-                                                     data, data.unseenclasses.size(0),
-                                                     opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
-                                                     generalized=False, netDec=netDec_image,
-                                                     dec_size=opt.attSize_image, dec_hidden_size=4096)
+                zsl_cls_max = classifier_dual.CLASSIFIER(syn_feature_max,
+                                                         util_dual.map_label(syn_label, data.unseenclasses),
+                                                         data, data.unseenclasses.size(0),
+                                                         opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                                         generalized=False, netDec=netDec_image,
+                                                         dec_size=opt.attSize_image, dec_hidden_size=4096)
                 acc_max = zsl_cls_max.acc
                 acc_per_class_max = zsl_cls_max.acc_per_class
                 # cm = zsl_cls.cm
