@@ -14,7 +14,9 @@ import util_dual
 import classifier_dual
 import classifier_entropy_dual
 import svm_classifier_dual
+import rf_classifier_dual
 from config_dual import opt
+
 
 if opt.manualSeed is None:
     opt.manualSeed = random.randint(1, 10000)
@@ -71,7 +73,7 @@ one = torch.tensor(1, dtype=torch.float)
 # one = torch.FloatTensor([1])
 mone = one * -1
 
-# Cuda
+# Cuda setting
 if opt.cuda:
     netG_image.cuda()
     netD_image.cuda()
@@ -198,31 +200,38 @@ elif opt.gzsl:
     best_gzsl_simple_acc = 0
 
 else:
+    # avg
     best_zsl_acc_avg = 0
     best_zsl_acc_per_class_avg = []
     #best_zsl_cm = []
 
+    # sum
     best_zsl_acc_sum = 0
     best_zsl_acc_per_class_sum = []
-
+    # sum_svm
     best_zsl_acc_sum_svm = 0
     best_zsl_acc_per_class_sum_svm = []
 
+    # max
+    best_zsl_acc_max = 0
+    best_zsl_acc_per_class_max = []
+    # max_svm
     best_zsl_acc_max_svm = 0
     best_zsl_acc_per_class_max_svm = []
+    # max_rf
+    best_zsl_acc_max_rf = 0
+    best_zsl_acc_per_class_max_rf = []
 
+    # min
+    best_zsl_acc_min = 0
+    best_zsl_acc_per_class_min = []
+    # min_svm
     best_zsl_acc_min_svm = 0
     best_zsl_acc_per_class_min_svm = []
 
-    best_zsl_acc_max = 0
-    best_zsl_acc_per_class_max = []
-
-    best_zsl_acc_min = 0
-    best_zsl_acc_per_class_min = []
-
 # fusion_methods = ['sum', 'max', 'min']
 fusion_methods = ['max']    # using max for this branch
-final_classifier = ['svm']  # using svm as final classifier after feature fusion
+final_classifier = ['rf']  # using svm as final classifier after feature fusion
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -366,7 +375,9 @@ for epoch in range(0, opt.nepoch):
     netG_image.eval()
     netDec_image.eval()
     netF_image.eval()
-    syn_feature_image, syn_label = generate_syn_feature(netG_image, data.unseenclasses, data.attribute_image,
+    syn_feature_image, syn_label = generate_syn_feature(netG_image,
+                                                        data.unseenclasses,
+                                                        data.attribute_image,
                                                         opt.syn_num,
                                                         netF=netF_image, netDec=netDec_image,
                                                         attSize=opt.attSize_image, nz=opt.nz_image)
@@ -505,10 +516,14 @@ for epoch in range(0, opt.nepoch):
     netG_text.eval()
     netDec_text.eval()
     netF_text.eval()
-    syn_feature_text, syn_label = generate_syn_feature(netG_text, data.unseenclasses,
-                                                       data.attribute_text, opt.syn_num,
-                                                       netF=netF_text, netDec=netDec_text,
-                                                       attSize=opt.attSize_text, nz=opt.nz_text)
+    syn_feature_text, syn_label = generate_syn_feature(netG_text,
+                                                       data.unseenclasses,
+                                                       data.attribute_text,
+                                                       opt.syn_num,
+                                                       netF=netF_text,
+                                                       netDec=netDec_text,
+                                                       attSize=opt.attSize_text,
+                                                       nz=opt.nz_text)
 
     # (unseen classes * number of syn feat, 8192)
     # Fusing generated visual features for unseen classes
@@ -716,7 +731,7 @@ for epoch in range(0, opt.nepoch):
         # Max fusion method
         elif fusion == 'max':
             syn_feature_max = torch.max(syn_feature_image, syn_feature_text)
-            # TODO: Generalized zero-shot learning
+            # TODO: Generalized zero-shot learning (OD-based)
             if opt.gzsl_od:
                 # OD based GZSL
                 print("Performing Out-of-Distribution GZSL")
@@ -781,22 +796,48 @@ for epoch in range(0, opt.nepoch):
                 print("Performing ZSL classifier stage.")
                 # Train ZSL classifier_dual
                 for classifier in final_classifier:
-                    print("Training and Testing final classifier: ", classifier)
-                    zsl_cls_max_svm = svm_classifier_dual.SVM_CLASSIFIER(syn_feature_max,
-                                                                         util_dual.map_label(syn_label, data.unseenclasses),
-                                                                         data, data.unseenclasses.size(0), generalized=False)
-                    acc_max_svm = zsl_cls_max_svm.acc
-                    acc_per_class_max_svm = zsl_cls_max_svm.acc_per_class
-                    # cm_svm = zsl_cls_sum_svm.cm
+                    if classifier == 'svm':
+                        print("Training and Testing final classifier: ", classifier)
+                        zsl_cls_max_svm = svm_classifier_dual.SVM_CLASSIFIER(syn_feature_max,
+                                                                             util_dual.map_label(syn_label, data.unseenclasses),
+                                                                             data,
+                                                                             data.unseenclasses.size(0),
+                                                                             generalized=False)
+                        acc_max_svm = zsl_cls_max_svm.acc
+                        acc_per_class_max_svm = zsl_cls_max_svm.acc_per_class
+                        # cm_svm = zsl_cls_sum_svm.cm
 
-                    if best_zsl_acc_max_svm < acc_max_svm:
-                        best_zsl_acc_max_svm = acc_max_svm
-                        best_zsl_acc_per_class_max_svm = acc_per_class_max_svm
-                        # best_zsl_cm = cm
-                        best_epoch_max = epoch
-                    print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max_svm, epoch))
-                    # print('ZSL unseen accuracy per class\n', acc_per_class)
-                    # print('ZSL confusion matrix\n', cm)
+                        if best_zsl_acc_max_svm < acc_max_svm:
+                            best_zsl_acc_max_svm = acc_max_svm
+                            best_zsl_acc_per_class_max_svm = acc_per_class_max_svm
+                            # best_zsl_cm = cm
+                            best_epoch_max = epoch
+                        print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max_svm, epoch))
+                        # print('ZSL unseen accuracy per class\n', acc_per_class)
+                        # print('ZSL confusion matrix\n', cm)
+
+                    elif classifier == 'rf':
+                        print("Training and Testing final classifier: ", classifier)
+                        zsl_cls_max_rf = rf_classifier_dual.RF_CLASSIFIER(syn_feature_max,
+                                                                          util_dual.map_label(syn_label, data.unseenclasses),
+                                                                          data,
+                                                                          data.unseenclasses.size(0),
+                                                                          generalized=False)
+                        acc_max_rf = zsl_cls_max_rf.acc
+                        acc_per_class_max_rf = zsl_cls_max_rf.acc_per_class
+                        # cm_rf = zsl_cls_sum_rf.cm
+
+                        if best_zsl_acc_max_rf < acc_max_rf:
+                            best_zsl_acc_max_rf = acc_max_rf
+                            best_zsl_acc_per_class_max_rf = acc_per_class_max_rf
+                            # best_zsl_cm = cm
+                            best_epoch_max = epoch
+                        print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max_rf, epoch))
+                        # print('ZSL unseen accuracy per class\n', acc_per_class)
+                        # print('ZSL confusion matrix\n', cm)
+
+                    else:
+                        print('Wrong Discriminative Classifier (either svm or rf)')
 
         # Min fusion method
         elif fusion == 'min':
@@ -894,8 +935,9 @@ for epoch in range(0, opt.nepoch):
         else:
             print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
 
+# Need to check when using Kay or Colab
+result_root = opt.resultroot
 
-result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
 # Showing Best results
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
@@ -998,33 +1040,65 @@ else:
 
         elif fusion_save == 'max':
             for classifier in final_classifier:
-                with open(os.path.join(result_root, "exp_zsl_results_" +
-                                                    opt.dataset + "_" +
-                                                    opt.class_embedding_text + "_" +
-                                                    opt.class_embedding_image + "_" +
-                                                    fusion_save + "_" +
-                                                    classifier + "_dual.txt"), "a+") as f:
-                    f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-                    f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
-                    f.write("Split Index: " + str(opt.split) + "\n")
-                    f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
-                    f.write("Supervised Learning Classifier: " + str(classifier) + "\n")
+                if classifier == 'svm':
+                    with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                        opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion_save + "_" +
+                                                        classifier + "_dual.txt"), "a+") as f:
+                        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                        f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
+                        f.write("Split Index: " + str(opt.split) + "\n")
+                        f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
+                        f.write("Supervised Learning Classifier: " + str(classifier) + "\n")
 
-                    f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-                    f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
-                    f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+                        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                        f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                        f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                    # TODO: recording full confusion matrix
-                    f.write("Best Epoch: " + str(best_epoch_max) + "\n")
-                    f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_svm) + "\n")
-                    f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_svm) + "\n")
-                    # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                        # TODO: recording full confusion matrix
+                        f.write("Best Epoch: " + str(best_epoch_max) + "\n")
+                        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_svm) + "\n")
+                        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_svm) + "\n")
+                        # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
-                print('Fusion Method: ', fusion_save)
-                print('Final Classifier: ', classifier)
-                print('Best ZSL unseen accuracy is', best_zsl_acc_max_svm)
-                print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max_svm)
-                # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+                    print('Fusion Method: ', fusion_save)
+                    print('Final Classifier: ', classifier)
+                    print('Best ZSL unseen accuracy is', best_zsl_acc_max_svm)
+                    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max_svm)
+                    # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+
+                elif classifier == 'rf':
+                    with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                        opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion_save + "_" +
+                                                        classifier + "_dual.txt"), "a+") as f:
+                        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                        f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
+                        f.write("Split Index: " + str(opt.split) + "\n")
+                        f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
+                        f.write("Supervised Learning Classifier: " + str(classifier) + "\n")
+
+                        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                        f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                        f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+
+                        # TODO: recording full confusion matrix
+                        f.write("Best Epoch: " + str(best_epoch_max) + "\n")
+                        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_svm) + "\n")
+                        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_svm) + "\n")
+                        # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+
+                    print('Fusion Method: ', fusion_save)
+                    print('Final Classifier: ', classifier)
+                    print('Best ZSL unseen accuracy is', best_zsl_acc_max_svm)
+                    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max_svm)
+                    # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+                else:
+                    print("Wrong Discriminative Classifier (either svm or rf)")
 
         elif fusion_save == 'min':
             with open(os.path.join(result_root, "exp_zsl_results_" +

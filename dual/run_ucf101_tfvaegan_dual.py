@@ -10,16 +10,28 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
                    'avg_img_resnet18': 512, 'avg_img_resnet50': 2048, 'avg_img_resnet101': 2048}
 '''
 
+# Colab:
+#       python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py
+#       --dataroot /content/drive/MyDrive/colab_data/action_datasets
+#       --resultsroot /content/drive/MyDrive/colab_data/KG_GCN_GAN
+
+# Kay:
+#       python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py
+#       --dataroot /ichec/work/tud01/kaiqiang/action_datasets
+#       --resultsroot /ichec/home/users/kaiqiang/kg_gnn_gan/dual
+
+
 class_embedding_text = {'action_class_w2v': 300}
-class_embedding_image = {'avg_img_resnet101': 2048}
+class_embedding_image = {'avg_img_googlenet_me': 1024}
 
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
-        for n in range(1, 6):
+        for n in range(1, 2):
             # n = n + 1
             os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py \
             --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
             --dataroot /content/drive/MyDrive/colab_data/action_datasets \
+            --resultsroot /content/drive/MyDrive/colab_data/KG_GCN_GAN \
             --splits_path ucf101_semantics --split {split} \
             --action_embedding i3d --resSize 8192 \
             --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \

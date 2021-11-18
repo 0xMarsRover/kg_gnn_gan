@@ -15,3 +15,15 @@ the knowledgesources from text and image for action classes.
 
 [1] Narayan, S., Gupta, A., Khan, F. S., Snoek, C. G., & Shao, L. (2020). Latent embedding feedback and discriminative features for zero-shot classification. In Computer Vision–ECCV 2020: 16th European Conference, Glasgow, UK, August 23–28, 2020, Proceedings, Part XXII 16 (pp. 479-495). Springer International Publishing.
     [github repo.](https://github.com/akshitac8/tfvaegan)
+
+### Branch Note
+<ol>
+  <li>main</li>
+  
+  <li> sum_max_min
+    <ol>
+      <li>classifier</li>
+      <li>kay_sum_max_min</li>
+    </ol>
+  </li>
+</ol>
