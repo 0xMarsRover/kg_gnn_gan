@@ -30,7 +30,7 @@ for c_t, dim_t in class_embedding_text.items():
             os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py \
             --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
             --dataroot /content/drive/MyDrive/colab_data/action_datasets \
-            --resultsroot /content/drive/MyDrive/colab_data/KG_GCN_GAN \
+            --resultroot /content/drive/MyDrive/colab_data/KG_GCN_GAN \
             --splits_path hmdb51_semantics --split {split} \
             --action_embedding i3d --resSize 8192 \
             --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
