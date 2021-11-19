@@ -2,7 +2,7 @@ import os
 # Need to check: zsl/gzsl, nz/attSize, nclass_all, nepoch
 # Also consider --syn_num: how many number of features should be generated per class
 
-# Conducting different experiments accordign to different semantics
+# Conducting different experiments according to different semantics
 # when --class_embedding action_class_w2v
 #       --nz 300 --attSize 300
 

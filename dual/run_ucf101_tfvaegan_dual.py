@@ -16,7 +16,7 @@ class_embedding_image = {'avg_img_resnet101': 2048}
 # current experiment status for ucf101 (need to run)
 # action + googlenet    -> finished
 # desc + googlenet      -> finished
-# action + resnet101    -> 23-30 running
+# action + resnet101    -> finished
 # desc + resnet101      -> finished
 
 for c_t, dim_t in class_embedding_text.items():
