@@ -38,7 +38,7 @@ class_embedding = {'avg_img_resnet101': 2048}
 
 for c, dim in class_embedding.items():
     for n in range(28, 31):
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kg_gnn_gan/train_tfvaegan.py \
         --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
         --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
         --splits_path hmdb51_semantics --split {split} \

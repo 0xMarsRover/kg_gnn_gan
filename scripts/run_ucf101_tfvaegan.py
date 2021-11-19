@@ -58,7 +58,7 @@ class_embedding = {'avg_img_googlenet_me': 1024}
 for c, dim in class_embedding.items():
     for n in range(23, 31):
         # n = n + 1
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kg_gnn_gan/train_tfvaegan.py \
         --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
         --dataroot /content/drive/MyDrive/colab_data/action_datasets \
         --splits_path ucf101_semantics --split {split} \
