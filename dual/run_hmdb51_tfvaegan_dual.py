@@ -9,14 +9,14 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024, 'avg_img_resnet101': 2048}
 '''
 
-class_embedding_text = {'action_class_w2v': 300}
+class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_resnet101': 2048}
 
 # current experiment status for hmdb51 (need to run)
 # action + googlenet    -> finished
-# desc + googlenet      -> 16-30 running
-# action + resnet101    -> 19-30 ready to run..
-# desc + resnet101      -> 19-30
+# desc + googlenet      -> finished
+# action + resnet101    -> 19-30 running
+# desc + resnet101      -> 19-30 ready to run
 
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
