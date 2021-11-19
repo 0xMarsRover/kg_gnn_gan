@@ -16,7 +16,6 @@ module load cuda/11.2
 
 source activate /ichec/home/users/kaiqiang/py39
 
-echo "Single GAN for HMDB51 and UCF101."
+echo "Single GAN for UCF101."
 
-time python ./scripts/run_hmdb51_tfvaegan.py
 time python ./scripts/run_ucf101_tfvaegan.py
