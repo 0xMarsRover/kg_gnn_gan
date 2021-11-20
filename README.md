@@ -1,14 +1,10 @@
 # Branch Info
-<ol>
-  <li>main</li>
-  
-  <li> sum_max_min
-    <ol>
-      <li>classifier</li>
-      <li>kay_sum_max_min</li>
-    </ol>
-  </li>
-</ol>
+1. main
+2. sum_max_min
+    1. kay_sum_max_min
+    2. classifier
+        1. kay_sum_max_min
+    
 
 # Classifier Branch
 This branch is to develop different ML models for final classification, such as SVM
