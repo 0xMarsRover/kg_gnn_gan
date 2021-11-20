@@ -15,15 +15,14 @@ class_embedding_image = {'avg_img_resnet101': 2048}
 # current experiment status for hmdb51 (need to run)
 # action + googlenet    -> finished
 # desc + googlenet      -> finished
-# action + resnet101    -> 19-30 running
-# desc + resnet101      -> 19-30 ready to run
+# action + resnet101    -> finished
+# desc + resnet101      -> 19-30 running
 
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for n in range(19, 31):
             # n = n + 1
-            # CUDA_LAUNCH_BLOCKING=1
-            os.system('''time python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py \
+            os.system('''python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py \
             --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
             --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
             --splits_path hmdb51_semantics --split {split}\

@@ -23,8 +23,7 @@ for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for n in range(23, 31):
             # n = n + 1
-            # CUDA_LAUNCH_BLOCKING=1
-            os.system('''time python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py \
+            os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py \
             --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
             --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
             --splits_path ucf101_semantics --split {split} \
