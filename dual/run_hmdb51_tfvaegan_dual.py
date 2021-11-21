@@ -15,7 +15,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 #       --resultsroot /content/drive/MyDrive/colab_data/KG_GCN_GAN
 
 # Kay:
-#       python /ichec/home/users/kaiqiang/kg_gnn_gan/dual/train_tfvaegan_dual.py
+#       python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py
 #       --dataroot /ichec/work/tud01/kaiqiang/action_datasets
 #       --resultsroot /ichec/home/users/kaiqiang/kg_gnn_gan/dual
 
