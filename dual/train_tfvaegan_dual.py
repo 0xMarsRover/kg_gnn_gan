@@ -1,5 +1,6 @@
 from __future__ import print_function
 import torch
+import torch.nn.functional
 import torch.autograd as autograd
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
@@ -13,8 +14,6 @@ import model_dual
 import util_dual
 import classifier_dual
 import classifier_entropy_dual
-import svm_classifier_dual
-import rf_classifier_dual
 from config_dual import opt
 
 
@@ -73,26 +72,45 @@ one = torch.tensor(1, dtype=torch.float)
 # one = torch.FloatTensor([1])
 mone = one * -1
 
-# Cuda setting
+# Cuda: multi-GPU training
 if opt.cuda:
+    torch.nn.DataParallel(netG_image).cuda()
+    torch.nn.DataParallel(netD_image).cuda()
+    torch.nn.DataParallel(netE_image).cuda()
+    torch.nn.DataParallel(netDec_image).cuda()
+    torch.nn.DataParallel(netF_image).cuda()
+    noise_image, input_att_image = noise_image.cuda(), input_att_image.cuda()
+
+    torch.nn.DataParallel(netG_text).cuda()
+    torch.nn.DataParallel(netD_text).cuda()
+    torch.nn.DataParallel(netE_text).cuda()
+    torch.nn.DataParallel(netDec_text).cuda()
+    torch.nn.DataParallel(netF_text).cuda()
+    noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
+
+    input_res = input_res.cuda()
+    one = one.cuda()
+    mone = mone.cuda()
+
+    # if failed to use multi-GPU, revert the codes below
+    '''
     netG_image.cuda()
     netD_image.cuda()
     netE_image.cuda()
     netDec_image.cuda()
     netF_image.cuda()
     noise_image, input_att_image = noise_image.cuda(), input_att_image.cuda()
-
     netG_text.cuda()
     netD_text.cuda()
     netE_text.cuda()
     netDec_text.cuda()
     netF_text.cuda()
     noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
-
     # input_bce_att = input_bce_att.cuda()
     input_res = input_res.cuda()
     one = one.cuda()
     mone = mone.cuda()
+    '''
 
 
 def loss_fn(recon_x, x, mean, log_var):
@@ -935,7 +953,6 @@ for epoch in range(0, opt.nepoch):
         else:
             print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
 
-# Need to check when using Kay or Colab
 result_root = opt.resultroot
 
 # Showing Best results

@@ -399,7 +399,7 @@ for epoch in range(0, opt.nepoch):
     netF.train()
 
 
-result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
+result_root = opt.resultroot
 # Showing Best results
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
