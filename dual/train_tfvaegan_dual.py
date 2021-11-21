@@ -1106,14 +1106,14 @@ else:
 
                         # TODO: recording full confusion matrix
                         f.write("Best Epoch: " + str(best_epoch_max) + "\n")
-                        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_svm) + "\n")
-                        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_svm) + "\n")
+                        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_rf) + "\n")
+                        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_rf) + "\n")
                         # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
                     print('Fusion Method: ', fusion_save)
                     print('Final Classifier: ', classifier)
-                    print('Best ZSL unseen accuracy is', best_zsl_acc_max_svm)
-                    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max_svm)
+                    print('Best ZSL unseen accuracy is', best_zsl_acc_max_rf)
+                    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max_rf)
                     # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
                 else:
                     print("Wrong Discriminative Classifier (either svm or rf)")
