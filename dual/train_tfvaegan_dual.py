@@ -842,6 +842,7 @@ for epoch in range(0, opt.nepoch):
                                                                           data,
                                                                           data.unseenclasses.size(0),
                                                                           generalized=False)
+                        # TODO: save acc and acc_per_class per epoch
                         acc_max_rf = zsl_cls_max_rf.acc
                         acc_per_class_max_rf = zsl_cls_max_rf.acc_per_class
                         # cm_rf = zsl_cls_sum_rf.cm
