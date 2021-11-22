@@ -3,7 +3,11 @@ import scipy.io as sio
 import numpy as np
 import csv
 
-data_root = '/Volumes/GoogleDrive/My Drive/colab_data/action_datasets'
+# TODO: save unseen labels for all splits
+# Mac
+#data_root = '/Volumes/GoogleDrive/My Drive/colab_data/action_datasets'
+# Windows
+data_root = 'G:\\My Drive\\colab_data\\action_datasets'
 dataset = 'hmdb51'  # ucf101
 
 # /Volumes/GoogleDrive/My Drive/colab_data/action_datasets/hmdb51'
@@ -49,6 +53,5 @@ for i in range(1, 31):
     with open('hmdb51_unseen_label_all_splits.csv', 'a+') as f:
         write = csv.writer(f)
         write.writerow(unseen_label_name)
-
 
 
