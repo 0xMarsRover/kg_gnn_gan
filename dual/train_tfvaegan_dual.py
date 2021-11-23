@@ -7,7 +7,7 @@ from torch.autograd import Variable
 import numpy as np
 import random
 import os
-import pandas as pd
+# import pandas as pd
 
 # load files
 import model_dual
@@ -401,9 +401,9 @@ for epoch in range(0, opt.nepoch):
                                                         opt.syn_num,
                                                         netF=netF_image, netDec=netDec_image,
                                                         attSize=opt.attSize_image, nz=opt.nz_image)
-
-    df_image = pd.DataFrame([syn_label, syn_feature_image])
-    df_image.to_csv('sym_image.csv', mode='a+')
+    # Check syn_data
+    # df_image = pd.DataFrame([syn_label, syn_feature_image])
+    # df_image.to_csv('sym_image.csv', mode='a+')
 
     # TODO: Text-GAN training
     for loop in range(0, opt.feedback_loop):
@@ -549,8 +549,9 @@ for epoch in range(0, opt.nepoch):
                                                        attSize=opt.attSize_text,
                                                        nz=opt.nz_text)
 
-    df_text = pd.DataFrame([syn_label, syn_feature_text])
-    df_text.to_csv('sym_image.csv', mode='a+')
+    # check syn_data
+    # df_text = pd.DataFrame([syn_label, syn_feature_text])
+    # df_text.to_csv('sym_text.csv', mode='a+')
 
     # (unseen classes * number of syn feat, 8192)
     # Fusing generated visual features for unseen classes
