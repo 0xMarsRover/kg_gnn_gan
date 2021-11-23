@@ -5,19 +5,19 @@ import csv
 
 # TODO: save unseen labels for all splits
 # Mac
-#data_root = '/Volumes/GoogleDrive/My Drive/colab_data/action_datasets'
+data_root = '/Volumes/GoogleDrive/My Drive/colab_data/action_datasets'
 # Windows
-data_root = 'G:\\My Drive\\colab_data\\action_datasets'
-dataset = 'hmdb51'  # ucf101
+#data_root = 'G:\\My Drive\\colab_data\\action_datasets'
+dataset = 'ucf101'  # ucf101
 
 # /Volumes/GoogleDrive/My Drive/colab_data/action_datasets/hmdb51'
 dataset_path = os.path.join(data_root, dataset)
-mat_i3d = sio.loadmat(dataset_path + '/hmdb51_i3d.mat')
+mat_i3d = sio.loadmat(dataset_path + '/' + dataset + '_i3d.mat')
 
 # for loop for 30 splits
 for i in range(1, 31):
     # /Volumes/GoogleDrive/My Drive/colab_data/action_datasets/hmdb51/hmdb51_semantics/split_1/att_splits.mat'
-    split_path = os.path.join(dataset_path, 'hmdb51_semantics/' + 'split_' + str(i))
+    split_path = os.path.join(dataset_path, dataset + '_semantics/' + 'split_' + str(i))
     mat_split = sio.loadmat(split_path + '/att_splits.mat')
 
     all_labels = mat_i3d['labels']
@@ -50,8 +50,6 @@ for i in range(1, 31):
         unseen_label_name.append(all_labels_names[unique_unseen_label[i]])
     print(unseen_label_name)
 
-    with open('hmdb51_unseen_label_all_splits.csv', 'a+') as f:
+    with open(dataset+'_unseen_label_all_splits.csv', 'a+') as f:
         write = csv.writer(f)
         write.writerow(unseen_label_name)
-
-
