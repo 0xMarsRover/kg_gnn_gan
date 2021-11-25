@@ -249,9 +249,10 @@ else:
     best_zsl_acc_min_svm = 0
     best_zsl_acc_per_class_min_svm = []
 
-# fusion_methods = ['sum', 'max', 'min']
-fusion_methods = ['max']    # [avg, sum, max, min] maybe other fusion methods?
-final_classifier = ['logsoftmax']  # using [svm, rf, logsoftmax]
+# Getting fusion methods
+fusion_methods = opt.fusion_methods
+# Getting classifiers
+final_classifier = opt.classifiers
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):

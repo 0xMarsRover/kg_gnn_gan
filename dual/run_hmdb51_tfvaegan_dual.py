@@ -22,11 +22,16 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 
 class_embedding_text = {'action_class_w2v': 300}
 class_embedding_image = {'avg_img_googlenet_me': 1024}
-# syn_num: 800, 1200, 1600, 2000
+
 # but need to consider imbalance issue if doing GZSL:
 # training class has around 120 videos, so the number of generated unseen features may not be too large.
+# previous exp. used 800
 syn_num = [1000, 1200, 1400]
 # syn_num = [1600, 1800, 2000]
+
+fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
+classifiers = ['logsoftmax']   # ['svm', 'rf', 'logsoftmax']
+
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
@@ -40,6 +45,7 @@ for c_t, dim_t in class_embedding_text.items():
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
                 --class_embedding_image {semantics_i} --nz_image {semantics_dimension_i} --attSize_image {semantics_dimension_i} \
+                --fusion_methods {fusion_methods} --classifiers {classifiers} \
                 --nepoch 100 --batch_size 64 --syn_num {syn_num} \
                 --preprocessing --cuda --gammaD 10 --gammaG 10 \
                 --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
@@ -47,4 +53,5 @@ for c_t, dim_t in class_embedding_text.items():
                 --recons_weight 0.1 --feedback_loop 2 --a2 1 --a1 1 \
                 --feed_lr 0.00001 --dec_lr 0.0001'''.format(split=n, semantics_t=c_t, semantics_dimension_t=dim_t,
                                                             semantics_i=c_i, semantics_dimension_i=dim_i,
-                                                            syn_num=syn))
+                                                            syn_num=syn, fusion_methods=fusion_methods,
+                                                            classifiers=classifiers))
