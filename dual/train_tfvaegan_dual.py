@@ -235,11 +235,11 @@ else:
     # max
     best_zsl_acc_max = 0    # for logsoftmax
     best_zsl_acc_per_class_max = []
-    # max_svm
-    best_zsl_acc_max_svm = 0
+
+    best_zsl_acc_max_svm = 0        # max_svm
     best_zsl_acc_per_class_max_svm = []
-    # max_rf
-    best_zsl_acc_max_rf = 0
+
+    best_zsl_acc_max_rf = 0     # max_rf
     best_zsl_acc_per_class_max_rf = []
 
     # min
@@ -260,10 +260,8 @@ for epoch in range(0, opt.nepoch):
     # feedback training loop
     # TODO: Training GAN-Image
     for loop in range(0, opt.feedback_loop):
-        #print("Training GAN-Image..")
-
         for i in range(0, data.ntrain, opt.batch_size):
-            # TODO: Discriminator training
+            # Discriminator training
             # unfreeze discrimator
             for p in netD_image.parameters():
                 p.requires_grad = True
@@ -271,16 +269,15 @@ for epoch in range(0, opt.nepoch):
             for p in netDec_image.parameters():
                 p.requires_grad = True
 
-            # TODO: Train D1 and Decoder
+            # Train D1 and Decoder
             gp_sum = 0
             for iter_d in range(opt.critic_iter):
-                # TODO: BUG -> init? or train dual in one loop?
                 sample()
                 netD_image.zero_grad()
                 input_resv_image = Variable(input_res)
                 input_attv_image = Variable(input_att_image)
 
-                # TODO: Training the auxillary module
+                # Training the auxillary module
                 netDec_image.zero_grad()
                 recons = netDec_image(input_resv_image)
                 R_cost = opt.recons_weight * WeightedL1(recons, input_attv_image)
@@ -301,7 +298,7 @@ for epoch in range(0, opt.nepoch):
                     noise_image.normal_(0, 1)
                     latent_code = Variable(noise_image)
 
-                # TODO: feedback loop
+                # feedback loop
                 if loop == 1:
                     fake = feedback_module(gen_out=latent_code, att=input_attv_image,
                                            netG=netG_image, netDec=netDec_image, netF=netF_image)
@@ -327,7 +324,7 @@ for epoch in range(0, opt.nepoch):
             elif (gp_sum < 1.001).sum() > 0:
                 opt.lambda1 /= 1.1
 
-            # TODO:netG training
+            # netG training
             # Train netG and Decoder
             for p in netD_image.parameters():
                 p.requires_grad = False
@@ -408,7 +405,7 @@ for epoch in range(0, opt.nepoch):
     # TODO: Text-GAN training
     for loop in range(0, opt.feedback_loop):
         for i in range(0, data.ntrain, opt.batch_size):
-            # TODO: Discriminator training
+            # Discriminator training
             # unfreeze discrimator
             for p in netD_text.parameters():
                 p.requires_grad = True
@@ -416,7 +413,7 @@ for epoch in range(0, opt.nepoch):
             for p in netDec_text.parameters():
                 p.requires_grad = True
 
-            # TODO: Train D1 and Decoder
+            # Train D1 and Decoder
             gp_sum = 0
             for iter_d in range(opt.critic_iter):
                 sample()
@@ -424,7 +421,7 @@ for epoch in range(0, opt.nepoch):
                 input_resv_text = Variable(input_res)
                 input_attv_text = Variable(input_att_text)
 
-                # TODO: Training the auxillary module
+                # Training the auxillary module
                 netDec_text.zero_grad()
                 recons = netDec_text(input_resv_text)
                 R_cost = opt.recons_weight * WeightedL1(recons, input_attv_text)
@@ -446,7 +443,7 @@ for epoch in range(0, opt.nepoch):
                     noise_text.normal_(0, 1)
                     latent_code = Variable(noise_text)
 
-                # TODO: feedback loop
+                # feedback loop
                 if loop == 1:
                     fake = feedback_module(gen_out=latent_code, att=input_attv_text,
                                            netG=netG_text, netDec=netDec_text, netF=netF_text)
@@ -472,7 +469,7 @@ for epoch in range(0, opt.nepoch):
             elif (gp_sum < 1.001).sum() > 0:
                 opt.lambda1 /= 1.1
 
-            # TODO:netG training
+            # netG training
             # Train netG and Decoder
             for p in netD_text.parameters():
                 p.requires_grad = False
@@ -566,7 +563,6 @@ for epoch in range(0, opt.nepoch):
                 print("Performing Out-of-Distribution GZSL")
                 seen_class = data.seenclasses.size(0)
                 print('seen class size: ', seen_class)
-                # TODO: not sure to use which netDec?
                 clsu = classifier_dual.CLASSIFIER(syn_feature_avg, util_dual.map_label(syn_label, data.unseenclasses),
                                                   data, data.unseenclasses.size(0), opt.cuda,
                                                   _nepoch=50, generalized=True,
