@@ -39,7 +39,7 @@ class RF_CLASSIFIER:
         self.ntrain = self.train_X.size()[0]
 
         # Init RF classifier
-        self.clf = RandomForestClassifier(n_estimators=400, max_depth=10, random_state=0)
+        self.clf = RandomForestClassifier(n_estimators=1000, max_depth=100, random_state=0)
 
         if generalized:
             # gzsl
