@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=dual_rf_hmdb
 #SBATCH --account=tud01
-#SBATCH --mem=32768
+#SBATCH --mem=65536
 #SBATCH --partition GpuQ
 #SBATCH --nodes 1
 #SBATCH --time=02-00
