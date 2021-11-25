@@ -1018,7 +1018,6 @@ elif opt.gzsl:
         f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
         f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
 
-        # TODO: recording full confusion matrix
         f.write("Best Epoch: " + str(best_epoch) + "\n")
         f.write("Best Simple GZSL seen accuracy: " + str(best_acc_seen) + "\n")
         f.write("Best Simple GZSL seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
@@ -1047,7 +1046,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
+                                                fusion_save + "_" + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1057,7 +1056,6 @@ else:
                 f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
                 f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                # TODO: recording full confusion matrix
                 f.write("Best Epoch: " + str(best_epoch_avg) + "\n")
                 f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_avg) + "\n")
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_avg) + "\n")
@@ -1073,7 +1071,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
+                                                fusion_save + "_" + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1083,7 +1081,6 @@ else:
                 f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
                 f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                # TODO: recording full confusion matrix
                 f.write("Best Epoch: " + str(best_epoch_sum) + "\n")
                 f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_sum) + "\n")
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_sum) + "\n")
@@ -1102,7 +1099,8 @@ else:
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         fusion_save + "_" +
-                                                        classifier + str(opt.syn_num) + "_dual.txt"), "a+") as f:
+                                                        classifier + "_" +
+                                                        str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1113,7 +1111,6 @@ else:
                         f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
                         f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                        # TODO: recording full confusion matrix
                         f.write("Best Epoch: " + str(best_epoch_max) + "\n")
                         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_svm) + "\n")
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_svm) + "\n")
@@ -1131,7 +1128,8 @@ else:
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         fusion_save + "_" +
-                                                        classifier + str(opt.syn_num) + "_dual.txt"), "a+") as f:
+                                                        classifier + "_" +
+                                                        str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1142,7 +1140,6 @@ else:
                         f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
                         f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                        # TODO: recording full confusion matrix
                         f.write("Best Epoch: " + str(best_epoch_max) + "\n")
                         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_rf) + "\n")
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_rf) + "\n")
@@ -1159,7 +1156,8 @@ else:
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
-                                                        fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
+                                                        fusion_save + "_" +
+                                                        str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1169,7 +1167,6 @@ else:
                         f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
                         f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                        # TODO: recording full confusion matrix
                         f.write("Best Epoch: " + str(best_epoch_max) + "\n")
                         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
@@ -1187,7 +1184,8 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
+                                                fusion_save + "_" +
+                                                str(opt.syn_num) + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1197,7 +1195,6 @@ else:
                 f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
                 f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-                # TODO: recording full confusion matrix
                 f.write("Best Epoch: " + str(best_epoch_min) + "\n")
                 f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_min) + "\n")
                 f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_min) + "\n")

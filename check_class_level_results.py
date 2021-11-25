@@ -7,7 +7,7 @@ import csv
 # Mac
 data_root = '/Volumes/GoogleDrive/My Drive/colab_data/action_datasets'
 # Windows
-#data_root = 'G:\\My Drive\\colab_data\\action_datasets'
+# data_root = 'G:\\My Drive\\colab_data\\action_datasets'
 dataset = 'ucf101'  # ucf101
 
 # /Volumes/GoogleDrive/My Drive/colab_data/action_datasets/hmdb51'
