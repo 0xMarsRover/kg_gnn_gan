@@ -251,7 +251,7 @@ else:
 
 # fusion_methods = ['sum', 'max', 'min']
 fusion_methods = ['max']    # using max for this branch
-final_classifier = ['rf']  # using svm as final classifier after feature fusion
+final_classifier = ['logsoftmax']  # using svm as final classifier after feature fusion
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -865,8 +865,36 @@ for epoch in range(0, opt.nepoch):
                         # print('ZSL unseen accuracy per class\n', acc_per_class)
                         # print('ZSL confusion matrix\n', cm)
 
+                    elif classifier == 'logsoftmax':
+                        zsl_cls_max = classifier_dual.CLASSIFIER(syn_feature_max,
+                                                                 util_dual.map_label(syn_label, data.unseenclasses),
+                                                                 data, data.unseenclasses.size(0),
+                                                                 opt.cuda, opt.classifier_lr, 0.5, 50, opt.syn_num,
+                                                                 generalized=False, netDec=netDec_image,
+                                                                 dec_size=opt.attSize_image, dec_hidden_size=4096)
+                        acc_max = zsl_cls_max.acc
+                        acc_per_class_max = zsl_cls_max.acc_per_class
+                        # cm = zsl_cls.cm
+                        if best_zsl_acc_max < acc_max:
+                            best_zsl_acc_max = acc_max
+                            best_zsl_acc_per_class_max = acc_per_class_max
+                            # best_zsl_cm = cm
+                            best_epoch_max = epoch
+                        print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max, epoch))
+                        # print('ZSL unseen accuracy per class\n', acc_per_class)
+                        # print('ZSL confusion matrix\n', cm)
+
                     else:
                         print('Wrong Discriminative Classifier (either svm or rf)')
+
+                    # reset modules to training mode
+                    netG_text.train()
+                    netDec_text.train()
+                    netF_text.train()
+
+                    netG_image.train()
+                    netDec_image.train()
+                    netF_image.train()
 
         # Min fusion method
         elif fusion == 'min':
@@ -1019,7 +1047,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + "_dual.txt"), "a+") as f:
+                                                fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1045,7 +1073,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + "_dual.txt"), "a+") as f:
+                                                fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1074,7 +1102,7 @@ else:
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         fusion_save + "_" +
-                                                        classifier + "_dual.txt"), "a+") as f:
+                                                        classifier + opt.syn_num + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1103,7 +1131,7 @@ else:
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         fusion_save + "_" +
-                                                        classifier + "_dual.txt"), "a+") as f:
+                                                        classifier + opt.syn_num + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1125,6 +1153,32 @@ else:
                     print('Best ZSL unseen accuracy is', best_zsl_acc_max_rf)
                     print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max_rf)
                     # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
+
+                elif classifier == 'logsoftmax':
+                    with open(os.path.join(result_root, "exp_zsl_results_" +
+                                                        opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
+                        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+                        f.write("Results: ZSL Experiments on Dual GAN" + "\n")
+                        f.write("Split Index: " + str(opt.split) + "\n")
+                        f.write("Feature Fusion Method: " + str(fusion_save) + "\n")
+
+                        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+                        f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+                        f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+
+                        # TODO: recording full confusion matrix
+                        f.write("Best Epoch: " + str(best_epoch_max) + "\n")
+                        f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
+                        f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
+                        # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+
+                    print('Fusion Method: ', fusion_save)
+                    print('Best ZSL unseen accuracy is', best_zsl_acc_max)
+                    print('Best ZSL unseen per-class accuracy is', best_zsl_acc_per_class_max)
+                    # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
                 else:
                     print("Wrong Discriminative Classifier (either svm or rf)")
 
@@ -1133,7 +1187,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + "_dual.txt"), "a+") as f:
+                                                fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
