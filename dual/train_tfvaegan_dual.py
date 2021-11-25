@@ -212,7 +212,7 @@ def calc_gradient_penalty(netD, real_data, fake_data, input_att):
     return gradient_penalty
 
 
-# TODO: Recording best_acc, best_acc_per_class, best_cm
+# TODO: Init best_acc, best_acc_per_class, best_cm
 if opt.gzsl_od:
     best_gzsl_od_acc = 0
 
@@ -233,7 +233,7 @@ else:
     best_zsl_acc_per_class_sum_svm = []
 
     # max
-    best_zsl_acc_max = 0
+    best_zsl_acc_max = 0    # for logsoftmax
     best_zsl_acc_per_class_max = []
     # max_svm
     best_zsl_acc_max_svm = 0
@@ -250,8 +250,8 @@ else:
     best_zsl_acc_per_class_min_svm = []
 
 # fusion_methods = ['sum', 'max', 'min']
-fusion_methods = ['max']    # using max for this branch
-final_classifier = ['logsoftmax']  # using svm as final classifier after feature fusion
+fusion_methods = ['max']    # [avg, sum, max, min] maybe other fusion methods?
+final_classifier = ['logsoftmax']  # using [svm, rf, logsoftmax]
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -992,9 +992,9 @@ for epoch in range(0, opt.nepoch):
         else:
             print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
 
-result_root = opt.resultroot
-
+# After training and testing
 # Showing Best results
+result_root = opt.resultroot
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
 if opt.gzsl_od:
@@ -1047,7 +1047,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
+                                                fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1073,7 +1073,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
+                                                fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
@@ -1102,7 +1102,7 @@ else:
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         fusion_save + "_" +
-                                                        classifier + opt.syn_num + "_dual.txt"), "a+") as f:
+                                                        classifier + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1131,7 +1131,7 @@ else:
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         fusion_save + "_" +
-                                                        classifier + opt.syn_num + "_dual.txt"), "a+") as f:
+                                                        classifier + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1159,7 +1159,7 @@ else:
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
-                                                        fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
+                                                        fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                         f.write("Split Index: " + str(opt.split) + "\n")
@@ -1187,7 +1187,7 @@ else:
                                                 opt.dataset + "_" +
                                                 opt.class_embedding_text + "_" +
                                                 opt.class_embedding_image + "_" +
-                                                fusion_save + opt.syn_num + "_dual.txt"), "a+") as f:
+                                                fusion_save + str(opt.syn_num) + "_dual.txt"), "a+") as f:
                 f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                 f.write("Results: ZSL Experiments on Dual GAN" + "\n")
                 f.write("Split Index: " + str(opt.split) + "\n")
