@@ -250,9 +250,11 @@ else:
     best_zsl_acc_per_class_min_svm = []
 
 # Getting fusion methods
-fusion_methods = opt.fusion_methods
+#fusion_methods = opt.fusion_methods
+fusion_methods = ['max']
 # Getting classifiers
-final_classifier = opt.classifiers
+#final_classifier = opt.classifiers
+final_classifier = ['rf']
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):

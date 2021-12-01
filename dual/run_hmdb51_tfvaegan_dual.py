@@ -12,12 +12,12 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 # Colab:
 #       python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py
 #       --dataroot /content/drive/MyDrive/colab_data/action_datasets
-#       --resultsroot /content/drive/MyDrive/colab_data/KG_GCN_GAN
+#       --resultroot /content/drive/MyDrive/colab_data/KG_GCN_GAN
 
 # Kay:
 #       python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py
 #       --dataroot /ichec/work/tud01/kaiqiang/action_datasets
-#       --resultsroot /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual
+#       --resultroot /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual
 
 
 class_embedding_text = {'action_class_w2v': 300}
@@ -26,7 +26,8 @@ class_embedding_image = {'avg_img_googlenet_me': 1024}
 # but need to consider imbalance issue if doing GZSL:
 # training class has around 120 videos, so the number of generated unseen features may not be too large.
 # previous exp. used 800
-syn_num = [1000, 1200, 1400]
+syn_num = 800
+# syn_num = [1000, 1200, 1400]
 # syn_num = [1600, 1800, 2000]
 
 #fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
@@ -45,7 +46,7 @@ for c_t, dim_t in class_embedding_text.items():
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
                 --class_embedding_image {semantics_i} --nz_image {semantics_dimension_i} --attSize_image {semantics_dimension_i} \
-                --fusion_methods max --classifiers rf \
+                
                 --nepoch 100 --batch_size 64 --syn_num {syn_num} \
                 --preprocessing --cuda --gammaD 10 --gammaG 10 \
                 --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
@@ -57,3 +58,5 @@ for c_t, dim_t in class_embedding_text.items():
 
                                                             #fusion_methods=fusion_methods,
                                                             #classifiers=classifiers))
+
+# --fusion_methods max --classifiers rf \
