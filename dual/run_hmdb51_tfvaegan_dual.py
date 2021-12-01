@@ -29,13 +29,13 @@ class_embedding_image = {'avg_img_googlenet_me': 1024}
 syn_num = [1000, 1200, 1400]
 # syn_num = [1600, 1800, 2000]
 
-fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
-classifiers = ['logsoftmax']   # ['svm', 'rf', 'logsoftmax']
+#fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
+#classifiers = ['logsoftmax']   # ['svm', 'rf', 'logsoftmax']
 
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(1, 6):
+            for n in range(1, 2):
                 # n = n + 1
                 os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py \
                 --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
@@ -45,7 +45,7 @@ for c_t, dim_t in class_embedding_text.items():
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
                 --class_embedding_image {semantics_i} --nz_image {semantics_dimension_i} --attSize_image {semantics_dimension_i} \
-                --fusion_methods {fusion_methods} --classifiers {classifiers} \
+                --fusion_methods max --classifiers rf \
                 --nepoch 100 --batch_size 64 --syn_num {syn_num} \
                 --preprocessing --cuda --gammaD 10 --gammaG 10 \
                 --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
@@ -53,5 +53,7 @@ for c_t, dim_t in class_embedding_text.items():
                 --recons_weight 0.1 --feedback_loop 2 --a2 1 --a1 1 \
                 --feed_lr 0.00001 --dec_lr 0.0001'''.format(split=n, semantics_t=c_t, semantics_dimension_t=dim_t,
                                                             semantics_i=c_i, semantics_dimension_i=dim_i,
-                                                            syn_num=syn, fusion_methods=fusion_methods,
-                                                            classifiers=classifiers))
+                                                            syn_num=syn))
+
+                                                            #fusion_methods=fusion_methods,
+                                                            #classifiers=classifiers))
