@@ -1172,7 +1172,7 @@ else:
                         f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
                         df_cm = pd.DataFrame(best_zsl_cm)
                         file_name = 'cm.csv'
-                        df_cm.to_csv(file_name, index=False)
+                        df_cm.to_csv(os.path.join(result_root, file_name), index=False)
 
 
                     print('Fusion Method: ', fusion_save)
