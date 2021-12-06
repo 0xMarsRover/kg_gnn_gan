@@ -856,24 +856,24 @@ for epoch in range(0, opt.nepoch):
                         acc_per_class_max_rf = zsl_cls_max_rf.acc_per_class
                         df_acc_per_class_max = pd.DataFrame(acc_per_class_max_rf)
                         file_per_class = os.path.join(result_root,
-                                                  "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
-                                                        opt.class_embedding_text + "_" +
-                                                        opt.class_embedding_image + "_" +
-                                                        classifier + "_" +
-                                                        fusion + "_" +
-                                                        str(opt.syn_num) + "_dual.csv")
+                                                      "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
+                                                      opt.class_embedding_text + "_" +
+                                                      opt.class_embedding_image + "_" +
+                                                      classifier + "_" +
+                                                      fusion + "_" +
+                                                      str(opt.syn_num) + "_dual.csv")
                         df_acc_per_class_max.to_csv(file_per_class, mode='a')
 
                         cm_max_rf = zsl_cls_max_rf.cm
                         # save confusion matrix for each epoch
                         df_cm_max_rf = pd.DataFrame(cm_max_rf)
                         file_cm = os.path.join(result_root,
-                                                  "each_epoch_cm_zsl_" + opt.dataset + "_" +
-                                                        opt.class_embedding_text + "_" +
-                                                        opt.class_embedding_image + "_" +
-                                                        classifier + "_" +
-                                                        fusion + "_" +
-                                                        str(opt.syn_num) + "_dual.csv")
+                                               "each_epoch_cm_zsl_" + opt.dataset + "_" +
+                                               opt.class_embedding_text + "_" +
+                                               opt.class_embedding_image + "_" +
+                                               classifier + "_" +
+                                               fusion + "_" +
+                                               str(opt.syn_num) + "_dual.csv")
                         df_cm_max_rf.to_csv(file_cm, mode='a')
 
                         if best_zsl_acc_max_rf < acc_max_rf:
@@ -896,7 +896,7 @@ for epoch in range(0, opt.nepoch):
                         acc_per_class_max = zsl_cls_max.acc_per_class
                         df_acc_per_class_max = pd.DataFrame(acc_per_class_max)
                         file_per_class = os.path.join(result_root,
-                                                  "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
+                                                      "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         classifier + "_" +
@@ -908,7 +908,7 @@ for epoch in range(0, opt.nepoch):
                         # save confusion matrix for each epoch
                         df_cm = pd.DataFrame(cm)
                         file_cm = os.path.join(result_root,
-                                                  "each_epoch_cm_zsl_" + opt.dataset + "_" +
+                                               "each_epoch_cm_zsl_" + opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
                                                         classifier + "_" +
