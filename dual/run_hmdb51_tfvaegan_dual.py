@@ -38,15 +38,15 @@ for c_t, dim_t in class_embedding_text.items():
         for syn in syn_num:
             for n in range(1, 2):
 
-                os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py \
+                os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py \
                 --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
-                --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
-                --resultroot /ichec/home/users/kaiqiang/kay_classifier_dual_gan \
+                --dataroot /content/drive/MyDrive/colab_data/action_datasets \
+                --resultroot /content/drive/MyDrive/colab_data/KG_GCN_GAN \
                 --splits_path hmdb51_semantics --split {split} \
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
                 --class_embedding_image {semantics_i} --nz_image {semantics_dimension_i} --attSize_image {semantics_dimension_i} \
-                --nepoch 100 --batch_size 64 --syn_num {syn_num} \
+                --nepoch 2 --batch_size 64 --syn_num {syn_num} \
                 --preprocessing --cuda --gammaD 10 --gammaG 10 \
                 --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
                 --lr 0.0001 --workers 8 --encoded_noise  \

@@ -7,7 +7,7 @@ from torch.autograd import Variable
 import numpy as np
 import random
 import os
-# import pandas as pd
+import pandas as pd
 
 # load files
 import model_dual
@@ -254,7 +254,7 @@ else:
 fusion_methods = ['max']
 # Getting classifiers
 #final_classifier = opt.classifiers
-final_classifier = ['rf'] # svm, logsoftmax
+final_classifier = ['logsoftmax'] # svm, logsoftmax
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -1170,6 +1170,10 @@ else:
                         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
                         f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                        df_cm = pd.DataFrame(best_zsl_cm)
+                        file_name = 'cm.csv'
+                        df_cm.to_csv(file_name, index=False)
+
 
                     print('Fusion Method: ', fusion_save)
                     print('Best ZSL unseen accuracy is', best_zsl_acc_max)
