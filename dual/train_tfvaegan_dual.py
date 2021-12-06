@@ -254,7 +254,7 @@ else:
 fusion_methods = ['max']
 # Getting classifiers
 #final_classifier = opt.classifiers
-final_classifier = ['logsoftmax'] # svm, logsoftmax
+final_classifier = ['rf'] # svm, logsoftmax, rf
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -897,11 +897,11 @@ for epoch in range(0, opt.nepoch):
                         df_acc_per_class_max = pd.DataFrame(acc_per_class_max)
                         file_per_class = os.path.join(result_root,
                                                       "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
-                                                        opt.class_embedding_text + "_" +
-                                                        opt.class_embedding_image + "_" +
-                                                        classifier + "_" +
-                                                        fusion + "_" +
-                                                        str(opt.syn_num) + "_dual.csv")
+                                                       opt.class_embedding_text + "_" +
+                                                       opt.class_embedding_image + "_" +
+                                                       classifier + "_" +
+                                                       fusion + "_" +
+                                                       str(opt.syn_num) + "_dual.csv")
                         df_acc_per_class_max.to_csv(file_per_class, mode='a')
 
                         cm = zsl_cls_max.cm
@@ -909,11 +909,11 @@ for epoch in range(0, opt.nepoch):
                         df_cm = pd.DataFrame(cm)
                         file_cm = os.path.join(result_root,
                                                "each_epoch_cm_zsl_" + opt.dataset + "_" +
-                                                        opt.class_embedding_text + "_" +
-                                                        opt.class_embedding_image + "_" +
-                                                        classifier + "_" +
-                                                        fusion + "_" +
-                                                        str(opt.syn_num) + "_dual.csv")
+                                               opt.class_embedding_text + "_" +
+                                               opt.class_embedding_image + "_" +
+                                               classifier + "_" +
+                                               fusion + "_" +
+                                               str(opt.syn_num) + "_dual.csv")
                         df_cm.to_csv(file_cm, mode='a')
 
                         if best_zsl_acc_max < acc_max:
@@ -1165,12 +1165,12 @@ else:
 
                 elif classifier == 'rf':
                     file_best_cm = os.path.join(result_root,
-                                                  "best_cm_zsl_" + opt.dataset + "_" +
-                                                        opt.class_embedding_text + "_" +
-                                                        opt.class_embedding_image + "_" +
-                                                        classifier + "_" +
-                                                        fusion_save + "_" +
-                                                        str(opt.syn_num) + "_dual.csv")
+                                                "best_cm_zsl_" + opt.dataset + "_" +
+                                                opt.class_embedding_text + "_" +
+                                                opt.class_embedding_image + "_" +
+                                                classifier + "_" +
+                                                fusion_save + "_" +
+                                                str(opt.syn_num) + "_dual.csv")
 
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
@@ -1204,12 +1204,12 @@ else:
 
                 elif classifier == 'logsoftmax':
                     file_best_cm = os.path.join(result_root,
-                                                  "best_cm_zsl_" + opt.dataset + "_" +
-                                                        opt.class_embedding_text + "_" +
-                                                        opt.class_embedding_image + "_" +
-                                                        classifier + "_" +
-                                                        fusion_save + "_" +
-                                                        str(opt.syn_num) + "_dual.csv")
+                                                "best_cm_zsl_" + opt.dataset + "_" +
+                                                opt.class_embedding_text + "_" +
+                                                opt.class_embedding_image + "_" +
+                                                classifier + "_" +
+                                                fusion_save + "_" +
+                                                str(opt.syn_num) + "_dual.csv")
 
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
