@@ -555,6 +555,7 @@ for epoch in range(0, opt.nepoch):
 
     # (unseen classes * number of syn feat, 8192)
     # Fusing generated visual features for unseen classes
+    result_root = opt.resultroot
     for fusion in fusion_methods:
         print("Feature Fusion Method: ", fusion)
         # Avg fusion method
@@ -874,6 +875,14 @@ for epoch in range(0, opt.nepoch):
                         acc_max = zsl_cls_max.acc
                         acc_per_class_max = zsl_cls_max.acc_per_class
                         cm = zsl_cls_max.cm
+                        df_cm = pd.DataFrame(cm)
+                        df_cm.to_csv(os.path.join(result_root,
+                                                  "each_epoch_cm_zsl_" + opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion + "_" +
+                                                        str(opt.syn_num) + "_dual.csv"),
+                                     mode='a')
                         if best_zsl_acc_max < acc_max:
                             best_zsl_acc_max = acc_max
                             best_zsl_acc_per_class_max = acc_per_class_max
@@ -1171,8 +1180,12 @@ else:
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
                         f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
                         df_cm = pd.DataFrame(best_zsl_cm)
-                        file_name = 'cm.csv'
-                        df_cm.to_csv(os.path.join(result_root, file_name))
+                        df_cm.to_csv(os.path.join(result_root,
+                                                  "cm_zsl_" + opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion_save + "_" +
+                                                        str(opt.syn_num) + "_dual.csv"))
 
 
                     print('Fusion Method: ', fusion_save)
