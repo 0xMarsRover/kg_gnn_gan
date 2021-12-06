@@ -1168,6 +1168,7 @@ else:
                                                   "best_cm_zsl_" + opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
                                                         fusion_save + "_" +
                                                         str(opt.syn_num) + "_dual.csv")
 
@@ -1175,8 +1176,8 @@ else:
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
-                                                        fusion_save + "_" +
                                                         classifier + "_" +
+                                                        fusion_save + "_" +
                                                         str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
                         f.write("Results: ZSL Experiments on Dual GAN with " + str(classifier) + "\n")
@@ -1206,12 +1207,15 @@ else:
                                                   "best_cm_zsl_" + opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
                                                         fusion_save + "_" +
                                                         str(opt.syn_num) + "_dual.csv")
+
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
                                                         fusion_save + "_" +
                                                         str(opt.syn_num) + "_dual.txt"), "a+") as f:
                         f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
