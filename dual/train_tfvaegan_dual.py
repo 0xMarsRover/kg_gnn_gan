@@ -854,12 +854,32 @@ for epoch in range(0, opt.nepoch):
                         # TODO: save acc and acc_per_class per epoch
                         acc_max_rf = zsl_cls_max_rf.acc
                         acc_per_class_max_rf = zsl_cls_max_rf.acc_per_class
-                        # cm_rf = zsl_cls_sum_rf.cm
+                        df_acc_per_class_max = pd.DataFrame(acc_per_class_max_rf)
+                        file_per_class = os.path.join(result_root,
+                                                  "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
+                                                        fusion + "_" +
+                                                        str(opt.syn_num) + "_dual.csv")
+                        df_acc_per_class_max.to_csv(file_per_class, mode='a')
+
+                        cm_max_rf = zsl_cls_max_rf.cm
+                        # save confusion matrix for each epoch
+                        df_cm_max_rf = pd.DataFrame(cm_max_rf)
+                        file_cm = os.path.join(result_root,
+                                                  "each_epoch_cm_zsl_" + opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
+                                                        fusion + "_" +
+                                                        str(opt.syn_num) + "_dual.csv")
+                        df_cm_max_rf.to_csv(file_cm, mode='a')
 
                         if best_zsl_acc_max_rf < acc_max_rf:
                             best_zsl_acc_max_rf = acc_max_rf
                             best_zsl_acc_per_class_max_rf = acc_per_class_max_rf
-                            # best_zsl_cm = cm
+                            best_zsl_max_rf_cm = cm_max_rf
                             best_epoch_max = epoch
                         print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max_rf, epoch))
                         # print('ZSL unseen accuracy per class\n', acc_per_class)
@@ -879,6 +899,7 @@ for epoch in range(0, opt.nepoch):
                                                   "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
                                                         fusion + "_" +
                                                         str(opt.syn_num) + "_dual.csv")
                         df_acc_per_class_max.to_csv(file_per_class, mode='a')
@@ -890,6 +911,7 @@ for epoch in range(0, opt.nepoch):
                                                   "each_epoch_cm_zsl_" + opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
                                                         opt.class_embedding_image + "_" +
+                                                        classifier + "_" +
                                                         fusion + "_" +
                                                         str(opt.syn_num) + "_dual.csv")
                         df_cm.to_csv(file_cm, mode='a')
@@ -1142,6 +1164,13 @@ else:
                     # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
                 elif classifier == 'rf':
+                    file_best_cm = os.path.join(result_root,
+                                                  "best_cm_zsl_" + opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion_save + "_" +
+                                                        str(opt.syn_num) + "_dual.csv")
+
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
@@ -1163,6 +1192,8 @@ else:
                         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max_rf) + "\n")
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_rf) + "\n")
                         # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                        df_max_rf_cm = pd.DataFrame(best_zsl_max_rf_cm)
+                        df_max_rf_cm.to_csv(file_best_cm)
 
                     print('Fusion Method: ', fusion_save)
                     print('Final Classifier: ', classifier)
