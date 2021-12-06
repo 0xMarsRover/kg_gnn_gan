@@ -254,7 +254,7 @@ else:
 fusion_methods = ['max']
 # Getting classifiers
 #final_classifier = opt.classifiers
-final_classifier = ['rf'] # svm, logsoftmax, rf
+final_classifier = ['logsoftmax'] # svm, logsoftmax, rf
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -824,6 +824,22 @@ for epoch in range(0, opt.nepoch):
                 print("Performing ZSL classifier stage.")
                 # Train ZSL classifier_dual
                 for classifier in final_classifier:
+                    file_per_class = os.path.join(result_root,
+                                                  "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
+                                                  opt.class_embedding_text + "_" +
+                                                  opt.class_embedding_image + "_" +
+                                                  classifier + "_" +
+                                                  fusion + "_" +
+                                                  str(opt.syn_num) + "_dual.csv")
+
+                    file_cm = os.path.join(result_root,
+                                           "each_epoch_cm_zsl_" + opt.dataset + "_" +
+                                           opt.class_embedding_text + "_" +
+                                           opt.class_embedding_image + "_" +
+                                           classifier + "_" +
+                                           fusion + "_" +
+                                           str(opt.syn_num) + "_dual.csv")
+
                     if classifier == 'svm':
                         print("Training and Testing final classifier: ", classifier)
                         zsl_cls_max_svm = svm_classifier_dual.SVM_CLASSIFIER(syn_feature_max,
@@ -855,25 +871,13 @@ for epoch in range(0, opt.nepoch):
                         acc_max_rf = zsl_cls_max_rf.acc
                         acc_per_class_max_rf = zsl_cls_max_rf.acc_per_class
                         df_acc_per_class_max = pd.DataFrame(acc_per_class_max_rf)
-                        file_per_class = os.path.join(result_root,
-                                                      "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
-                                                      opt.class_embedding_text + "_" +
-                                                      opt.class_embedding_image + "_" +
-                                                      classifier + "_" +
-                                                      fusion + "_" +
-                                                      str(opt.syn_num) + "_dual.csv")
+                        # save acc_per_class for each epoch
                         df_acc_per_class_max.to_csv(file_per_class, mode='a')
 
                         cm_max_rf = zsl_cls_max_rf.cm
                         # save confusion matrix for each epoch
                         df_cm_max_rf = pd.DataFrame(cm_max_rf)
-                        file_cm = os.path.join(result_root,
-                                               "each_epoch_cm_zsl_" + opt.dataset + "_" +
-                                               opt.class_embedding_text + "_" +
-                                               opt.class_embedding_image + "_" +
-                                               classifier + "_" +
-                                               fusion + "_" +
-                                               str(opt.syn_num) + "_dual.csv")
+
                         df_cm_max_rf.to_csv(file_cm, mode='a')
 
                         if best_zsl_acc_max_rf < acc_max_rf:
@@ -895,25 +899,12 @@ for epoch in range(0, opt.nepoch):
                         acc_max = zsl_cls_max.acc
                         acc_per_class_max = zsl_cls_max.acc_per_class
                         df_acc_per_class_max = pd.DataFrame(acc_per_class_max)
-                        file_per_class = os.path.join(result_root,
-                                                      "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
-                                                       opt.class_embedding_text + "_" +
-                                                       opt.class_embedding_image + "_" +
-                                                       classifier + "_" +
-                                                       fusion + "_" +
-                                                       str(opt.syn_num) + "_dual.csv")
+                        # Save acc_per_class for each epoch
                         df_acc_per_class_max.to_csv(file_per_class, mode='a')
 
                         cm = zsl_cls_max.cm
                         # save confusion matrix for each epoch
                         df_cm = pd.DataFrame(cm)
-                        file_cm = os.path.join(result_root,
-                                               "each_epoch_cm_zsl_" + opt.dataset + "_" +
-                                               opt.class_embedding_text + "_" +
-                                               opt.class_embedding_image + "_" +
-                                               classifier + "_" +
-                                               fusion + "_" +
-                                               str(opt.syn_num) + "_dual.csv")
                         df_cm.to_csv(file_cm, mode='a')
 
                         if best_zsl_acc_max < acc_max:
@@ -1134,6 +1125,13 @@ else:
 
         elif fusion_save == 'max':
             for classifier in final_classifier:
+                file_best_cm = os.path.join(result_root,
+                                            "best_cm_zsl_" + opt.dataset + "_" +
+                                            opt.class_embedding_text + "_" +
+                                            opt.class_embedding_image + "_" +
+                                            classifier + "_" +
+                                            fusion_save + "_" +
+                                            str(opt.syn_num) + "_dual.csv")
                 if classifier == 'svm':
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
@@ -1164,14 +1162,6 @@ else:
                     # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
                 elif classifier == 'rf':
-                    file_best_cm = os.path.join(result_root,
-                                                "best_cm_zsl_" + opt.dataset + "_" +
-                                                opt.class_embedding_text + "_" +
-                                                opt.class_embedding_image + "_" +
-                                                classifier + "_" +
-                                                fusion_save + "_" +
-                                                str(opt.syn_num) + "_dual.csv")
-
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
@@ -1203,14 +1193,6 @@ else:
                     # print('Best ZSL unseen confusion matrix is', best_zsl_cm)
 
                 elif classifier == 'logsoftmax':
-                    file_best_cm = os.path.join(result_root,
-                                                "best_cm_zsl_" + opt.dataset + "_" +
-                                                opt.class_embedding_text + "_" +
-                                                opt.class_embedding_image + "_" +
-                                                classifier + "_" +
-                                                fusion_save + "_" +
-                                                str(opt.syn_num) + "_dual.csv")
-
                     with open(os.path.join(result_root, "exp_zsl_results_" +
                                                         opt.dataset + "_" +
                                                         opt.class_embedding_text + "_" +
