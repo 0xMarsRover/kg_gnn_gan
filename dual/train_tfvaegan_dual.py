@@ -1184,7 +1184,7 @@ else:
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max_rf) + "\n")
                         # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
                         df_max_rf_cm = pd.DataFrame(best_zsl_max_rf_cm)
-                        df_max_rf_cm.to_csv(file_best_cm)
+                        df_max_rf_cm.to_csv(file_best_cm, mode='a')
 
                     print('Fusion Method: ', fusion_save)
                     print('Final Classifier: ', classifier)
@@ -1214,7 +1214,7 @@ else:
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
                         f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
                         df_cm = pd.DataFrame(best_zsl_cm)
-                        df_cm.to_csv(file_best_cm)
+                        df_cm.to_csv(file_best_cm, mode='a')
 
                     print('Fusion Method: ', fusion_save)
                     print('Best ZSL unseen accuracy is', best_zsl_acc_max)
