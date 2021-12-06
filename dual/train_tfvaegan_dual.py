@@ -874,7 +874,16 @@ for epoch in range(0, opt.nepoch):
                                                                  dec_size=opt.attSize_image, dec_hidden_size=4096)
                         acc_max = zsl_cls_max.acc
                         acc_per_class_max = zsl_cls_max.acc_per_class
+                        df_acc_per_class_max = pd.DataFrame(acc_per_class_max)
+                        df_acc_per_class_max.to_csv(os.path.join(result_root,
+                                                  "each_epoch_acc_per_class_zsl_" + opt.dataset + "_" +
+                                                        opt.class_embedding_text + "_" +
+                                                        opt.class_embedding_image + "_" +
+                                                        fusion + "_" +
+                                                        str(opt.syn_num) + "_dual.csv"), mode='a')
+
                         cm = zsl_cls_max.cm
+                        # save confusion matrix for each epoch
                         df_cm = pd.DataFrame(cm)
                         df_cm.to_csv(os.path.join(result_root,
                                                   "each_epoch_cm_zsl_" + opt.dataset + "_" +
