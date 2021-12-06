@@ -254,7 +254,7 @@ else:
 fusion_methods = ['max']
 # Getting classifiers
 #final_classifier = opt.classifiers
-final_classifier = ['rf']
+final_classifier = ['rf'] # svm, logsoftmax
 
 # Training Image-GAN and Text-GAN together in one epoch
 for epoch in range(0, opt.nepoch):
@@ -873,11 +873,11 @@ for epoch in range(0, opt.nepoch):
                                                                  dec_size=opt.attSize_image, dec_hidden_size=4096)
                         acc_max = zsl_cls_max.acc
                         acc_per_class_max = zsl_cls_max.acc_per_class
-                        # cm = zsl_cls.cm
+                        cm = zsl_cls_max.cm
                         if best_zsl_acc_max < acc_max:
                             best_zsl_acc_max = acc_max
                             best_zsl_acc_per_class_max = acc_per_class_max
-                            # best_zsl_cm = cm
+                            best_zsl_cm = cm
                             best_epoch_max = epoch
                         print('ZSL unseen accuracy=%.4f at Epoch %d\n' % (acc_max, epoch))
                         # print('ZSL unseen accuracy per class\n', acc_per_class)
@@ -1169,7 +1169,7 @@ else:
                         f.write("Best Epoch: " + str(best_epoch_max) + "\n")
                         f.write("Best ZSL unseen accuracy: " + str(best_zsl_acc_max) + "\n")
                         f.write("Best ZSL unseen per-class accuracy: " + str(best_zsl_acc_per_class_max) + "\n")
-                        # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+                        f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
 
                     print('Fusion Method: ', fusion_save)
                     print('Best ZSL unseen accuracy is', best_zsl_acc_max)
