@@ -35,6 +35,7 @@ data = util_dual.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)
 print("Dataset: ", opt.dataset)
 print("Dual GAN Experiments for sum/max/min feature fusion.")
+print("Th number of generated unseen features per class: ", str(opt.syn_num))
 
 if opt.gzsl_od:
     print('Performing OD-based GZSL experiments!')
