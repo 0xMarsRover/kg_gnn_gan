@@ -21,7 +21,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 
 
 class_embedding_text = {'action_class_w2v': 300}
-class_embedding_image = {'avg_img_googlenet_me': 1024}
+class_embedding_image = {'avg_img_resnet101': 1024}
 
 # but need to consider imbalance issue if doing GZSL:
 # training class has around 120 videos, so the number of generated unseen features may not be too large.
@@ -36,7 +36,7 @@ syn_num = [800]
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(7, 31):
+            for n in range(1, 10):
 
                 os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/dual/train_tfvaegan_dual.py \
                 --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
