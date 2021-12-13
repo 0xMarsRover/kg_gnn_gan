@@ -21,7 +21,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 
 
 class_embedding_text = {'action_class_w2v': 300}
-class_embedding_image = {'avg_img_resnet101': 1024}
+class_embedding_image = {'avg_img_resnet101': 2048}
 
 # but need to consider imbalance issue if doing GZSL:
 # training class has around 120 videos, so the number of generated unseen features may not be too large.
