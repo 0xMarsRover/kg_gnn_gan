@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=dual_rf_hmdb
+#SBATCH --job-name=hmdb_200
 #SBATCH --account=tud01
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ
