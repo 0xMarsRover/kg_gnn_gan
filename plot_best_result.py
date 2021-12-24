@@ -32,8 +32,8 @@ plt.show()
 
 labels = ['Text-only', 'Image-only', 'Text & Image']
 # hmdb51, ucf101
-hmdb51 = np.array([31.75, 31.36, 36.32])
-ucf101 = np.array([29.09, 45.46, 46.52])
+hmdb51 = np.array([31.75, 31.41, 36.05])
+ucf101 = np.array([29.09, 45.87, 46.37])
 
 x = np.arange(len(labels))  # the label locations
 width = 0.25  # the width of the bars
@@ -67,4 +67,5 @@ ax.bar_label(rects2, padding=3, )
 fig.tight_layout()
 #plt.show()
 sns.despine(bottom=True)  # removes right and top axis lines
-plt.savefig('res1.png', dpi=800)
+plt.savefig('best_results_each.eps', dpi=1000)
+

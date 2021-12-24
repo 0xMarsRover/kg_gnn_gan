@@ -25,7 +25,7 @@ class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_resnet101': 2048}
 
 # previous exp. using 400
-syn_num = [1200] # 200, 600, 800, 1000, 1200, 1400, 1600
+syn_num = [1400] # 200, 600, 800, 1000, 1200, 1400, 1600
 
 # fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
 # classifiers = ['logsoftmax']   # ['svm', 'rf', 'logsoftmax']
