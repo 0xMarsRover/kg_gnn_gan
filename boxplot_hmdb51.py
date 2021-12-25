@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-avg = [35.15, 36.05, 32.72, 33.37]
-sum = [34.94, 35.73, 32.44, 33.27]
-max = [35.41, 36.32, 32.88, 33.61]
-min = [35.34, 36.08, 33.30, 33.95]
+avg = [35.15, 35.94, 32.72, 33.37]
+sum = [34.91, 35.59, 32.15, 33.71]
+max = [35.39, 36.05, 32.46, 33.14]
+min = [35.36, 35.93, 32.83, 33.88]
 
 dataset = np.array([avg, sum, max, min]).transpose()
 df = pd.DataFrame(dataset, columns=['Avgering', 'Summation', 'Maximum', 'Minimum'])
@@ -53,5 +53,5 @@ plt.ylabel("Mean Average Accuracy (%)", fontweight='bold', fontsize=11)
 sns.despine(bottom=True)  # removes right and top axis lines
 #plt.title("The results of Dual-GANs using different fusion methods in HMDB51")
 #plt.show()
-plt.savefig('dual_hmdb51.png', dpi=800)
+plt.savefig('dual_hmdb51.eps', dpi=1000)
 

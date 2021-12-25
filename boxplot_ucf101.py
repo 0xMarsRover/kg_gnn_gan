@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 avg = [41.20, 41.29, 45.01, 45.58]
-sum = [40.72, 40.28, 44.99, 45.82]
-max = [41.45, 41.07, 45.98, 46.52]
-min = [40.84, 40.88, 45.17, 45.57]
+sum = [41.14, 41.05, 44.73, 45.57]
+max = [41.84, 41.95, 45.59, 46.37]
+min = [41.06, 41.24, 44.85, 45.37]
 
 dataset = np.array([avg, sum, max, min]).transpose()
 df = pd.DataFrame(dataset, columns=['Avgering', 'Summation', 'Maximum', 'Minimum'])
@@ -52,4 +52,4 @@ plt.ylabel("Mean Average Accuracy (%)", fontweight='bold', fontsize=11)
 sns.despine(bottom=True)  # removes right and top axis lines
 #plt.title("The results of Dual-GANs using different fusion methods in UCF101")
 #plt.show()
-plt.savefig('dual_ucf101.png', dpi=800)
+plt.savefig('dual_ucf101.eps', dpi=1000)
