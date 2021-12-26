@@ -2,7 +2,7 @@
 
 #SBATCH --job-name=ucf_1600
 #SBATCH --account=tud01
-#SBATCH --mem=65536
+#SBATCH --mem=98304
 #SBATCH --partition GpuQ
 #SBATCH --nodes 1
 #SBATCH --time=02-00
