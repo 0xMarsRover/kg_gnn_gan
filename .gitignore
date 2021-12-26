@@ -1,6 +1,5 @@
 # Ignore data
 data/
-downloads/
 ucf101_images/
 hmdb51_images/
 *.mat
@@ -8,6 +7,7 @@ hmdb51_images/
 .DS_Store
 bert embedding/
 *.png
+*.eps
 .idea/
 *.txt
 *.log
