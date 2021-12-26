@@ -25,7 +25,7 @@ class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_resnet101': 2048}
 
 # previous exp. using 400
-syn_num = [1600] # 200, 600, 800, 1000, 1200, 1400, 1600
+syn_num = [1000] # 200, 600, 800, 1000, 1200, 1400, 1600
 
 # fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
 # classifiers = ['logsoftmax']   # ['svm', 'rf', 'logsoftmax']
@@ -33,7 +33,7 @@ syn_num = [1600] # 200, 600, 800, 1000, 1200, 1400, 1600
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(1, 11):
+            for n in range(11, 16):
                 # n = n + 1
                 os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py \
                 --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
