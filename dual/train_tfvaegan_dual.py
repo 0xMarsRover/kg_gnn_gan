@@ -1252,3 +1252,4 @@ else:
 
         else:
             print("Please choose the correct combination approaches (Currently supporting sum, max and min).")
+
