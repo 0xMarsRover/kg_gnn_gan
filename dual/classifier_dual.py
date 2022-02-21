@@ -65,6 +65,7 @@ class CLASSIFIER:
         best_acc = 0
         mean_loss = 0
         acc_per_class = []
+        best_acc_per_class =[]
         best_cm = []
         last_loss_epoch = 1e8
         best_model = copy.deepcopy(self.model)
@@ -97,6 +98,8 @@ class CLASSIFIER:
         best_H = 0
         best_seen = 0
         best_unseen = 0
+        best_acc_per_seen = []
+        best_acc_per_unseen = []
         best_cm = []
         best_model = copy.deepcopy(self.model)
         # early_stopping = EarlyStopping(patience=20, verbose=True)
@@ -121,11 +124,11 @@ class CLASSIFIER:
             if H > best_H:
                 best_seen = acc_seen
                 best_acc_per_seen = acc_per_seen
-                best_acc_per_useen = acc_per_unseen
+                best_acc_per_unseen = acc_per_unseen
                 best_unseen = acc_unseen
                 best_H = H
                 best_model = copy.deepcopy(self.model)
-        return best_seen, best_acc_per_seen, best_unseen, best_acc_per_useen, best_H, best_model
+        return best_seen, best_acc_per_seen, best_unseen, best_acc_per_unseen, best_H, best_model
 
     def val_gzsl(self, test_X, test_label, target_classes):
         start = 0
