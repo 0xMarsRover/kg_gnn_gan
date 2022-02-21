@@ -213,7 +213,7 @@ def calc_gradient_penalty(netD, real_data, fake_data, input_att):
     return gradient_penalty
 
 
-# TODO: Init best_acc, best_acc_per_class, best_cm
+# Init best_acc, best_acc_per_class, best_cm
 if opt.gzsl_od:
     best_gzsl_od_acc = 0
 
