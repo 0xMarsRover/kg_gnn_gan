@@ -39,7 +39,7 @@ for c_t, dim_t in class_embedding_text.items():
             for n in range(1, 3):
 
                 os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py \
-                --dataset hmdb51 --nclass_all 51 --gzsl_od --manualSeed 806 \
+                --dataset hmdb51 --nclass_all 51 --gzsl --manualSeed 806 \
                 --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
                 --resultroot /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual \
                 --splits_path hmdb51_semantics --split {split} \

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=hmdb_gzsl_od_800
+#SBATCH --job-name=hmdb_gzsl__800
 #SBATCH --account=tud01
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ
@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mail-user=kaiqiang.x.huang@mytudublin.ie
 #SBATCH --mail-type=ALL,TIME_LIMIT_80
-#SBATCH --output=res_dual_hmdb51_gzsl_od_800.out
+#SBATCH --output=res_dual_hmdb51_gzsl_800.out
 
 module load conda/2
 module load cuda/11.2
