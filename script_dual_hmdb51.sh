@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=hmdb_gzsl__800
+#SBATCH --job-name=hmdb_gzsl_800
 #SBATCH --account=tud01
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ

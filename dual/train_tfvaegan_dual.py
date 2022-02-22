@@ -1031,34 +1031,57 @@ result_root = opt.resultroot
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
 if opt.gzsl_od:
-    with open(os.path.join(result_root, "exp_gzsl_od_results.txt"), "a+") as f:
-        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-        f.write("Results: OD-based GZSL Experiments" + "\n")
-        f.write("Split Index: " + str(opt.split) + "\n")
+    try:
+        with open(os.path.join(result_root, "exp_gzsl_od_results.txt"), "a+") as f:
+            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+            f.write("Results: OD-based GZSL Experiments" + "\n")
+            f.write("Split Index: " + str(opt.split) + "\n")
+
+            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
+
+            f.write("Best Epoch: " + str(best_epoch) + "\n")
+            f.write("Best Simple GZSL seen accuracy: " + str(best_acc_seen) + "\n")
+            f.write("Best Simple GZSL seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
+
+            f.write("Best Simple GZSL unseen accuracy: " + str(best_acc_unseen) + "\n")
+            f.write("Best Simple GZSL unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
+            f.write("Best Simple GZSL H: " + str(best_gzsl_od_acc) + "\n")
+            # f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+
+    except Exception as e:
+        print(e)
+        pass
 
     print('Best GZSL-OD seen accuracy is', best_acc_seen, best_acc_per_seen)
     print('Best GZSL-OD unseen accuracy is', best_acc_unseen, best_acc_per_unseen)
     print('Best GZSL-OD H is', best_gzsl_od_acc)
-    #print('Best GZSL-OD seen CM', best_cm_seen)
-    #print('Best GZSL-OD unseen CM', best_cm_unseen)
+    # print('Best GZSL-OD seen CM', best_cm_seen)
+    # print('Best GZSL-OD unseen CM', best_cm_unseen)
 
 elif opt.gzsl:
-    with open(os.path.join(result_root, "exp_gzsl_results.txt"), "a+") as f:
-        f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
-        f.write("Results: Simple GZSL Experiments" + "\n")
-        f.write("Split Index: " + str(opt.split) + "\n")
+    try:
+        with open(os.path.join(result_root, "exp_gzsl_results.txt"), "a+") as f:
+            f.write("\n" + "Dataset: " + str(opt.dataset) + "\n")
+            f.write("Results: Simple GZSL Experiments" + "\n")
+            f.write("Split Index: " + str(opt.split) + "\n")
 
-        f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
-        f.write("Semantic Embedding: " + str(opt.class_embedding) + "\n")
+            f.write("Visual Embedding: " + str(opt.action_embedding) + "\n")
+            f.write("Semantic Text Embedding: " + str(opt.class_embedding_text) + "\n")
+            f.write("Semantic Image Embedding: " + str(opt.class_embedding_image) + "\n")
 
-        f.write("Best Epoch: " + str(best_epoch) + "\n")
-        f.write("Best Simple GZSL seen accuracy: " + str(best_acc_seen) + "\n")
-        f.write("Best Simple GZSL seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
+            f.write("Best Epoch: " + str(best_epoch) + "\n")
+            f.write("Best Simple GZSL seen accuracy: " + str(best_acc_seen) + "\n")
+            f.write("Best Simple GZSL seen per-class accuracy: " + str(best_acc_per_seen) + "\n")
 
-        f.write("Best Simple GZSL unseen accuracy: " + str(best_acc_unseen) + "\n")
-        f.write("Best Simple GZSL unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
-        f.write("Best Simple GZSL H: " + str(best_gzsl_simple_acc) + "\n")
-        #f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+            f.write("Best Simple GZSL unseen accuracy: " + str(best_acc_unseen) + "\n")
+            f.write("Best Simple GZSL unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
+            f.write("Best Simple GZSL H: " + str(best_gzsl_simple_acc) + "\n")
+            #f.write("Best ZSL unseen confusion matrix: " + str(best_zsl_cm) + "\n")
+    except Exception as e:
+        print(e)
+        pass
 
     print('Best Simple GZSL seen accuracy: ', best_acc_seen)
     print('Best Simple GZSL seen accuracy per class: ', best_acc_per_seen)
