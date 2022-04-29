@@ -59,6 +59,14 @@ parser.add_argument("--conditional", action='store_true',default=True)
 parser.add_argument('--freeze_dec', action='store_true', default=False, help='Freeze Decoder for fake samples')
 parser.add_argument('--bce_att', action='store_true', default=False, help='bce attributes')
 
+##
+parser.add_argument('--center_margin', type=float, default=150, help='the margin in the center loss')
+parser.add_argument('--center_weight', type=float, default=0.5, help='the weight for the center loss')
+parser.add_argument('--incenter_weight', type=float, default=0.5, help='the weight for the center loss')
+parser.add_argument('--i_c', type=float, default=0.1, help='information constrain')
+parser.add_argument('--lr_dec', action='store_true', default=False, help='enable lr decay or not')
+parser.add_argument('--lr_dec_ep', type=int, default=1, help='lr decay for every 100 epoch')
+
 opt = parser.parse_args()
 opt.lambda2 = opt.lambda1
 opt.encoder_layer_sizes[0] = opt.resSize

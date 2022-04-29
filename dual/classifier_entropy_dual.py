@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix
 class CLASSIFIER:
     def __init__(self, _train_X, _train_Y, data_loader, _nclass, syn_feature, syn_label, _cuda, seen_classifier,
                  unseen_classifier, _lr=0.001, _beta1=0.5, _nepoch=50, _batch_size=64, _hidden_size=512,
-                 netDec=None, dec_size=4096, dec_hidden_size=4096):
+                 netDec=None, netFR=None, dec_size=4096, dec_hidden_size=4096):
         self.train_X = _train_X
         self.train_Y = _train_Y
         self.test_seen_feature = data_loader.test_seen_feature
@@ -38,6 +38,18 @@ class CLASSIFIER:
             self.syn_feat = self.compute_dec_out(self.syn_feat, self.input_dim)
             self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim)
             self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim)
+
+        self.netFR = netFR
+        if self.netFR:
+            self.netFR.eval()
+            # self.input_dim = self.input_dim
+            # self.input_dim = self.input_dim + dec_hidden_size
+            self.input_dim = self.input_dim + dec_hidden_size + dec_size
+            self.model = ODDetector(self.input_dim, self.hidden_size, self.nclass)
+            self.train_X = self.compute_fear_out(self.train_X, self.input_dim)
+            self.syn_feat = self.compute_fear_out(self.syn_feat, self.input_dim)
+            self.test_unseen_feature = self.compute_fear_out(self.test_unseen_feature, self.input_dim)
+            self.test_seen_feature = self.compute_fear_out(self.test_seen_feature, self.input_dim)
 
         self.seen_cls_model = seen_classifier.best_model
         self.unseen_cls_model = unseen_classifier.best_model
@@ -241,6 +253,55 @@ class CLASSIFIER:
             # new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data
             start = end
         return new_test_X
+
+    def compute_fear_out(self, test_X, new_size):
+        start = 0
+        ntest = test_X.size()[0]
+        new_test_X = torch.zeros(ntest, new_size)
+        for i in range(0, ntest, self.batch_size):
+            end = min(ntest, start + self.batch_size)
+            if self.cuda:
+                with torch.no_grad():
+                    inputX = Variable(test_X[start:end].cuda())
+            else:
+                with torch.no_grad():
+                    inputX = Variable(test_X[start:end])
+            _, _, _, _, _, feat2 = self.netFR(inputX)
+            feat1 = self.netFR.getLayersOutDet()
+            # new_test_X[start:end] = inputX.data.cpu()
+            # new_test_X[start:end] = torch.cat([inputX,feat1],dim=1).data.cpu()
+            new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
+
+            start = end
+            # pca = PCA(n_components=4096,whiten=False)
+            # fit = pca.fit(new_test_X)
+            # features = pca.fit_transform(new_test_X)
+            # features = torch.from_numpy(features)
+            # fnorm = torch.norm(features, p=2, dim=1, keepdim=True)
+            # new_test_X = features.div(fnorm.expand_as(features))
+        return new_test_X
+
+    def compute_per_class_acc_gzsl_knn(self, predicted_label, test_label, target_classes):
+        acc_per_class = 0
+        for i in target_classes:
+            idx = (predicted_label == i)
+            if torch.sum(idx) == 0:
+                acc_per_class += 0
+            else:
+                acc_per_class += float(torch.sum(predicted_label[idx] == test_label[idx])) / float(torch.sum(idx))
+        acc_per_class /= float(target_classes.size(0))
+        return acc_per_class
+
+    def compute_per_class_acc_knn(self, predicted_label, test_label, nclass):
+        acc_per_class = torch.FloatTensor(nclass).fill_(0)
+        for i in range(nclass):
+            idx = (test_label == i)
+            if torch.sum(idx) == 0:
+                acc_per_class += 0
+            else:
+                acc_per_class += torch.sum(predicted_label[idx] == test_label[idx]).float() / torch.sum(idx)
+        acc_per_class /= float(nclass)
+        return acc_per_class.mean()
 
 
 class ODDetector(nn.Module):

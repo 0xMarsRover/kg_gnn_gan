@@ -12,7 +12,8 @@ from config_dual import opt
 # Softmax Classifier
 class CLASSIFIER:
     def __init__(self, _train_X, _train_Y, data_loader, _nclass, _cuda, _lr=0.001, _beta1=0.5, _nepoch=50,
-                 _batch_size=64, generalized=False, netDec=None, dec_size=4096, dec_hidden_size=4096):
+                 _batch_size=64, generalized=False, netDec=None, netFR=None,
+                 dec_size=4096, dec_hidden_size=4096):
         self.train_X = _train_X.clone()
         self.train_Y = _train_Y.clone()
         self.test_seen_feature = data_loader.test_seen_feature.clone()
@@ -37,6 +38,18 @@ class CLASSIFIER:
             self.train_X = self.compute_dec_out(self.train_X, self.input_dim)
             self.test_unseen_feature = self.compute_dec_out(self.test_unseen_feature, self.input_dim)
             self.test_seen_feature = self.compute_dec_out(self.test_seen_feature, self.input_dim)
+
+        self.netFR = netFR
+        if self.netFR:
+            self.netFR.eval()
+            # self.input_dim = self.input_dim
+            # self.input_dim = self.input_dim + dec_hidden_size
+            self.input_dim = self.input_dim + dec_hidden_size + dec_size
+            self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.nclass)
+            self.train_X = self.compute_fear_out(self.train_X, self.input_dim)
+            self.test_unseen_feature = self.compute_fear_out(self.test_unseen_feature, self.input_dim)
+            self.test_seen_feature = self.compute_fear_out(self.test_seen_feature, self.input_dim)
+
         self.model.apply(util_dual.weights_init)
         self.criterion = nn.NLLLoss()
         self.input = torch.FloatTensor(_batch_size, self.input_dim)
@@ -251,6 +264,55 @@ class CLASSIFIER:
             # print(start, end)
             # from index start to index end-1
             return self.train_X[start:end], self.train_Y[start:end]
+
+    def compute_fear_out(self, test_X, new_size):
+        start = 0
+        ntest = test_X.size()[0]
+        new_test_X = torch.zeros(ntest, new_size)
+        for i in range(0, ntest, self.batch_size):
+            end = min(ntest, start + self.batch_size)
+            if self.cuda:
+                with torch.no_grad():
+                    inputX = Variable(test_X[start:end].cuda())
+            else:
+                with torch.no_grad():
+                    inputX = Variable(test_X[start:end])
+            _, _, _, _, _, feat2 = self.netFR(inputX)
+            feat1 = self.netFR.getLayersOutDet()
+            # new_test_X[start:end] = inputX.data.cpu()
+            # new_test_X[start:end] = torch.cat([inputX,feat1],dim=1).data.cpu()
+            new_test_X[start:end] = torch.cat([inputX, feat1, feat2], dim=1).data.cpu()
+
+            start = end
+            # pca = PCA(n_components=4096,whiten=False)
+            # fit = pca.fit(new_test_X)
+            # features = pca.fit_transform(new_test_X)
+            # features = torch.from_numpy(features)
+            # fnorm = torch.norm(features, p=2, dim=1, keepdim=True)
+            # new_test_X = features.div(fnorm.expand_as(features))
+        return new_test_X
+
+    def compute_per_class_acc_gzsl_knn(self, predicted_label, test_label, target_classes):
+        acc_per_class = 0
+        for i in target_classes:
+            idx = (predicted_label == i)
+            if torch.sum(idx) == 0:
+                acc_per_class += 0
+            else:
+                acc_per_class += float(torch.sum(predicted_label[idx] == test_label[idx])) / float(torch.sum(idx))
+        acc_per_class /= float(target_classes.size(0))
+        return acc_per_class
+
+    def compute_per_class_acc_knn(self, predicted_label, test_label, nclass):
+        acc_per_class = torch.FloatTensor(nclass).fill_(0)
+        for i in range(nclass):
+            idx = (test_label == i)
+            if torch.sum(idx) == 0:
+                acc_per_class += 0
+            else:
+                acc_per_class += torch.sum(predicted_label[idx] == test_label[idx]).float() / torch.sum(idx)
+        acc_per_class /= float(nclass)
+        return acc_per_class.mean()
 
 
 class LINEAR_LOGSOFTMAX_CLASSIFIER(nn.Module):
