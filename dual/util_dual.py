@@ -165,5 +165,5 @@ class DATA_LOADER(object):
         batch_label = self.train_label[idx]
         batch_att_text = self.attribute_text[batch_label]
         batch_att_image = self.attribute_image[batch_label]
-        return batch_feature, batch_att_text, batch_att_image
+        return batch_feature, batch_label, batch_att_text, batch_att_image
 
