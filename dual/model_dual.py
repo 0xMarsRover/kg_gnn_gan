@@ -186,12 +186,12 @@ class FR(nn.Module):
         self.hidden = None
         self.lantent = None
         # self.latensize = opt.latensize
-        self.attSize = opt.attSize
+        self.attSize = attSize
         self.fc1 = nn.Linear(opt.resSize, opt.ngh)
         self.fc3 = nn.Linear(opt.ngh, attSize * 2)
         # self.encoder_linear = nn.Linear(opt.resSize, opt.latensize*2)
-        self.discriminator = nn.Linear(opt.attSize, 1)
-        self.classifier = nn.Linear(opt.attSize, opt.nclass_seen)
+        self.discriminator = nn.Linear(attSize, 1)
+        self.classifier = nn.Linear(attSize, opt.nclass_seen)
         self.lrelu = nn.LeakyReLU(0.2, True)
         self.sigmoid = nn.Sigmoid()
         self.logic = nn.LogSoftmax(dim=1)
