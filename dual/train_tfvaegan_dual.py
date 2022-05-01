@@ -186,7 +186,6 @@ def sample():
     input_label.copy_(util_dual.map_label(batch_label, data.seenclasses))
 
 
-
 def generate_syn_feature(netG, classes, attribute, num, netF=None, netDec=None, attSize=None, nz=None):
     # unseen feature synthesis
     nclass = classes.size(0)
@@ -280,6 +279,7 @@ def MI_loss(mus, sigmas, i_c, alpha=1e-8):
     MI_loss = (torch.mean(kl_divergence) - i_c)
 
     return MI_loss
+
 
 def optimize_beta(beta, MI_loss,alpha2=1e-6):
     beta_new = max(0, beta + (alpha2 * MI_loss))
@@ -385,11 +385,16 @@ for epoch in range(0, opt.nepoch):
                 else:
                     fake = netG_image(latent_code, c=input_attv_image)
 
-
                 # TODO: update FR_image
                 netFR_image.zero_grad()
                 muR, varR, criticD_real_FR, latent_pred, _, recons_real = netFR_image(input_resv_image)
+                print("muR size: ", muR.size)
+                print("varR size: ", varR.size)
+                print("criticD_real_FR size: ", criticD_real_FR.size)
+                print("latent_pred size: ", latent_pred.size)
+                print("recons_real size: ", recons_real.size)
                 criticD_real_FR = criticD_real_FR.mean()
+                # recons_real should have the same size as input_resv_image (8192)
                 R_cost = opt.recons_weight * WeightedL1(recons_real, input_resv_image)
 
                 muF, varF, criticD_fake_FR, _, _, recons_fake = netFR_image(fake.detach())
