@@ -51,10 +51,20 @@ else:
 
 cls_criterion = nn.NLLLoss()
 if opt.dataset in ['hmdb51']:
-    center_criterion = TripCenterLoss_margin(num_classes=opt.nclass_seen, feat_dim=opt.attSize, use_gpu=opt.cuda)
+    center_criterion_image = TripCenterLoss_margin(num_classes=opt.nclass_seen,
+                                                   feat_dim=opt.attSize_image,
+                                                   use_gpu=opt.cuda)
+    center_criterion_text = TripCenterLoss_margin(num_classes=opt.nclass_seen,
+                                                   feat_dim=opt.attSize_text,
+                                                   use_gpu=opt.cuda)
 
 elif opt.dataset in ['ucf101']:
-    center_criterion = TripCenterLoss_margin(num_classes=opt.nclass_seen, feat_dim=opt.attSize, use_gpu=opt.cuda)
+    center_criterion_image = TripCenterLoss_margin(num_classes=opt.nclass_seen,
+                                                   feat_dim=opt.attSize_image,
+                                                   use_gpu=opt.cuda)
+    center_criterion_text = TripCenterLoss_margin(num_classes=opt.nclass_seen,
+                                                  feat_dim=opt.attSize_text,
+                                                  use_gpu=opt.cuda)
 else:
     raise ValueError('Dataset %s is not supported'%(opt.dataset))
 
@@ -209,7 +219,7 @@ optimizerG_image = optim.Adam(netG_image.parameters(), lr=opt.lr, betas=(opt.bet
 optimizerF_image = optim.Adam(netF_image.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
 optimizerDec_image = optim.Adam(netDec_image.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
 optimizerFR_image = optim.Adam(netFR_image.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
-optimizer_center_image = optim.Adam(center_criterion.parameters(), lr=opt.lr,betas=(opt.beta1, 0.999))
+optimizer_center_image = optim.Adam(center_criterion_image.parameters(), lr=opt.lr,betas=(opt.beta1, 0.999))
 
 optimizerD_text = optim.Adam(netD_text.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerE_text = optim.Adam(netE_text.parameters(), lr=opt.lr)
@@ -217,7 +227,7 @@ optimizerG_text = optim.Adam(netG_text.parameters(), lr=opt.lr, betas=(opt.beta1
 optimizerF_text = optim.Adam(netF_text.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
 optimizerDec_text = optim.Adam(netDec_text.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
 optimizerFR_text = optim.Adam(netFR_text.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
-optimizer_center_text = optim.Adam(center_criterion.parameters(), lr=opt.lr,betas=(opt.beta1, 0.999))
+optimizer_center_text = optim.Adam(center_criterion_text.parameters(), lr=opt.lr,betas=(opt.beta1, 0.999))
 
 
 def calc_gradient_penalty(netD, real_data, fake_data, input_att):
@@ -383,7 +393,7 @@ for epoch in range(0, opt.nepoch):
                 muF, varF, criticD_fake_FR, _, _, recons_fake = netFR_image(fake.detach())
                 criticD_fake_FR = criticD_fake_FR.mean()
                 gradient_penalty = calc_gradient_penalty_FR(netFR_image, input_resv_image, fake.data)
-                center_loss_real = center_criterion(muR, input_label, margin=opt.center_margin,
+                center_loss_real = center_criterion_image(muR, input_label, margin=opt.center_margin,
                                                     incenter_weight=opt.incenter_weight)
                 D_cost_FR = center_loss_real * opt.center_weight + R_cost
                 D_cost_FR.backward()
@@ -543,7 +553,7 @@ for epoch in range(0, opt.nepoch):
                 else:
                     fake = netG_text(latent_code, c=input_attv_text)
 
-                # TODO: update FR_image
+                # TODO: update FR_text
                 netFR_text.zero_grad()
                 muR, varR, criticD_real_FR, latent_pred, _, recons_real = netFR_text(input_resv_text)
                 criticD_real_FR = criticD_real_FR.mean()
@@ -552,7 +562,7 @@ for epoch in range(0, opt.nepoch):
                 muF, varF, criticD_fake_FR, _, _, recons_fake = netFR_image(fake.detach())
                 criticD_fake_FR = criticD_fake_FR.mean()
                 gradient_penalty = calc_gradient_penalty_FR(netFR_image, input_resv_text, fake.data)
-                center_loss_real = center_criterion(muR, input_label, margin=opt.center_margin,
+                center_loss_real = center_criterion_text(muR, input_label, margin=opt.center_margin,
                                                     incenter_weight=opt.incenter_weight)
                 D_cost_FR = center_loss_real * opt.center_weight + R_cost
                 D_cost_FR.backward()
