@@ -288,7 +288,6 @@ def optimize_beta(beta, MI_loss,alpha2=1e-6):
     return beta_new
 
 
-
 # Init best_acc, best_acc_per_class, best_cm
 if opt.gzsl_od:
     best_gzsl_od_acc = 0
@@ -395,7 +394,7 @@ for epoch in range(0, opt.nepoch):
                 print("recons_real size: ", recons_real.size())
                 criticD_real_FR = criticD_real_FR.mean()
                 # recons_real should have the same size as input_resv_image (8192)
-                R_cost = opt.recons_weight * WeightedL1(recons_real, input_resv_image)
+                R_cost = opt.recons_weight * WeightedL1(recons_real, input_attv_image)
 
                 muF, varF, criticD_fake_FR, _, _, recons_fake = netFR_image(fake.detach())
                 criticD_fake_FR = criticD_fake_FR.mean()
@@ -410,7 +409,6 @@ for epoch in range(0, opt.nepoch):
                 criticD_fake = netD_image(fake.detach(), input_attv_image)
                 criticD_fake = opt.gammaD * criticD_fake.mean()
                 criticD_fake.backward(one)
-
 
                 # gradient penalty
                 gradient_penalty = opt.gammaD * calc_gradient_penalty(netD_image, input_res, fake.data, input_att_image)
@@ -476,7 +474,6 @@ for epoch in range(0, opt.nepoch):
             G_cost = -criticG_fake
             # Add vae loss and generator loss
             errG += opt.gammaG * G_cost
-
 
             # netDec_image.zero_grad()
             # recons_fake = netDec_image(fake)
