@@ -76,7 +76,7 @@ netD_image = model_dual.Discriminator_D1(opt, semantics_type='image')
 # Init model_duals: Feedback module, auxillary module
 netF_image = model_dual.Feedback(opt)
 netDec_image = model_dual.AttDec(opt, opt.attSize_image)
-netFR_image = model_dual.FR(opt, opt.attSize)
+netFR_image = model_dual.FR(opt, opt.attSize_image)
 
 netE_text = model_dual.Encoder(opt, semantics_type='text')
 netG_text = model_dual.Generator(opt, semantics_type='text')
@@ -84,7 +84,7 @@ netD_text = model_dual.Discriminator_D1(opt, semantics_type='text')
 # Init model_duals: Feedback module, auxillary module
 netF_text = model_dual.Feedback(opt)
 netDec_text = model_dual.AttDec(opt, opt.attSize_text)
-netFR_text = model_dual.FR(opt, opt.attSize)
+netFR_text = model_dual.FR(opt, opt.attSize_text)
 
 # Init Tensors
 input_res = torch.FloatTensor(opt.batch_size, opt.resSize)
