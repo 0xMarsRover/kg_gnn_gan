@@ -68,9 +68,6 @@ class DATA_LOADER(object):
             self.attribute_image /= self.attribute_image.pow(2).sum(1).sqrt().unsqueeze(1).\
                                     expand(self.attribute_image.size(0), self.attribute_image.size(1))
 
-
-
-
         # HMDB51 dataset
         elif opt.dataset == "hmdb51":
             # Argparse:
