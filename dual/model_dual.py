@@ -185,7 +185,7 @@ class FR(nn.Module):
         self.embedSz = 0
         self.hidden = None
         self.lantent = None
-        self.latensize = opt.latensize
+        # self.latensize = opt.latensize
         self.attSize = opt.attSize
         self.fc1 = nn.Linear(opt.resSize, opt.ngh)
         self.fc3 = nn.Linear(opt.ngh, attSize * 2)
