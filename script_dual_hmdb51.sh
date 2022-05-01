@@ -16,7 +16,7 @@ module load cuda/11.2
 
 source activate /ichec/home/users/kaiqiang/py39
 
-echo "GZSL OD: Dual GAN with different classifier for HMDB51 (multi-GPU)"
+echo "GZSL OD: Dual GAN with FREE for HMDB51 (multi-GPU)"
 echo "The number of syn_data is 200"
 
 time python ./dual/run_hmdb51_tfvaegan_dual.py
