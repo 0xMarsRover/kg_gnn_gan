@@ -110,6 +110,7 @@ if opt.cuda:
     torch.nn.DataParallel(netE_image).cuda()
     torch.nn.DataParallel(netDec_image).cuda()
     torch.nn.DataParallel(netF_image).cuda()
+    torch.nn.DataParallel(netFR_image).cuda()
     noise_image, input_att_image = noise_image.cuda(), input_att_image.cuda()
 
     torch.nn.DataParallel(netG_text).cuda()
@@ -117,6 +118,7 @@ if opt.cuda:
     torch.nn.DataParallel(netE_text).cuda()
     torch.nn.DataParallel(netDec_text).cuda()
     torch.nn.DataParallel(netF_text).cuda()
+    torch.nn.DataParallel(netFR_text).cuda()
     noise_text, input_att_text = noise_text.cuda(), input_att_text.cuda()
 
     input_res = input_res.cuda()
