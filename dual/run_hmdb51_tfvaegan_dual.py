@@ -26,7 +26,7 @@ class_embedding_image = {'avg_img_resnet101': 2048}
 # but need to consider imbalance issue if doing GZSL:
 # training class has around 120 videos, so the number of generated unseen features may not be too large.
 # previous exp. used 800
-syn_num = [800]  # 200, 400, 600, 800, 1000, 1200, 1400, 1600
+syn_num = [600]  # 200, 400, 600, 800, 1000, 1200, 1400, 1600
 # syn_num = [1000, 1200, 1400]
 # syn_num = [1600, 1800, 2000]
 
@@ -46,7 +46,7 @@ for c_t, dim_t in class_embedding_text.items():
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
                 --class_embedding_image {semantics_i} --nz_image {semantics_dimension_i} --attSize_image {semantics_dimension_i} \
-                --nepoch 80 --batch_size 64 --syn_num {syn_num} \
+                --nepoch 100 --batch_size 64 --syn_num {syn_num} \
                 --preprocessing --cuda --gammaD 10 --gammaG 10 \
                 --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
                 --lr 0.0001 --workers 8 --encoded_noise  \
