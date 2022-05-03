@@ -54,8 +54,3 @@ for c_t, dim_t in class_embedding_text.items():
                 --feed_lr 0.00001 --dec_lr 0.0001'''.format(split=n, semantics_t=c_t, semantics_dimension_t=dim_t,
                                                             semantics_i=c_i, semantics_dimension_i=dim_i,
                                                             syn_num=syn))
-
-                                                            #fusion_methods=fusion_methods,
-                                                            #classifiers=classifiers))
-
-# --fusion_methods max --classifiers rf \
