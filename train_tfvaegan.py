@@ -39,12 +39,6 @@ netD = model.Discriminator_D1(opt)
 netF = model.Feedback(opt)
 netDec = model.AttDec(opt, opt.attSize)
 
-print(netE)
-print(netG)
-print(netD)
-print(netF)
-print(netDec)
-
 # Init Tensors
 input_res = torch.FloatTensor(opt.batch_size, opt.resSize)
 input_att = torch.FloatTensor(opt.batch_size, opt.attSize)
@@ -399,7 +393,7 @@ for epoch in range(0, opt.nepoch):
     netF.train()
 
 
-result_root = '/content/drive/MyDrive/colab_data/KG_GCN_GAN'
+result_root = opt.resultroot
 # Showing Best results
 print('Showing Best Results for Dataset: ', opt.dataset)
 # TODO: Save results into local file for ZSL, GZSL, GZSL-OD
@@ -423,12 +417,12 @@ if opt.gzsl_od:
         f.write("Best GZSL-OD unseen per-class accuracy: " + str(best_acc_per_unseen) + "\n")
         f.write('Best GZSL-OD H is ' + str(best_gzsl_od_acc) + "\n")
 
-    print('Best GZSL-OD GZSL seen accuracy: ', best_acc_seen)
-    print('Best GZSL-OD GZSL seen accuracy per class: ', best_acc_per_seen)
-
-    print('Best GZSL-OD GZSL unseen accuracy: ', best_acc_unseen)
-    print('Best GZSL-OD GZSL unseen accuracy per class: ', best_acc_per_unseen)
-    print('Best GZSL-OD GZSL H: ', best_gzsl_od_acc)
+    # print('Best GZSL-OD GZSL seen accuracy: ', best_acc_seen)
+    # print('Best GZSL-OD GZSL seen accuracy per class: ', best_acc_per_seen)
+    #
+    # print('Best GZSL-OD GZSL unseen accuracy: ', best_acc_unseen)
+    # print('Best GZSL-OD GZSL unseen accuracy per class: ', best_acc_per_unseen)
+    # print('Best GZSL-OD GZSL H: ', best_gzsl_od_acc)
     #print('Best GZSL-OD seen CM', best_cm_seen)
     #print('Best GZSL-OD unseen CM', best_cm_unseen)best_gzsl_od_acc
 
