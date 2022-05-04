@@ -37,7 +37,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 class_embedding = {'action_class_w2v': 300}
 
 for c, dim in class_embedding.items():
-    for n in range(1, 2):
+    for n in range(1, 10):
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kg_gnn_gan_main/train_tfvaegan.py \
         --dataset hmdb51 --nclass_all 51 --gzsl_od --manualSeed 806 \
@@ -46,7 +46,7 @@ for c, dim in class_embedding.items():
         --splits_path hmdb51_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
         --class_embedding {semantics} --nz {semantics_dimension} --attSize {semantics_dimension} \
-        --nepoch 3 --batch_size 64 --syn_num 600 \
+        --nepoch 100 --batch_size 64 --syn_num 600 \
         --preprocessing --cuda --gammaD 10 --gammaG 10 \
         --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
         --lr 0.0001 --workers 8 --encoded_noise  \
