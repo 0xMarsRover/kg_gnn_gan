@@ -40,7 +40,7 @@ for c, dim in class_embedding.items():
     for n in range(1, 2):
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kg_gnn_gan_main/train_tfvaegan.py \
-        --dataset hmdb51 --nclass_all 51 --zsl --manualSeed 806 \
+        --dataset hmdb51 --nclass_all 51 --gzsl_od --manualSeed 806 \
         --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
         --resultroot /ichec/home/users/kaiqiang/kg_gnn_gan_main \
         --splits_path hmdb51_semantics --split {split} \
