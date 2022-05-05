@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mail-user=kaiqiang.x.huang@mytudublin.ie
 #SBATCH --mail-type=ALL,TIME_LIMIT_80
-#SBATCH --output=res_hmdb51_gzsl_od_600_resnet_sp_1_8.out
+#SBATCH --output=res_hmdb51_gzsl_od_600_resnet_sp_8_30.out
 
 module load conda/2
 module load cuda/11.2
