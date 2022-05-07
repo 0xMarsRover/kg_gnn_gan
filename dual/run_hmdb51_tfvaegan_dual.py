@@ -36,7 +36,7 @@ syn_num = [600]  # 200, 400, 600, 800, 1000, 1200, 1400, 1600
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(9, 25):
+            for n in range(25, 31):
 
                 os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py \
                 --dataset hmdb51 --nclass_all 51 --gzsl_od --manualSeed 806 \
