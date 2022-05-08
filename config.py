@@ -26,7 +26,7 @@ parser.add_argument('--attSize', type=int, default=1024, help='size of semantic 
 parser.add_argument('--nz', type=int, default=312, help='size of the latent z vector')
 parser.add_argument('--ngh', type=int, default=4096, help='size of the hidden units in generator')
 parser.add_argument('--ndh', type=int, default=1024, help='size of the hidden units in discriminator')
-parser.add_argument('--nepoch', type=int, default=2000, help='number of epochs to train for')
+parser.add_argument('--nepoch', type=int, default=100, help='number of epochs to train for')
 parser.add_argument('--critic_iter', type=int, default=5, help='critic iteration, following WGAN-GP')
 parser.add_argument('--lambda1', type=float, default=10, help='gradient penalty regularizer, following WGAN-GP')
 parser.add_argument('--lambda2', type=float, default=10, help='gradient penalty regularizer, following WGAN-GP')
@@ -42,7 +42,8 @@ parser.add_argument('--recons_weight', type=float, default=1.0, help='recons_wei
 parser.add_argument('--feedback_loop', type=int, default=2)
 parser.add_argument('--encoded_noise', action='store_true', default=False, help='NEED TO FIGURE OUT')
 parser.add_argument('--manualSeed', type=int, help='manual seed')
-parser.add_argument('--nclass_all', type=int, default=200, help='number of all classes')
+parser.add_argument('--nclass_all', type=int, default=51, help='number of all classes')
+parser.add_argument('--nclass_seen', type=int, default=26, help='number of seen classes')
 parser.add_argument('--validation', action='store_true', default=False, help='enables validation mode')
 parser.add_argument("--encoder_layer_sizes", type=list, default=[8192, 4096])
 parser.add_argument("--decoder_layer_sizes", type=list, default=[4096, 8192])
@@ -54,6 +55,14 @@ parser.add_argument("--latent_size", type=int, default=312)
 parser.add_argument("--conditional", action='store_true',default=True)
 parser.add_argument('--freeze_dec', action='store_true', default=False, help='Freeze Decoder for fake samples')
 parser.add_argument('--bce_att', action='store_true', default=False, help='bce attributes')
+
+##
+parser.add_argument('--center_margin', type=float, default=150, help='the margin in the center loss')
+parser.add_argument('--center_weight', type=float, default=0.5, help='the weight for the center loss')
+parser.add_argument('--incenter_weight', type=float, default=0.5, help='the weight for the center loss')
+parser.add_argument('--i_c', type=float, default=0.1, help='information constrain')
+parser.add_argument('--lr_dec', action='store_true', default=False, help='enable lr decay or not')
+parser.add_argument('--lr_dec_ep', type=int, default=1, help='lr decay for every 100 epoch')
 
 opt = parser.parse_args()
 opt.lambda2 = opt.lambda1

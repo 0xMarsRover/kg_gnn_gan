@@ -1,5 +1,6 @@
 from __future__ import print_function
 import torch
+import torch.nn as nn
 import torch.autograd as autograd
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
@@ -7,6 +8,7 @@ from torch.autograd import Variable
 import numpy as np
 import random
 import os
+import pandas as pd
 
 # load files
 import model
@@ -14,6 +16,8 @@ import util
 import classifier
 import classifier_entropy
 from config import opt
+from center_loss import TripCenterLoss_min_margin, TripCenterLoss_margin
+import time
 
 if opt.manualSeed is None:
     opt.manualSeed = random.randint(1, 10000)
@@ -30,6 +34,30 @@ if torch.cuda.is_available() and not opt.cuda:
 data = util.DATA_LOADER(opt)
 print("Training samples: ", data.ntrain)
 print("Dataset: ", opt.dataset)
+print("Single GAN Experiments with FREE.")
+print("Th number of generated unseen features per class: ", str(opt.syn_num))
+
+if opt.gzsl_od:
+    print('Performing OD-based GZSL experiments!')
+
+elif opt.gzsl:
+    print('Performing Simple GZSL experiments!')
+else:
+    print('Performing ZSL experiments!')
+
+
+cls_criterion = nn.NLLLoss()
+if opt.dataset in ['hmdb51']:
+    center_criterion = TripCenterLoss_margin(num_classes=opt.nclass_seen,
+                                                   feat_dim=opt.attSize,
+                                                   use_gpu=opt.cuda)
+
+elif opt.dataset in ['ucf101']:
+    center_criterion = TripCenterLoss_margin(num_classes=opt.nclass_seen,
+                                                   feat_dim=opt.attSize,
+                                                   use_gpu=opt.cuda)
+else:
+    raise ValueError('Dataset %s is not supported'%(opt.dataset))
 
 # Init modules: Encoder, Generator, Discriminator
 netE = model.Encoder(opt)
@@ -38,28 +66,33 @@ netD = model.Discriminator_D1(opt)
 # Init models: Feedback module, auxillary module
 netF = model.Feedback(opt)
 netDec = model.AttDec(opt, opt.attSize)
+netFR = model.FR(opt, opt.attSize)
 
 # Init Tensors
 input_res = torch.FloatTensor(opt.batch_size, opt.resSize)
 input_att = torch.FloatTensor(opt.batch_size, opt.attSize)
 noise = torch.FloatTensor(opt.batch_size, opt.nz)
 # input_bce_att = torch.FloatTensor(opt.batch_size, opt.attSize)
+input_label = torch.LongTensor(opt.batch_size)
 one = torch.tensor(1, dtype=torch.float)
 # one = torch.FloatTensor([1])
 mone = one * -1
+beta=0
 
-# Cuda
+# Cuda: multi-GPU training
 if opt.cuda:
-    netG.cuda()
-    netD.cuda()
-    netE.cuda()
-    netDec.cuda()
-    netF.cuda()
+    torch.nn.DataParallel(netG).cuda()
+    torch.nn.DataParallel(netD).cuda()
+    torch.nn.DataParallel(netE).cuda()
+    torch.nn.DataParallel(netDec).cuda()
+    torch.nn.DataParallel(netF).cuda()
+    torch.nn.DataParallel(netFR).cuda()
     input_res = input_res.cuda()
     noise, input_att = noise.cuda(), input_att.cuda()
     # input_bce_att = input_bce_att.cuda()
     one = one.cuda()
     mone = mone.cuda()
+    input_label = input_label.cuda()
 
 
 def loss_fn(recon_x, x, mean, log_var):
@@ -132,6 +165,8 @@ optimizerE = optim.Adam(netE.parameters(), lr=opt.lr)
 optimizerG = optim.Adam(netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 optimizerF = optim.Adam(netF.parameters(), lr=opt.feed_lr, betas=(opt.beta1, 0.999))
 optimizerDec = optim.Adam(netDec.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
+optimizerFR = optim.Adam(netFR.parameters(), lr=opt.dec_lr, betas=(opt.beta1, 0.999))
+optimizer_center = optim.Adam(center_criterion.parameters(), lr=opt.lr,betas=(opt.beta1, 0.999))
 
 
 def calc_gradient_penalty(netD, real_data, fake_data, input_att):
@@ -152,6 +187,43 @@ def calc_gradient_penalty(netD, real_data, fake_data, input_att):
                               create_graph=True, retain_graph=True, only_inputs=True)[0]
     gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean() * opt.lambda1
     return gradient_penalty
+
+def calc_gradient_penalty_FR(netFR, real_data, fake_data):
+    #print real_data.size()
+    alpha = torch.rand(opt.batch_size, 1)
+    alpha = alpha.expand(real_data.size())
+    if opt.cuda:
+        alpha = alpha.cuda()
+    interpolates = alpha * real_data + ((1 - alpha) * fake_data)
+    if opt.cuda:
+        interpolates = interpolates.cuda()
+
+    interpolates = Variable(interpolates, requires_grad=True)
+    _,_,disc_interpolates,_ ,_, _ = netFR(interpolates)
+    ones = torch.ones(disc_interpolates.size())
+    if opt.cuda:
+        ones = ones.cuda()
+    gradients = autograd.grad(outputs=disc_interpolates, inputs=interpolates,
+                              grad_outputs=ones,
+                              create_graph=True, retain_graph=True, only_inputs=True)[0]
+    gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean() * opt.lambda1
+    return gradient_penalty
+
+
+def MI_loss(mus, sigmas, i_c, alpha=1e-8):
+    kl_divergence = (0.5 * torch.sum((mus ** 2) + (sigmas ** 2)
+                                  - torch.log((sigmas ** 2) + alpha) - 1, dim=1))
+
+    MI_loss = (torch.mean(kl_divergence) - i_c)
+
+    return MI_loss
+
+
+def optimize_beta(beta, MI_loss,alpha2=1e-6):
+    beta_new = max(0, beta + (alpha2 * MI_loss))
+
+    # return the updated beta value:
+    return beta_new
 
 
 # TODO: Recording best_acc, best_acc_per_class, best_cm
@@ -222,6 +294,29 @@ for epoch in range(0, opt.nepoch):
                     fake = feedback_module(gen_out=latent_code, att=input_attv, netG=netG, netDec=netDec, netF=netF)
                 else:
                     fake = netG(latent_code, c=input_attv)
+
+                # TODO: update FR
+                netFR.zero_grad()
+                muR, varR, criticD_real_FR, latent_pred, _, recons_real = netFR(input_resv)
+                # print("muR size: ", muR.size())
+                # print("varR size: ", varR.size())
+                # print("criticD_real_FR size: ", criticD_real_FR.size())
+                # print("latent_pred size: ", latent_pred.size())
+                # print("recons_real size: ", recons_real.size())
+                criticD_real_FR = criticD_real_FR.mean()
+                # recons_real should have the same size as input_resv_image (8192)
+                R_cost = opt.recons_weight * WeightedL1(recons_real, input_attv)
+
+                muF, varF, criticD_fake_FR, _, _, recons_fake = netFR(fake.detach())
+                criticD_fake_FR = criticD_fake_FR.mean()
+                gradient_penalty = calc_gradient_penalty_FR(netFR, input_resv, fake.data)
+                center_loss_real = center_criterion(muR, input_label, margin=opt.center_margin,
+                                                          incenter_weight=opt.incenter_weight)
+                D_cost_FR = center_loss_real * opt.center_weight + R_cost
+                D_cost_FR.backward()
+                optimizerFR.step()
+                optimizer_center.step()
+
                 criticD_fake = netD(fake.detach(), input_attv)
                 criticD_fake = opt.gammaD * criticD_fake.mean()
                 criticD_fake.backward(one)
@@ -288,8 +383,11 @@ for epoch in range(0, opt.nepoch):
             G_cost = -criticG_fake
             # Add vae loss and generator loss
             errG += opt.gammaG * G_cost
-            netDec.zero_grad()
-            recons_fake = netDec(fake)
+
+            # netDec_image.zero_grad()
+            # recons_fake = netDec_image(fake)
+            netFR.zero_grad()
+            _, _, criticG_fake_FR, latent_pred_fake, _, recons_fake = netFR(fake, train_G=True)
             # R_cost = WeightedL1(recons_fake, input_attv, bce=opt.bce_att, gt_bce=Variable(input_bce_att))
             R_cost = WeightedL1(recons_fake, input_attv)
             # Add reconstruction loss
@@ -297,6 +395,7 @@ for epoch in range(0, opt.nepoch):
             errG.backward()
             optimizerE.step()
             optimizerG.step()
+            optimizerFR.step()
             if loop == 1:
                 optimizerF.step()
             # not train decoder at feedback time
