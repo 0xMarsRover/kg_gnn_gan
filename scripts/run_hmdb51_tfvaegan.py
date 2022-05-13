@@ -46,7 +46,7 @@ for c, dim in class_embedding.items():
         --splits_path hmdb51_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
         --class_embedding {semantics} --nz {semantics_dimension} --attSize {semantics_dimension} \
-        --nepoch 3 --batch_size 64 --syn_num 600 \
+        --nepoch 100 --batch_size 64 --syn_num 600 \
         --preprocessing --cuda --gammaD 10 --gammaG 10 \
         --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
         --lr 0.0001 --workers 8 --encoded_noise  \
