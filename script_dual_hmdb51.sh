@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #SBATCH --job-name=hmdb_gzsl_od_600
-#SBATCH --account=tud01
+#SBATCH --account=tucom002c
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ
 #SBATCH --nodes 1
@@ -14,7 +14,7 @@
 module load conda/2
 module load cuda/11.2
 
-source activate /ichec/home/users/kaiqiang/py39
+source activate /ichec/work/tucom002c/py39
 
 echo "GZSL OD: Single GAN without FREE for HMDB51"
 echo "The number of syn_data is 600"
