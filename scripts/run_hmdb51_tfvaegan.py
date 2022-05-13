@@ -39,10 +39,10 @@ class_embedding = {'action_class_w2v': 300}
 for c, dim in class_embedding.items():
     for n in range(10, 31):
         # n = n + 1
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kg_gnn_gan_main/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/single_gan/train_tfvaegan.py \
         --dataset hmdb51 --nclass_all 51 --gzsl_od --manualSeed 806 \
         --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
-        --resultroot /ichec/home/users/kaiqiang/kg_gnn_gan_main \
+        --resultroot /ichec/work/tucom002c/single_gan \
         --splits_path hmdb51_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
         --class_embedding {semantics} --nz {semantics_dimension} --attSize {semantics_dimension} \
