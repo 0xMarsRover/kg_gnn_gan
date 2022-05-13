@@ -36,12 +36,12 @@ syn_num = [600]  # 200, 400, 600, 800, 1000, 1200, 1400, 1600
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(11, 19):
+            for n in range(17, 31):
 
-                os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/gzsar/dual/train_tfvaegan_dual.py \
+                os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/gzsar/dual/train_tfvaegan_dual.py \
                 --dataset hmdb51 --nclass_all 51 --nclass_seen 26 --gzsl_od --manualSeed 806 \
                 --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
-                --resultroot /ichec/home/users/kaiqiang/gzsar/dual \
+                --resultroot /ichec/work/tucom002c/gzsar \
                 --splits_path hmdb51_semantics --split {split} \
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
