@@ -33,14 +33,6 @@ import os
 # Number of splits range(30)
 # when using --class_embedding img_avg, set "CUDA_LAUNCH_BLOCKING=1 python train_vaegan.py ...."
 
-#TODO: Conducting 30-split experiment in one run (by for-loop)
-# 1. recording results into a local file for each split:
-#       a. The best Epoch
-#       b. The best average accuracy over test classes
-#       c. In the best epoch:
-#            i. accuracy per class
-#           ii. confusion matrix
-
 '''
 class_embedding = {'attribute': 115, 'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 600,
                    'avg_img_googlenet': 1024, 'avg_img_googlenet_me': 1024,
@@ -54,12 +46,12 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300,
 # avg_img_googlenet_me; avg_img_resnet101; 21-31
 class_embedding = {'avg_desc_w2v': 300}
 for c, dim in class_embedding.items():
-    for n in range(16, 31):
-
+    for n in range(1, 6):
         # n = n + 1
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /content/kg_gnn_gan/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/single_free/train_tfvaegan.py \
         --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
-        --dataroot /content/drive/MyDrive/colab_data/action_datasets \
+        --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
+        --resultroot /ichec/work/tucom002c/single_free \
         --splits_path ucf101_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
         --class_embedding {semantics} --nz {semantics_dimension} --attSize {semantics_dimension} \

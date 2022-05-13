@@ -37,16 +37,16 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300, 'fwv_k1_desc': 
 class_embedding = {'avg_img_resnet101': 2048}
 
 for c, dim in class_embedding.items():
-    for n in range(1, 16):
+    for n in range(10, 11):
         # n = n + 1
-        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/single_free/train_tfvaegan.py \
+        os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/single_free/train_tfvaegan.py \
         --dataset hmdb51 --nclass_all 51 --gzsl_od --manualSeed 806 \
         --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
-        --resultroot /ichec/home/users/kaiqiang/single_free \
+        --resultroot /ichec/work/tucom002c/single_free \
         --splits_path hmdb51_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
         --class_embedding {semantics} --nz {semantics_dimension} --attSize {semantics_dimension} \
-        --nepoch 100 --batch_size 64 --syn_num 600 \
+        --nepoch 3 --batch_size 64 --syn_num 600 \
         --preprocessing --cuda --gammaD 10 --gammaG 10 \
         --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
         --lr 0.0001 --workers 8 --encoded_noise  \
