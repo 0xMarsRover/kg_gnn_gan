@@ -49,13 +49,13 @@ for c, dim in class_embedding.items():
     for n in range(1, 6):
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/single_free/train_tfvaegan.py \
-        --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
+        --dataset ucf101 --nclass_all 101 --gzsl_od --manualSeed 806 \
         --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
         --resultroot /ichec/work/tucom002c/single_free \
         --splits_path ucf101_semantics --split {split} \
         --action_embedding i3d --resSize 8192 \
         --class_embedding {semantics} --nz {semantics_dimension} --attSize {semantics_dimension} \
-        --nepoch 100 --batch_size 64 --syn_num 400 \
+        --nepoch 100 --batch_size 64 --syn_num 600 \
         --preprocessing --cuda --gammaD 10 --gammaG 10 \
         --ngh 4096 --ndh 4096 --lambda1 10 --critic_iter 5 \
         --lr 0.0001 --workers 8 --encoded_noise  \

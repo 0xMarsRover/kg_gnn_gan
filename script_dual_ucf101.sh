@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=ucf_gzsl_od_600
+#SBATCH --job-name=ucf_gzsl_od_single_free_600
 #SBATCH --account=tucom002c
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ
