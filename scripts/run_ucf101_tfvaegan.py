@@ -44,7 +44,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300,
 '''
 
 # avg_img_googlenet_me; avg_img_resnet101; 21-31
-class_embedding = {'avg_desc_w2v': 300}
+class_embedding = {'avg_img_resnet101': 2048}
 for c, dim in class_embedding.items():
     for n in range(1, 6):
         # n = n + 1

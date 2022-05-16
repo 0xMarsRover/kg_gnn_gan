@@ -5,11 +5,11 @@
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ
 #SBATCH --nodes 1
-#SBATCH --time=02-00
+#SBATCH --time=01-00
 #SBATCH --cpus-per-task=8
 #SBATCH --mail-user=kaiqiang.x.huang@mytudublin.ie
 #SBATCH --mail-type=ALL,TIME_LIMIT_80
-#SBATCH --output=res_ucf101_gzsl_od_600_desc_w2v_free_sp_1_5.out
+#SBATCH --output=res_ucf101_gzsl_od_600_resnet_free_sp_1_5.out
 
 module load conda/2
 module load cuda/11.2
