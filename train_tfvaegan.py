@@ -490,6 +490,7 @@ for epoch in range(0, opt.nepoch):
     netG.train()
     netDec.train()
     netF.train()
+    netFR.train()
 
 
 result_root = opt.resultroot
