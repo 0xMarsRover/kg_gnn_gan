@@ -259,6 +259,10 @@ for epoch in range(0, opt.nepoch):
             for p in netDec.parameters():
                 p.requires_grad = True
 
+            # unfreeze FR
+            for p in netFR.parameters():
+                p.requires_grad = True
+
             # TODO: Train D1 and Decoder
             gp_sum = 0
             for iter_d in range(opt.critic_iter):
@@ -346,9 +350,14 @@ for epoch in range(0, opt.nepoch):
                 for p in netDec.parameters():
                     p.requires_grad = False
 
+            if opt.recons_weight > 0 and opt.freeze_dec:
+                for p in netFR.parameters(): #freeze decoder
+                    p.requires_grad = False
+
             netE.zero_grad()
             netG.zero_grad()
             netF.zero_grad()
+
             input_resv = Variable(input_res)
             input_attv = Variable(input_att)
             # This is outside the opt.encoded_noise condition because of the vae loss
@@ -408,6 +417,8 @@ for epoch in range(0, opt.nepoch):
     netG.eval()
     netDec.eval()
     netF.eval()
+    netFR.eval()
+
     syn_feature, syn_label = generate_syn_feature(netG, data.unseenclasses, data.attribute, opt.syn_num,
                                                   netF=netF, netDec=netDec)
 
@@ -419,17 +430,17 @@ for epoch in range(0, opt.nepoch):
         clsu = classifier.CLASSIFIER(syn_feature, util.map_label(syn_label, data.unseenclasses),
                                      data, data.unseenclasses.size(0), opt.cuda,
                                      _nepoch=30, generalized=True, _batch_size=128,
-                                     netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+                                     netDec=netDec, netFR=netFR, dec_size=opt.attSize, dec_hidden_size=4096)
         # _batch_size=opt.syn_num
         clss = classifier.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                      data, data.seenclasses.size(0), opt.cuda,
                                      _nepoch=30, generalized=True, _batch_size=128,
-                                     netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+                                     netDec=netDec, netFR=netFR, dec_size=opt.attSize, dec_hidden_size=4096)
 
         clsg = classifier_entropy.CLASSIFIER(data.train_feature, util.map_label(data.train_label, data.seenclasses),
                                              data, seen_class, syn_feature, syn_label,
                                              opt.cuda, clss, clsu, _nepoch=30, _batch_size=128,
-                                             netDec=netDec, dec_size=opt.attSize, dec_hidden_size=4096)
+                                             netDec=netDec, netFR=netFR, dec_size=opt.attSize, dec_hidden_size=4096)
 
         if best_gzsl_od_acc < clsg.H:
             best_acc_seen, best_acc_unseen, best_gzsl_od_acc = clsg.acc_seen, clsg.acc_unseen, clsg.H
