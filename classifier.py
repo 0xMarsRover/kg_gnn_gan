@@ -44,9 +44,8 @@ class CLASSIFIER:
             # self.input_dim = self.input_dim
             # self.input_dim = self.input_dim + dec_hidden_size
             self.input_dim = self.input_dim + dec_hidden_size + dec_size
-            self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.hidden_size, self.nclass)
+            self.model = LINEAR_LOGSOFTMAX_CLASSIFIER(self.input_dim, self.nclass)
             self.train_X = self.compute_fear_out(self.train_X, self.input_dim)
-            self.syn_feat = self.compute_fear_out(self.syn_feat, self.input_dim)
             self.test_unseen_feature = self.compute_fear_out(self.test_unseen_feature, self.input_dim)
             self.test_seen_feature = self.compute_fear_out(self.test_seen_feature, self.input_dim)
 
