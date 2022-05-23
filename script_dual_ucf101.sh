@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#SBATCH --job-name=ucf_1000
+#SBATCH --job-name=ucf_gzsl_od_dual_600
 #SBATCH --account=tucom002c
 #SBATCH --mem=65536
 #SBATCH --partition GpuQ
@@ -17,6 +17,6 @@ module load cuda/11.2
 source activate /ichec/work/tucom002c/py39
 
 echo "GZSL OD: Dual GAN without FREE for UCF101 (multi-GPU)"
-echo "The number of syn_data is 1000"
+echo "The number of syn_data is 600"
 
 time python ./dual/run_ucf101_tfvaegan_dual.py

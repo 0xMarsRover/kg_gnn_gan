@@ -25,7 +25,7 @@ class_embedding_text = {'avg_desc_w2v': 300}
 class_embedding_image = {'avg_img_resnet101': 2048}
 
 # previous exp. using 400
-syn_num = [1000] # 200, 600, 800, 1000, 1200, 1400, 1600
+syn_num = [600] # 200, 600, 800, 1000, 1200, 1400, 1600
 
 # fusion_methods = ['max']    # ['avg', 'sum', 'max', 'min']
 # classifiers = ['logsoftmax']   # ['svm', 'rf', 'logsoftmax']
@@ -33,12 +33,12 @@ syn_num = [1000] # 200, 600, 800, 1000, 1200, 1400, 1600
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(11, 16):
+            for n in range(1, 11):
                 # n = n + 1
-                os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual/train_tfvaegan_dual.py \
-                --dataset ucf101 --nclass_all 101 --zsl --manualSeed 806 \
+                os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/dual_gan/dual/train_tfvaegan_dual.py \
+                --dataset ucf101 --nclass_all 101 --gzsl_od --manualSeed 806 \
                 --dataroot /ichec/work/tud01/kaiqiang/action_datasets \
-                --resultroot /ichec/home/users/kaiqiang/kay_classifier_dual_gan/dual \
+                --resultroot /ichec/work/tucom002c/dual_gan \
                 --splits_path ucf101_semantics --split {split} \
                 --action_embedding i3d --resSize 8192 \
                 --class_embedding_text {semantics_t} --nz_text {semantics_dimension_t} --attSize_text {semantics_dimension_t} \
