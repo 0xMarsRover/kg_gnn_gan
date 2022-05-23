@@ -46,7 +46,7 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300,
 
 class_embedding = {'avg_desc_w2v': 300}
 for c, dim in class_embedding.items():
-    for n in range(1, 6):
+    for n in range(6, 11):
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/single_gan/train_tfvaegan.py \
         --dataset ucf101 --nclass_all 101 --gzsl_od --manualSeed 806 \
