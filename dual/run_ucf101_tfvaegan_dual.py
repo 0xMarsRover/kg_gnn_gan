@@ -33,7 +33,7 @@ syn_num = [600] # 200, 600, 800, 1000, 1200, 1400, 1600
 for c_t, dim_t in class_embedding_text.items():
     for c_i, dim_i in class_embedding_image.items():
         for syn in syn_num:
-            for n in range(1, 6):
+            for n in range(6, 11):
                 # n = n + 1
                 os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/dual_free/dual/train_tfvaegan_dual.py \
                 --dataset ucf101 --nclass_all 101 --nclass_seen 51 --gzsl_od --manualSeed 806 \
