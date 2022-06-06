@@ -46,7 +46,8 @@ class_embedding = {'action_class_w2v': 300, 'avg_desc_w2v': 300,
 # avg_img_googlenet_me; avg_img_resnet101; 21-31
 class_embedding = {'avg_img_resnet101': 2048}
 for c, dim in class_embedding.items():
-    for n in range(10, 19):
+    # for n in range(10, 19):
+    for n in [19,21,24,25,26,27,28,29]:
         # n = n + 1
         os.system('''CUDA_LAUNCH_BLOCKING=1 python /ichec/work/tucom002c/single_free/train_tfvaegan.py \
         --dataset ucf101 --nclass_all 101 --gzsl_od --manualSeed 806 \
