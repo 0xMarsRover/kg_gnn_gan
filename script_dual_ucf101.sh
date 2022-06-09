@@ -9,7 +9,7 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mail-user=kaiqiang.x.huang@mytudublin.ie
 #SBATCH --mail-type=ALL,TIME_LIMIT_80
-#SBATCH --output=res_dual_ucf101_gzsl_od_600_sp_11_30.out
+#SBATCH --output=res_dual_ucf101_gzsl_od_600_sp_17_22.out
 
 module load conda/2
 module load cuda/11.2
